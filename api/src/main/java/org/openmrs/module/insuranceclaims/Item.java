@@ -25,7 +25,9 @@ import javax.persistence.ManyToOne;
 //@Entity(name = "insuranceclaims.Item")
 //@Table(name = "insuranceclaims_item")
 public class Item extends BaseOpenmrsData {
-	
+
+	private static final long serialVersionUID = 8352049103901464406L;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "insuranceclaims_item_id")

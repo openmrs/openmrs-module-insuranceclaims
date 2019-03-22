@@ -111,6 +111,24 @@
 					</executions>
 				</plugin>
 				<plugin>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-maven-plugin</artifactId>
+					<version>${spotbugs.vesrion}</version>
+					<configuration>
+						<effort>Max</effort>
+						<threshold>Low</threshold>
+					</configuration>
+					<executions>
+						<execution>
+							<id>analyze-compile</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
 					<artifactId>maven-java-formatter-plugin</artifactId>
 					<executions>
@@ -130,6 +148,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -165,5 +187,6 @@
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<checkstylePluginVersion>3.0.0</checkstylePluginVersion>
 		<pmdPluginVersion>3.10.0</pmdPluginVersion>
+		<spotbugs.vesrion>3.1.11</spotbugs.vesrion>
 	</properties>
 </project>

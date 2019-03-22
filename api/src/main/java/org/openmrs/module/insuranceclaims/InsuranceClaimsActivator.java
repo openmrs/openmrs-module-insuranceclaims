@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class InsuranceClaimsActivator extends BaseModuleActivator {
 	
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(InsuranceClaimsActivator.class);
 	
 	/**
 	 * @see #started()

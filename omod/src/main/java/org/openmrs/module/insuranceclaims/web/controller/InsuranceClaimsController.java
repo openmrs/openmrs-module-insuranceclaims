@@ -34,7 +34,7 @@ public class InsuranceClaimsController {
 	/**
 	 * Logger for this class and subclasses
 	 */
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(InsuranceClaimsController.class);
 
 	@Autowired
 	private UserService userService;
@@ -62,12 +62,12 @@ public class InsuranceClaimsController {
 	 * @param errors - set of errors
 	 * @return - url to redirect
 	 */
-	@SuppressWarnings("PMD.EmptyIfStmt")
 	@RequestMapping(method = RequestMethod.POST)
 	public String onPost(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
 			BindingResult errors) {
 
 		if (errors.hasErrors()) {
+			log.debug("The error view should be return.");
 			// return error view
 		}
 

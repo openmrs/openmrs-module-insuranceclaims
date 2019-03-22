@@ -20,7 +20,14 @@ public class InsuranceClaimsServiceImpl extends BaseOpenmrsService implements In
 	private InsuranceClaimsDao dao;
 	
 	private UserService userService;
-	
+
+	public InsuranceClaimsServiceImpl() { }
+
+	public  InsuranceClaimsServiceImpl(InsuranceClaimsDao dao, UserService userService) {
+		this.dao = dao;
+		this.userService = userService;
+	}
+
 	/**
 	 * Injected in moduleApplicationContext.xml
 	 */
