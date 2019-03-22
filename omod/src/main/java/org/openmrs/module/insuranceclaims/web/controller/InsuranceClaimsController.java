@@ -62,6 +62,7 @@ public class InsuranceClaimsController {
 	 * @param errors - set of errors
 	 * @return - url to redirect
 	 */
+	@SuppressWarnings("PMD.EmptyIfStmt")
 	@RequestMapping(method = RequestMethod.POST)
 	public String onPost(HttpSession httpSession, @ModelAttribute("anyRequestObject") Object anyRequestObject,
 			BindingResult errors) {

@@ -69,7 +69,7 @@
 							<phase>validate</phase>
 							<configuration>
 								<configLocation>checkstyle.xml</configLocation>
-								<encoding>UTF-8</encoding>
+								<encoding>${project.build.sourceEncoding}</encoding>
 								<consoleOutput>true</consoleOutput>
 								<logViolationsToConsole>true</logViolationsToConsole>
 								<failOnViolation>true</failOnViolation>
@@ -78,6 +78,34 @@
 							</configuration>
 							<goals>
 								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>${pmdPluginVersion}</version>
+					<configuration>
+						<rulesets>
+							<ruleset>pmd.xml</ruleset>
+						</rulesets>
+						<linkXRef>false</linkXRef>
+						<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+						<minimumTokens>100</minimumTokens>
+						<targetJdk>${javaVersion}</targetJdk>
+						<printFailingErrors>true</printFailingErrors>
+						<analysisCache>true</analysisCache>
+						<includeTests>true</includeTests>
+						<failOnViolation>true</failOnViolation>
+					</configuration>
+					<executions>
+						<execution>
+							<id>validate</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>check</goal>
+								<goal>cpd-check</goal>
 							</goals>
 						</execution>
 					</executions>
@@ -98,6 +126,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -127,9 +159,11 @@
 	</pluginRepositories>
 
 	<properties>
+		<javaVersion>1.8</javaVersion>
 		<openmrsPlatformVersion>2.1.3</openmrsPlatformVersion>
 		<legacyuiVersion>1.4.0</legacyuiVersion>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<checkstylePluginVersion>3.0.0</checkstylePluginVersion>
+		<pmdPluginVersion>3.10.0</pmdPluginVersion>
 	</properties>
 </project>

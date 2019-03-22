@@ -11,4 +11,18 @@
     <packaging>jar</packaging>
     <name>Insurance Claims API</name>
     <description>API project for Insurance Claims</description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <rulesets>
+                        <ruleset>../pmd.xml</ruleset>
+                    </rulesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
