@@ -44,6 +44,12 @@
 				<version>${legacyuiVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>3.0.1</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -74,5 +80,6 @@
 	<properties>
 		<openmrsPlatformVersion>2.1.3</openmrsPlatformVersion>
 		<legacyuiVersion>1.4.0</legacyuiVersion>
+		<javax.servlet.version>3.0.1</javax.servlet.version>
 	</properties>
 </project>

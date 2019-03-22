@@ -11,6 +11,7 @@ package org.openmrs.module.insuranceclaims;
 import org.junit.Test;
 import org.openmrs.module.Extension;
 import org.openmrs.module.insuranceclaims.extension.html.AdminList;
+import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
 import java.util.Map;
 
@@ -22,7 +23,7 @@ import static org.junit.Assert.assertThat;
 /**
  * This test validates the AdminList extension class
  */
-public class AdminListExtensionTest {
+public class AdminListExtensionTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
 	 * Get the links for the extension class
