@@ -15,6 +15,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("insuranceclaims.InsuranceClaimsConfig")
 public class InsuranceClaimsConfig {
-	
-	public final static String MODULE_PRIVILEGE = "Insurance Claims Privilege";
+
+	public static final String MODULE_PRIVILEGE = "Insurance Claims Privilege";
 }

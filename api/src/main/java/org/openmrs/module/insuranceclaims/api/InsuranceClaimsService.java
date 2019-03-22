@@ -20,26 +20,26 @@ import org.springframework.transaction.annotation.Transactional;
  * moduleApplicationContext.xml on how it is wired up.
  */
 public interface InsuranceClaimsService extends OpenmrsService {
-	
+
 	/**
 	 * Returns an item by uuid. It can be called by any authenticated user. It is fetched in read
 	 * only transaction.
-	 * 
-	 * @param uuid
-	 * @return
-	 * @throws APIException
+	 *
+	 * @param uuid - value of uuid
+	 * @return fetched item
+	 * @throws APIException - exception
 	 */
 	@Authorized()
 	@Transactional(readOnly = true)
 	Item getItemByUuid(String uuid) throws APIException;
-	
+
 	/**
 	 * Saves an item. Sets the owner to superuser, if it is not set. It can be called by users with
 	 * this module's privilege. It is executed in a transaction.
-	 * 
-	 * @param item
-	 * @return
-	 * @throws APIException
+	 *
+	 * @param item - item representation
+	 * @return saved item
+	 * @throws APIException - exception
 	 */
 	@Authorized(InsuranceClaimsConfig.MODULE_PRIVILEGE)
 	@Transactional
