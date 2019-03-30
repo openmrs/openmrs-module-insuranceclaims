@@ -1,11 +1,3 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
- * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
- * graphic logo is a trademark of OpenMRS Inc.
- */
 package org.openmrs.module.insuranceclaims.extension.html;
 
 import org.openmrs.module.Extension;
@@ -20,32 +12,43 @@ import java.util.Map;
  * config.xml file.
  */
 public class AdminList extends AdministrationSectionExt {
-	
+
+	private static final String MODULE_TITLE_KEY = "insuranceclaims.title";
+
+	private static final String MODULE_REFAPP_TITLE = "insuranceclaims.refapp.title";
+
+	private static final String MODULE_REFAPP_UI_URL = "insuranceclaims/insuranceclaims.page";
+
+	private static final String MODULE_LEGACY_UI_URL = "module/insuranceclaims/insuranceclaims.form";
+
 	/**
 	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getMediaType()
 	 */
+	@Override
 	public Extension.MEDIA_TYPE getMediaType() {
 		return Extension.MEDIA_TYPE.html;
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getTitle()
 	 */
+	@Override
 	public String getTitle() {
-		return "insuranceclaims.title";
+		return MODULE_TITLE_KEY;
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getLinks()
 	 */
+	@Override
 	public Map<String, String> getLinks() {
-		
-		Map<String, String> map = new HashMap<String, String>();
-		
-		map.put("module/insuranceclaims/insuranceclaims.form", "insuranceclaims.title");
-		map.put("insuranceclaims/insuranceclaims.page", "insuranceclaims.refapp.title");
-		
+
+		Map<String, String> map = new HashMap<>();
+
+		map.put(MODULE_LEGACY_UI_URL, MODULE_TITLE_KEY);
+		map.put(MODULE_REFAPP_UI_URL, MODULE_REFAPP_TITLE);
+
 		return map;
 	}
-	
+
 }

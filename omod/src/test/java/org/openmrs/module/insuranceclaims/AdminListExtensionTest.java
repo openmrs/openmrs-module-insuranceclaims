@@ -1,11 +1,3 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
- * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
- * graphic logo is a trademark of OpenMRS Inc.
- */
 package org.openmrs.module.insuranceclaims;
 
 import org.junit.Test;
@@ -29,7 +21,7 @@ public class AdminListExtensionTest extends BaseModuleWebContextSensitiveTest {
 	 * Get the links for the extension class
 	 */
 	@Test
-	public void testValidatesLinks() {
+	public void getLinks_shouldReturnNonEmptyList() {
 		AdminList ext = new AdminList();
 		
 		Map<String, String> links = ext.getLinks();
@@ -42,7 +34,7 @@ public class AdminListExtensionTest extends BaseModuleWebContextSensitiveTest {
 	 * Check the media type of this extension class
 	 */
 	@Test
-	public void testMediaTypeIsHtml() {
+	public void getMediaType_shouldReturnHTMLType() {
 		AdminList ext = new AdminList();
 		
 		assertThat(ext.getMediaType(), is(Extension.MEDIA_TYPE.html));

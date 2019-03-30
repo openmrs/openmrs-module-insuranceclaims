@@ -1,11 +1,3 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
- * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
- * graphic logo is a trademark of OpenMRS Inc.
- */
 package org.openmrs.module.insuranceclaims.web.controller;
 
 import org.openmrs.User;
@@ -34,7 +26,7 @@ public class InsuranceClaimsController {
 	/**
 	 * Logger for this class and subclasses
 	 */
-	private final Logger log = LoggerFactory.getLogger(InsuranceClaimsController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(InsuranceClaimsController.class);
 
 	@Autowired
 	private UserService userService;
@@ -67,7 +59,7 @@ public class InsuranceClaimsController {
 			BindingResult errors) {
 
 		if (errors.hasErrors()) {
-			log.debug("The error view should be return.");
+			LOG.error("The error view should be return.");
 			// return error view
 		}
 
@@ -80,7 +72,7 @@ public class InsuranceClaimsController {
 	 * by the return type of this method
 	 */
 	@ModelAttribute("users")
-	protected List<User> getUsers() throws APIException {
+	public List<User> getUsers() throws APIException {
 		List<User> users = userService.getAllUsers();
 
 		// this object will be made available to the jsp page under the variable name
