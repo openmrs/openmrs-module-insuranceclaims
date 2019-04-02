@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class defines the links that will appear on the administration page under the
+ * Defines the links that will appear on the administration page under the
  * "insuranceclaims.title" heading. This extension is enabled by defining (uncommenting) it in the
  * config.xml file.
  */

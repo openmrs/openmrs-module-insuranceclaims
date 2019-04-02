@@ -21,7 +21,7 @@ public class InsuranceClaimsDao {
 	@Autowired
 	private DbSessionFactory sessionFactory;
 	
-	private DbSession getSession() {
+	public DbSession getSession() {
 		return sessionFactory.getCurrentSession();
 	}
 	

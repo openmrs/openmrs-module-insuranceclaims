@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class contains the logic that is run every time this module is either started or stopped
+ * Contains the logic that is run every time this module is either started or stopped
  */
 public class InsuranceClaimsActivator extends BaseModuleActivator {
 	

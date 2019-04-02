@@ -14,7 +14,9 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.insuranceclaims.Item;
 import org.openmrs.module.insuranceclaims.api.InsuranceClaimsService;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimsDao;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class InsuranceClaimsServiceImpl extends BaseOpenmrsService implements InsuranceClaimsService {
 	
 	private InsuranceClaimsDao dao;
@@ -43,6 +45,7 @@ public class InsuranceClaimsServiceImpl extends BaseOpenmrsService implements In
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Item getItemByUuid(String uuid) throws APIException {
 		return dao.getItemByUuid(uuid);
 	}

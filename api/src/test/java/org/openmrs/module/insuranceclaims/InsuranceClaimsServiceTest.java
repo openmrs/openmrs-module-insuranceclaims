@@ -40,7 +40,7 @@ public class InsuranceClaimsServiceTest {
 	UserService userService;
 	
 	@Before
-	public void setupMocks() {
+	public void setUpMocks() {
 		MockitoAnnotations.initMocks(this);
 	}
 	

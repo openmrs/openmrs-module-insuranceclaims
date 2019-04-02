@@ -52,10 +52,10 @@
     </advice>
      /AOP -->
 
-    <privilege>
+    <!--<privilege>
         <name>Insurance Claims Privilege</name>
         <description>Allows user to access Insurance Claims module pages/functions</description>
-    </privilege>
+    </privilege>-->
 
     <!-- Required Global Properties
     <globalProperty>
@@ -102,14 +102,6 @@
     <messages>
         <lang>en</lang>
         <file>messages.properties</file>
-    </messages>
-    <messages>
-        <lang>fr</lang>
-        <file>messages_fr.properties</file>
-    </messages>
-    <messages>
-        <lang>es</lang>
-        <file>messages_es.properties</file>
     </messages>
     <!-- /Internationalization -->
 

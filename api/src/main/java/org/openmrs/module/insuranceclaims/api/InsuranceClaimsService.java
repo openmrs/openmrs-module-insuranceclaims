@@ -11,9 +11,8 @@ package org.openmrs.module.insuranceclaims.api;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.insuranceclaims.InsuranceClaimsConfig;
 import org.openmrs.module.insuranceclaims.Item;
-import org.springframework.transaction.annotation.Transactional;
+import org.openmrs.module.insuranceclaims.PrivilegeConstants;
 
 /**
  * The main service of this module, which is exposed for other modules. See
@@ -30,7 +29,6 @@ public interface InsuranceClaimsService extends OpenmrsService {
 	 * @throws APIException - exception
 	 */
 	@Authorized()
-	@Transactional(readOnly = true)
 	Item getItemByUuid(String uuid) throws APIException;
 
 	/**
@@ -41,7 +39,6 @@ public interface InsuranceClaimsService extends OpenmrsService {
 	 * @return saved item
 	 * @throws APIException - exception
 	 */
-	@Authorized(InsuranceClaimsConfig.MODULE_PRIVILEGE)
-	@Transactional
+	@Authorized(PrivilegeConstants.MODULE_PRIVILEGE)
 	Item saveItem(Item item) throws APIException;
 }
