@@ -1,4 +1,4 @@
-package org.openmrs.module.insuranceclaims;
+package org.openmrs.module.insuranceclaims.util;
 
 import org.openmrs.annotation.AddOnStartup;
 import org.openmrs.annotation.HasAddOnStartupPrivileges;

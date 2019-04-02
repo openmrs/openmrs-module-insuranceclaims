@@ -12,7 +12,7 @@ import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.insuranceclaims.Item;
-import org.openmrs.module.insuranceclaims.PrivilegeConstants;
+import org.openmrs.module.insuranceclaims.util.PrivilegeConstants;
 
 /**
  * The main service of this module, which is exposed for other modules. See
