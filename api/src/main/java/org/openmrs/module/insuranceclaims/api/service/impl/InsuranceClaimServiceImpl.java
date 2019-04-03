@@ -7,6 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("insuranceclaims.InsuranceClaimService")
 @Transactional
-public class InsuranceClaimServiceImpl extends HibernateOpenmrsDataService<InsuranceClaim> implements InsuranceClaimService {
+public class InsuranceClaimServiceImpl extends OpenmrsDataService<InsuranceClaim> implements InsuranceClaimService {
 
 }

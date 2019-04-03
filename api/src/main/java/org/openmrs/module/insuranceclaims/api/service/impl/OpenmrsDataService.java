@@ -11,15 +11,15 @@ import java.io.Serializable;
 import java.util.List;
 
 @Transactional
-public class HibernateOpenmrsDataService<T extends BaseOpenmrsData> extends BaseOpenmrsService
-		implements OpenmrsDataService<T> {
+public class OpenmrsDataService<T extends BaseOpenmrsData> extends BaseOpenmrsService
+		implements org.openmrs.module.insuranceclaims.api.service.OpenmrsDataService<T> {
 
 	private OpenmrsDataDAO<T> dao;
 
-	public HibernateOpenmrsDataService() {
+	public OpenmrsDataService() {
 	}
 
-	public HibernateOpenmrsDataService(OpenmrsDataDAO<T> dao) {
+	public OpenmrsDataService(OpenmrsDataDAO<T> dao) {
 		this.dao = dao;
 	}
 
