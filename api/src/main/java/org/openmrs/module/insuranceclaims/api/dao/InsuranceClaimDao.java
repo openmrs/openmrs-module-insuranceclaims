@@ -1,12 +1,8 @@
 package org.openmrs.module.insuranceclaims.api.dao;
 
+import org.openmrs.api.db.OpenmrsDataDAO;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 
-public interface InsuranceClaimDao {
+public interface InsuranceClaimDao extends OpenmrsDataDAO<InsuranceClaim> {
 
-	InsuranceClaim getInsuranceClaimById(Integer id);
-
-	InsuranceClaim getInsuranceClaimByUuid(String uuid);
-
-	InsuranceClaim saveInsuranceClaim(InsuranceClaim claim);
 }

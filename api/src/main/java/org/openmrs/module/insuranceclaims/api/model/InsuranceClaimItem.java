@@ -1,11 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.openmrs.BaseOpenmrsData;
-import org.openmrs.module.insuranceclaims.util.InsuranceClaimsConstants;
 
 import java.math.BigDecimal;
 import javax.persistence.Basic;
@@ -19,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity(name = "iclm.InsuranceClaimItem ")
 @Table(name = "iclm_claim_item")
-public class InsuranceClaimItem extends BaseOpenmrsData {
+public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = -6769445113735423802L;
 
@@ -159,52 +155,5 @@ public class InsuranceClaimItem extends BaseOpenmrsData {
 
 	public void setClaimItemStatus(InsuranceClaimItemStatus claimItemStatus) {
 		this.claimItemStatus = claimItemStatus;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		InsuranceClaimItem that = (InsuranceClaimItem) o;
-
-		return new EqualsBuilder()
-				.appendSuper(super.equals(o))
-				.append(id, that.id)
-				.append(quantityProvided, that.quantityProvided)
-				.append(quantityApproved, that.quantityApproved)
-				.append(priceApproved, that.priceApproved)
-				.append(priceAsked, that.priceAsked)
-				.append(explanation, that.explanation)
-				.append(justification, that.justification)
-				.append(rejectionReason, that.rejectionReason)
-				.append(item, that.item)
-				.append(insuranceClaim, that.insuranceClaim)
-				.append(claimItemStatus, that.claimItemStatus)
-				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(InsuranceClaimsConstants.HASH_CODE_INITIAL_NON_ZERO_ODD_NUMBER,
-				InsuranceClaimsConstants.HASH_CODE_MULTIPLIER_NON_ZERO_ODD_NUMBER)
-				.appendSuper(super.hashCode())
-				.append(id)
-				.append(quantityProvided)
-				.append(quantityApproved)
-				.append(priceApproved)
-				.append(priceAsked)
-				.append(explanation)
-				.append(justification)
-				.append(rejectionReason)
-				.append(item)
-				.append(insuranceClaim)
-				.append(claimItemStatus)
-				.toHashCode();
 	}
 }

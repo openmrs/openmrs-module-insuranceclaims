@@ -18,22 +18,19 @@ public class ItemPriceDaoImplTest extends BaseModuleContextSensitiveTest {
 	private ItemPriceDao dao;
 
 	@Test
-	public void saveItemPrice_shouldSaveAllPropertiesInDb() {
+	public void saveOrUpdate_shouldSaveAllPropertiesInDb() {
 		ItemPrice price = ItemPriceMother.createTestInstance();
 
-		dao.saveItemPrice(price);
+		dao.saveOrUpdate(price);
 
 		Context.flushSession();
 		Context.clearSession();
 
-		ItemPrice savedPrice = dao.getItemPriceByUuid(price.getUuid());
+		ItemPrice savedPrice = dao.getByUuid(price.getUuid());
 
 		Assert.assertThat(savedPrice, hasProperty("uuid", is(price.getUuid())));
 		Assert.assertThat(savedPrice, hasProperty("price", is(price.getPrice())));
 		Assert.assertThat(savedPrice, hasProperty("name", is(price.getName())));
 		Assert.assertThat(savedPrice, hasProperty("item", is(price.getItem())));
-
-		ItemPrice samePrice = dao.getItemPriceById(savedPrice.getId());
-		Assert.assertEquals(savedPrice, samePrice);
 	}
 }

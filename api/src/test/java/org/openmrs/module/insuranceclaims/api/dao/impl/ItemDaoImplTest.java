@@ -20,29 +20,23 @@ import static org.hamcrest.Matchers.is;
  */
 public class ItemDaoImplTest extends BaseModuleContextSensitiveTest {
 
-	private static final boolean DEFAULT_VALUE_OF_CARE_SERVICE = false;
-
 	@Autowired
 	private ItemDao dao;
 
 	@Test
-	public void saveItem_shouldSaveAllPropertiesInDb() {
+	public void saveOrUpdate_shouldSaveAllPropertiesInDb() {
 		Item item = ItemMother.createTestInstance();
 
-		dao.saveItem(item);
+		dao.saveOrUpdate(item);
 
 		Context.flushSession();
 		Context.clearSession();
 
-		Item savedItem = dao.getItemByUuid(item.getUuid());
+		Item savedItem = dao.getByUuid(item.getUuid());
 
 		Assert.assertThat(savedItem, hasProperty("uuid", is(item.getUuid())));
 		Assert.assertThat(savedItem, hasProperty("name", is(item.getName())));
 		Assert.assertThat(savedItem, hasProperty("description", is(item.getDescription())));
 		Assert.assertThat(savedItem, hasProperty("careService", is(item.isCareService())));
-		Assert.assertEquals(savedItem.isCareService(), DEFAULT_VALUE_OF_CARE_SERVICE);
-
-		Item sameItem = dao.getItemById(savedItem.getId());
-		Assert.assertEquals(savedItem, sameItem);
 	}
 }

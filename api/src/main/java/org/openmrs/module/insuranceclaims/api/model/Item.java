@@ -1,10 +1,5 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.openmrs.BaseOpenmrsData;
-import org.openmrs.module.insuranceclaims.util.InsuranceClaimsConstants;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +12,7 @@ import javax.persistence.Table;
  */
 @Entity(name = "iclm.Item")
 @Table(name = "iclm_item")
-public class Item extends BaseOpenmrsData {
+public class Item extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = 8352049103901464406L;
 
@@ -87,38 +82,5 @@ public class Item extends BaseOpenmrsData {
 
 	public void setCareService(boolean careService) {
 		this.careService = careService;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		Item item = (Item) o;
-
-		return new EqualsBuilder()
-				.appendSuper(super.equals(o))
-				.append(careService, item.careService)
-				.append(id, item.id)
-				.append(name, item.name)
-				.append(description, item.description)
-				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(InsuranceClaimsConstants.HASH_CODE_INITIAL_NON_ZERO_ODD_NUMBER,
-				InsuranceClaimsConstants.HASH_CODE_MULTIPLIER_NON_ZERO_ODD_NUMBER)
-				.appendSuper(super.hashCode())
-				.append(id)
-				.append(name)
-				.append(description)
-				.append(careService)
-				.toHashCode();
 	}
 }

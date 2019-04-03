@@ -1,11 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.openmrs.BaseOpenmrsData;
-import org.openmrs.module.insuranceclaims.util.InsuranceClaimsConstants;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -21,7 +17,7 @@ import javax.persistence.Table;
  */
 @Entity(name = "iclm.ItemCode")
 @Table(name = "iclm_item_code")
-public class ItemCode extends BaseOpenmrsData {
+public class ItemCode extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = -3696155497057221967L;
 
@@ -78,36 +74,5 @@ public class ItemCode extends BaseOpenmrsData {
 
 	public void setItem(Item item) {
 		this.item = item;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		ItemCode itemCode = (ItemCode) o;
-
-		return new EqualsBuilder()
-				.appendSuper(super.equals(o))
-				.append(id, itemCode.id)
-				.append(code, itemCode.code)
-				.append(item, itemCode.item)
-				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(InsuranceClaimsConstants.HASH_CODE_INITIAL_NON_ZERO_ODD_NUMBER,
-				InsuranceClaimsConstants.HASH_CODE_MULTIPLIER_NON_ZERO_ODD_NUMBER)
-				.appendSuper(super.hashCode())
-				.append(id)
-				.append(code)
-				.append(item)
-				.toHashCode();
 	}
 }

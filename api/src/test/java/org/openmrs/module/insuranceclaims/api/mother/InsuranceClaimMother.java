@@ -2,8 +2,9 @@ package org.openmrs.module.insuranceclaims.api.mother;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Provider;
-import org.openmrs.api.context.Context;
+import org.openmrs.VisitType;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
 
@@ -16,12 +17,15 @@ public final class InsuranceClaimMother {
 	/**
 	 * Creates the InsuranceClaim's test instance
 	 *
+	 * @param location - related location object
+	 * @param provider - related provider object
+	 * @param visitType - related visit type
+	 * @param identifierType - related identifier type (used to create patient)
 	 * @return - the InsuranceClaim instance
 	 */
-	public static InsuranceClaim createTestInstance() {
-		Location location = Context.getLocationService().getLocation(1);
-		Provider provider = Context.getProviderService().getProvider(1);
-		Patient patient = PatientMother.createTestInstance(location);
+	public static InsuranceClaim createTestInstance(Location location, Provider provider, VisitType visitType,
+			PatientIdentifierType identifierType) {
+		Patient patient = PatientMother.createTestInstance(location, identifierType);
 
 		InsuranceClaim insuranceClaim = new InsuranceClaim();
 		insuranceClaim.setProvider(provider);
@@ -37,7 +41,7 @@ public final class InsuranceClaimMother {
 		insuranceClaim.setExplanation(UUID.randomUUID().toString());
 		insuranceClaim.setRejectionReason(UUID.randomUUID().toString());
 		insuranceClaim.setGuaranteeId(UUID.randomUUID().toString());
-		insuranceClaim.setVisitType(Context.getVisitService().getVisitType(1));
+		insuranceClaim.setVisitType(visitType);
 		insuranceClaim.setClaimStatus(InsuranceClaimStatus.ENTERED);
 		return insuranceClaim;
 	}

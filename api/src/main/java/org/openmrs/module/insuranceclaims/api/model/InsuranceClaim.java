@@ -1,15 +1,11 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.VisitType;
-import org.openmrs.module.insuranceclaims.util.InsuranceClaimsConstants;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -27,7 +23,7 @@ import javax.persistence.Table;
  */
 @Entity(name = "iclm.Claim")
 @Table(name = "iclm_claim")
-public class InsuranceClaim extends BaseOpenmrsData {
+public class InsuranceClaim extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = 1649522411236291450L;
 
@@ -225,62 +221,5 @@ public class InsuranceClaim extends BaseOpenmrsData {
 
 	public void setClaimStatus(InsuranceClaimStatus claimStatus) {
 		this.claimStatus = claimStatus;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		InsuranceClaim that = (InsuranceClaim) o;
-
-		return new EqualsBuilder()
-				.appendSuper(super.equals(o))
-				.append(id, that.id)
-				.append(provider, that.provider)
-				.append(patient, that.patient)
-				.append(location, that.location)
-				.append(claimCode, that.claimCode)
-				.append(dateFrom, that.dateFrom)
-				.append(dateTo, that.dateTo)
-				.append(adjustment, that.adjustment)
-				.append(claimedTotal, that.claimedTotal)
-				.append(approvedTotal, that.approvedTotal)
-				.append(dateProcessed, that.dateProcessed)
-				.append(explanation, that.explanation)
-				.append(rejectionReason, that.rejectionReason)
-				.append(guaranteeId, that.guaranteeId)
-				.append(visitType, that.visitType)
-				.append(claimStatus, that.claimStatus)
-				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(InsuranceClaimsConstants.HASH_CODE_INITIAL_NON_ZERO_ODD_NUMBER,
-				InsuranceClaimsConstants.HASH_CODE_MULTIPLIER_NON_ZERO_ODD_NUMBER)
-				.appendSuper(super.hashCode())
-				.append(id)
-				.append(provider)
-				.append(patient)
-				.append(location)
-				.append(claimCode)
-				.append(dateFrom)
-				.append(dateTo)
-				.append(adjustment)
-				.append(claimedTotal)
-				.append(approvedTotal)
-				.append(dateProcessed)
-				.append(explanation)
-				.append(rejectionReason)
-				.append(guaranteeId)
-				.append(visitType)
-				.append(claimStatus)
-				.toHashCode();
 	}
 }

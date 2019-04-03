@@ -1,20 +1,19 @@
 package org.openmrs.module.insuranceclaims.api.mother;
 
-import org.openmrs.api.context.Context;
+import org.openmrs.Concept;
 import org.openmrs.module.insuranceclaims.api.model.ItemConcept;
 
 public final class ItemConceptMother {
 
-	private static final int TEST_CONCEPT_ID = 3;
-
 	/**
 	 * Creates the ItemConcept's test instance
 	 *
+	 * @param concept - related concept object
 	 * @return - the ItemConcept instance
 	 */
-	public static ItemConcept createTestInstance() {
+	public static ItemConcept createTestInstanceWithConcept(Concept concept) {
 		ItemConcept itemConcept = new ItemConcept();
-		itemConcept.setConcept(Context.getConceptService().getConcept(TEST_CONCEPT_ID));
+		itemConcept.setConcept(concept);
 		itemConcept.setItem(ItemMother.createTestInstance());
 		return itemConcept;
 	}

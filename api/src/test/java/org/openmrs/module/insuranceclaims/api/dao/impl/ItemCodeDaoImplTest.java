@@ -18,21 +18,18 @@ public class ItemCodeDaoImplTest extends BaseModuleContextSensitiveTest {
 	private ItemCodeDao dao;
 
 	@Test
-	public void saveItemCode_shouldSaveAllPropertiesInDb() {
+	public void saveOrUpdate_shouldSaveAllPropertiesInDb() {
 		ItemCode itemCode = ItemCodeMother.createTestInstance();
 
-		dao.saveItemCode(itemCode);
+		dao.saveOrUpdate(itemCode);
 
 		Context.flushSession();
 		Context.clearSession();
 
-		ItemCode savedItemCode = dao.getItemCodeByUuid(itemCode.getUuid());
+		ItemCode savedItemCode = dao.getByUuid(itemCode.getUuid());
 
 		Assert.assertThat(savedItemCode, hasProperty("uuid", is(itemCode.getUuid())));
 		Assert.assertThat(savedItemCode, hasProperty("code", is(itemCode.getCode())));
 		Assert.assertThat(savedItemCode, hasProperty("item", is(itemCode.getItem())));
-
-		ItemCode sameItemCode = dao.getItemCodeById(savedItemCode.getId());
-		Assert.assertEquals(savedItemCode, sameItemCode);
 	}
 }

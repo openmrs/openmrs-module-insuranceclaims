@@ -1,12 +1,8 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Patient;
-import org.openmrs.module.insuranceclaims.util.InsuranceClaimsConstants;
 
 import java.util.Date;
 import javax.persistence.Basic;
@@ -23,7 +19,7 @@ import javax.persistence.Table;
  */
 @Entity(name = "iclm.InsurancePolicy")
 @Table(name = "iclm_policy")
-public class InsurancePolicy extends BaseOpenmrsData {
+public class InsurancePolicy extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = -4340488805384799463L;
 
@@ -109,40 +105,5 @@ public class InsurancePolicy extends BaseOpenmrsData {
 
 	public void setPolicyStatus(InsurancePolicyStatus policyStatus) {
 		this.policyStatus = policyStatus;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		InsurancePolicy that = (InsurancePolicy) o;
-
-		return new EqualsBuilder()
-				.appendSuper(super.equals(o))
-				.append(id, that.id)
-				.append(startDate, that.startDate)
-				.append(expiryDate, that.expiryDate)
-				.append(patient, that.patient)
-				.append(policyStatus, that.policyStatus)
-				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(InsuranceClaimsConstants.HASH_CODE_INITIAL_NON_ZERO_ODD_NUMBER,
-				InsuranceClaimsConstants.HASH_CODE_MULTIPLIER_NON_ZERO_ODD_NUMBER)
-				.appendSuper(super.hashCode())
-				.append(id)
-				.append(startDate)
-				.append(expiryDate)
-				.append(patient)
-				.append(policyStatus)
-				.toHashCode();
 	}
 }

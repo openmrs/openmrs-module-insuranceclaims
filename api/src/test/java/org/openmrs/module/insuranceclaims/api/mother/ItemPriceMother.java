@@ -13,7 +13,7 @@ public final class ItemPriceMother {
 	 * @return - the ItemPrice instance
 	 */
 	public static ItemPrice createTestInstance() {
-		return createTestInstance(ItemMother.createTestInstance());
+		return createTestInstanceWithItem(ItemMother.createTestInstance());
 	}
 
 	/**
@@ -22,7 +22,7 @@ public final class ItemPriceMother {
 	 * @param item - the related item
 	 * @return - the ItemPrice instance
 	 */
-	public static ItemPrice createTestInstance(Item item) {
+	public static ItemPrice createTestInstanceWithItem(Item item) {
 		ItemPrice itemPrice = new ItemPrice();
 		itemPrice.setName("someName");
 		itemPrice.setPrice(new BigDecimal("1234567890.12"));
