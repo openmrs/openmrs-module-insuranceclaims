@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
  * Contains the logic that is run every time this module is either started or stopped
  */
 public class InsuranceClaimsActivator extends BaseModuleActivator {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(InsuranceClaimsActivator.class);
-	
+
 	/**
 	 * @see #started()
 	 */
@@ -18,7 +18,7 @@ public class InsuranceClaimsActivator extends BaseModuleActivator {
 	public void started() {
 		LOG.info("Started Insurance Claims");
 	}
-	
+
 	/**
 	 * @see #stopped()
 	 */
@@ -26,5 +26,5 @@ public class InsuranceClaimsActivator extends BaseModuleActivator {
 	public void stopped() {
 		LOG.info("Stopped Insurance Claims");
 	}
-	
+
 }
