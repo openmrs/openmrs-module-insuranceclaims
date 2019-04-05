@@ -12,6 +12,7 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimItemMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
+import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,14 +20,6 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 
 public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTest {
-
-	private static final int TEST_LOCATION_ID = 1;
-
-	private static final int TEST_PROVIDER_ID = 1;
-
-	private static final int TEST_VISIT_TYPE_ID = 1;
-
-	private static final Integer TEST_IDENTIFIER_TYPE_ID = 2;
 
 	@Autowired
 	private InsuranceClaimItemDao dao;
@@ -56,10 +49,11 @@ public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTes
 	}
 
 	private InsuranceClaimItem createTestInstance() {
-		Location location = Context.getLocationService().getLocation(TEST_LOCATION_ID);
-		Provider provider = Context.getProviderService().getProvider(TEST_PROVIDER_ID);
-		VisitType visitType = Context.getVisitService().getVisitType(TEST_VISIT_TYPE_ID);
-		PatientIdentifierType identifierType = Context.getPatientService().getPatientIdentifierType(TEST_IDENTIFIER_TYPE_ID);
+		Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
+		Provider provider = Context.getProviderService().getProvider(TestConstants.TEST_PROVIDER_ID);
+		VisitType visitType = Context.getVisitService().getVisitType(TestConstants.TEST_VISIT_TYPE_ID);
+		PatientIdentifierType identifierType = Context.getPatientService()
+				.getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
 		InsuranceClaim insuranceClaim = InsuranceClaimMother.createTestInstance(location, provider, visitType,
 				identifierType);
 		return InsuranceClaimItemMother.createTestInstance(insuranceClaim);

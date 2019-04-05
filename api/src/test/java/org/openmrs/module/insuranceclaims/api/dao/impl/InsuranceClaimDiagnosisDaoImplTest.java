@@ -13,30 +13,19 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimDiagnosisMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
+import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 
 public class InsuranceClaimDiagnosisDaoImplTest extends BaseModuleContextSensitiveTest {
 
-	private static final int TEST_CONCEPT_ID = 3;
-
-	private static final int TEST_LOCATION_ID = 1;
-
-	private static final int TEST_PROVIDER_ID = 1;
-
-	private static final int TEST_VISIT_TYPE_ID = 1;
-
-	private static final Integer TEST_IDENTIFIER_TYPE_ID = 2;
-
 	@Autowired
 	private InsuranceClaimDiagnosisDao dao;
 
 	@Test
-	@Transactional
 	public void saveOrUpdate_shouldSaveAllPropertiesInDb() {
 		InsuranceClaimDiagnosis diagnosis = createTestInstance();
 
@@ -54,11 +43,12 @@ public class InsuranceClaimDiagnosisDaoImplTest extends BaseModuleContextSensiti
 	}
 
 	private InsuranceClaimDiagnosis createTestInstance() {
-		Concept concept = Context.getConceptService().getConcept(TEST_CONCEPT_ID);
-		Location location = Context.getLocationService().getLocation(TEST_LOCATION_ID);
-		Provider provider = Context.getProviderService().getProvider(TEST_PROVIDER_ID);
-		VisitType visitType = Context.getVisitService().getVisitType(TEST_VISIT_TYPE_ID);
-		PatientIdentifierType identifierType = Context.getPatientService().getPatientIdentifierType(TEST_IDENTIFIER_TYPE_ID);
+		Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
+		Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
+		Provider provider = Context.getProviderService().getProvider(TestConstants.TEST_PROVIDER_ID);
+		VisitType visitType = Context.getVisitService().getVisitType(TestConstants.TEST_VISIT_TYPE_ID);
+		PatientIdentifierType identifierType = Context.getPatientService()
+				.getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
 		InsuranceClaim insuranceClaim = InsuranceClaimMother.createTestInstance(location, provider, visitType,
 				identifierType);
 		return InsuranceClaimDiagnosisMother.createTestInstance(concept, insuranceClaim);

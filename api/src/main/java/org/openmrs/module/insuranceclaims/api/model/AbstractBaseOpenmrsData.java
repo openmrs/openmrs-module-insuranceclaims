@@ -8,8 +8,6 @@ public abstract class AbstractBaseOpenmrsData extends BaseOpenmrsData {
 
 	private static final String ID_FIELD_NAME = "id";
 
-	private static final long serialVersionUID = -1781076310482589522L;
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
