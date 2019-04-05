@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * This is an integration test (extends BaseModuleContextSensitiveTest), which verifies logic in InsuranceClaimService.
@@ -53,7 +54,7 @@ public class InsuranceClaimServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getService_shouldReturnNotNullService() {
 		InsuranceClaimService insuranceClaimService = Context.getService(InsuranceClaimService.class);
-		Assert.assertNotNull(insuranceClaimService);
+		Assert.assertThat(insuranceClaimService, is(notNullValue()));
 	}
 
 	private InsuranceClaim createTestInstance() {
