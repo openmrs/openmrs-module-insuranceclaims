@@ -1,6 +1,7 @@
 package org.openmrs.module.insuranceclaims.web.controller;
 
 import org.openmrs.User;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.APIException;
 import org.openmrs.api.UserService;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 
 /**
  * This class configured as controller using annotation and mapped with the URL of
@@ -72,8 +74,8 @@ public class InsuranceClaimsController {
 	 * by the return type of this method
 	 */
 	@ModelAttribute("users")
-	public List<User> getUsers() throws APIException {
-		List<User> users = userService.getAllUsers();
+	protected List<User> Collections.singletonList("users") throws APIException {
+		List<User> users = Context.getAuthenticatedUser();
 
 		// this object will be made available to the jsp page under the variable name
 		// that is defined in the @ModuleAttribute tag
