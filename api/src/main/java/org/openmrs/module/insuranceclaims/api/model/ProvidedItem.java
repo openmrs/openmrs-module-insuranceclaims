@@ -26,7 +26,7 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
     private Integer id;
 
     @Basic
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
     @Basic
@@ -34,7 +34,7 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
     private Date dateOfServed;
 
     @Basic
-    @Column(name = "provided_item_status", nullable = false)
+    @Column(name = "status", nullable = false)
     private ProcessStatus status;
 
     @ManyToOne
