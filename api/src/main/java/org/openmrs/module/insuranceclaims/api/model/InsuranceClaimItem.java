@@ -13,6 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * Model class that represents an insurance claim item.
+ * Represents the relation between claim and item.
+ */
 @Entity(name = "iclm.InsuranceClaimItem ")
 @Table(name = "iclm_claim_item")
 public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
@@ -35,11 +39,6 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 	@Basic
 	@Column(name = "price_approved")
 	private BigDecimal priceApproved;
-
-	@ManyToOne
-	@Cascade(CascadeType.SAVE_UPDATE)
-	@JoinColumn(name = "price_asked")
-	private ItemPrice priceAsked;
 
 	@Basic
 	@Column(name = "explanation", columnDefinition = "TEXT")
@@ -99,14 +98,6 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 
 	public void setPriceApproved(BigDecimal priceApproved) {
 		this.priceApproved = priceApproved;
-	}
-
-	public ItemPrice getPriceAsked() {
-		return priceAsked;
-	}
-
-	public void setPriceAsked(ItemPrice priceAsked) {
-		this.priceAsked = priceAsked;
 	}
 
 	public String getExplanation() {

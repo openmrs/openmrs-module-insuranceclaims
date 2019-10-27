@@ -14,6 +14,11 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * Model class that represent a provided item.
+ * Contains information about the goods and services provided by the health facility to the specific patients.
+ */
+
 @Entity(name = "iclm.ProvidedItem")
 @Table(name = "iclm_provided_item")
 public class ProvidedItem extends AbstractBaseOpenmrsData {

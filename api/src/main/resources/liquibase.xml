@@ -281,7 +281,6 @@
             <column name="quantity_provided" type="int"/>
             <column name="quantity_approved" type="int"/>
             <column name="price_approved" type="decimal(10,2)"/>
-            <column name="price_asked" type="int"/>
             <column name="explanation" type="TEXT"/>
             <column name="justification" type="TEXT"/>
             <column name="rejection_reason" type="varchar(255)"/>
@@ -309,9 +308,6 @@
             </column>
             <column name="voided_by" type="int"/>
         </createTable>
-        <addForeignKeyConstraint constraintName="iclm_claim_item_price_fk"
-                                 baseTableName="iclm_claim_item" baseColumnNames="price_asked"
-                                 referencedTableName="iclm_item_price" referencedColumnNames="iclm_item_price_id"/>
         <addForeignKeyConstraint constraintName="iclm_claim_item_item_fk"
                                  baseTableName="iclm_claim_item" baseColumnNames="item"
                                  referencedTableName="iclm_provided_item" referencedColumnNames="iclm_provided_item_id"/>
