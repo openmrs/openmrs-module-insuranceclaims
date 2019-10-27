@@ -3,7 +3,6 @@ package org.openmrs.module.insuranceclaims.api.mother;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItemStatus;
-import org.openmrs.module.insuranceclaims.api.model.Item;
 
 import java.math.BigDecimal;
 import java.util.UUID;

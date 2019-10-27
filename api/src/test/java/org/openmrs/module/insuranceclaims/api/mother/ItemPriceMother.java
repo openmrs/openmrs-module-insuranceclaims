@@ -1,8 +1,5 @@
 package org.openmrs.module.insuranceclaims.api.mother;
 
-import org.openmrs.module.insuranceclaims.api.model.Item;
-import org.openmrs.module.insuranceclaims.api.model.ItemPrice;
-
 import java.math.BigDecimal;
 
 public final class ItemPriceMother {

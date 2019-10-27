@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.insuranceclaims.api.dao.ItemConceptDao;
-import org.openmrs.module.insuranceclaims.api.model.ItemConcept;
 import org.openmrs.module.insuranceclaims.api.mother.ItemConceptMother;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;

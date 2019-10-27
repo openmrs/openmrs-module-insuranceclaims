@@ -1,7 +1,6 @@
 package org.openmrs.module.insuranceclaims.api.mother;
 
 import org.openmrs.Concept;
-import org.openmrs.module.insuranceclaims.api.model.ItemConcept;
 
 public final class ItemConceptMother {
 

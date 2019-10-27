@@ -3,8 +3,6 @@ package org.openmrs.module.insuranceclaims.api.dao.impl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.insuranceclaims.api.dao.ItemCodeDao;
-import org.openmrs.module.insuranceclaims.api.model.ItemCode;
 import org.openmrs.module.insuranceclaims.api.mother.ItemCodeMother;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
