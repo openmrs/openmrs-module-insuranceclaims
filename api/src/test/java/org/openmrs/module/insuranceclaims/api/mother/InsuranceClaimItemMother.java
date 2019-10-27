@@ -3,6 +3,7 @@ package org.openmrs.module.insuranceclaims.api.mother;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItemStatus;
+import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -22,12 +23,11 @@ public final class InsuranceClaimItemMother {
 	 * @return - the InsuranceClaimItem instance
 	 */
 	public static InsuranceClaimItem createTestInstance(InsuranceClaim insuranceClaim) {
-		Item item = ItemMother.createTestInstance();
+		ProvidedItem item = ProvidedItemMother.createTestInstance();
 		InsuranceClaimItem claimItem = new InsuranceClaimItem();
 		claimItem.setQuantityApproved(EXAMPLE_QUANTITY_APPROVED);
 		claimItem.setQuantityProvided(EXAMPLE_QUANTITY_PROVIDED);
 		claimItem.setPriceApproved(new BigDecimal(EXAMPLE_PRICE_APPROVED));
-		claimItem.setPriceAsked(ItemPriceMother.createTestInstanceWithItem(item));
 		claimItem.setExplanation(UUID.randomUUID().toString());
 		claimItem.setJustification(UUID.randomUUID().toString());
 		claimItem.setRejectionReason(UUID.randomUUID().toString());
