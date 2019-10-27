@@ -6,6 +6,8 @@ import org.openmrs.Patient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -40,6 +42,7 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
 
     @Basic
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ProcessStatus status;
 
     @ManyToOne

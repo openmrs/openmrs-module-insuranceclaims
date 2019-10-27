@@ -12,6 +12,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -91,6 +93,7 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 
 	@Basic
 	@Column(name = "claim_status", nullable = false)
+	@Enumerated(EnumType.STRING)
 	private InsuranceClaimStatus claimStatus;
 
 	@ManyToOne
