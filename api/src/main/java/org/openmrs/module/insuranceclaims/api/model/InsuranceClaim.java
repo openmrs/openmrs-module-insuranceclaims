@@ -93,6 +93,10 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 	@Column(name = "claim_status", nullable = false)
 	private InsuranceClaimStatus claimStatus;
 
+	@ManyToOne
+	@JoinColumn(name = "bill")
+	private Bill bill;
+
 	@Override
 	public Integer getId() {
 		return this.id;

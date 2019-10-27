@@ -56,7 +56,7 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "item", nullable = false)
-	private Item item;
+	private ProvidedItem item;
 
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
@@ -133,11 +133,11 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 		this.rejectionReason = rejectionReason;
 	}
 
-	public Item getItem() {
+	public ProvidedItem getItem() {
 		return item;
 	}
 
-	public void setItem(Item item) {
+	public void setItem(ProvidedItem item) {
 		this.item = item;
 	}
 
