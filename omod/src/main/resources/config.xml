@@ -32,6 +32,9 @@
         <require_module version="${appuiVersion}">
             org.openmrs.module.appui
         </require_module>
+        <require_module version="${fhirVersion}">
+            org.openmrs.module.fhir
+        </require_module>
     </require_modules>
 
     <!-- Extensions -->
@@ -42,6 +45,7 @@
 
     <aware_of_modules>
         <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
+        <aware_of_module>org.openmrs.module.fhir</aware_of_module>
     </aware_of_modules>
 
 

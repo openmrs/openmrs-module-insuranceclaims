@@ -12,7 +12,7 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimItemMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
-import org.openmrs.module.insuranceclaims.api.util.TestConstants;
+import org.openmrs.module.insuranceclaims.api.testutils.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

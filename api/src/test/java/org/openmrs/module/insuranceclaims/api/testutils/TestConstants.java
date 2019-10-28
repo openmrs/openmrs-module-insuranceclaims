@@ -1,4 +1,4 @@
-package org.openmrs.module.insuranceclaims.api.util;
+package org.openmrs.module.insuranceclaims.api.testutils;
 
 public final class TestConstants {
 

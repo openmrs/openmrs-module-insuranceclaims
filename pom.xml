@@ -32,11 +32,16 @@
 		<javaVersion>1.8</javaVersion>
 		<openmrsPlatformVersion>2.1.3</openmrsPlatformVersion>
 		<legacyuiVersion>1.4.0</legacyuiVersion>
+		<fhirVersion>1.19.0</fhirVersion>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<checkstylePluginVersion>3.0.0</checkstylePluginVersion>
 		<pmdPluginVersion>3.10.0</pmdPluginVersion>
 		<spotbugs.vesrion>3.1.11</spotbugs.vesrion>
 		<referenceapplication.version>2.8.1</referenceapplication.version>
+
+		<hapiFhirBaseVersion>2.5</hapiFhirBaseVersion>
+		<hapiFhirStructuresDstuVersion>2.5</hapiFhirStructuresDstuVersion>
+		<hapiValidationResources>2.5</hapiValidationResources>
 	</properties>
 
 	<dependencyManagement>
@@ -61,6 +66,44 @@
 				<version>${javax.servlet.version}</version>
 				<scope>test</scope>
 			</dependency>
+
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>fhir-api</artifactId>
+				<version>${fhirVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<!--happi modules provided by fhir-api -->
+			<dependency>
+				<groupId>ca.uhn.hapi.fhir</groupId>
+				<artifactId>hapi-fhir-base</artifactId>
+				<version>${hapiFhirBaseVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>ca.uhn.hapi.fhir</groupId>
+				<artifactId>hapi-fhir-structures-dstu3</artifactId>
+				<version>${hapiFhirStructuresDstuVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>ca.uhn.hapi.fhir</groupId>
+				<artifactId>hapi-fhir-server</artifactId>
+				<version>${hapiFhirStructuresDstuVersion}</version>
+			    <scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>ca.uhn.hapi.fhir</groupId>
+				<artifactId>hapi-fhir-validation-resources-dstu3</artifactId>
+				<version>${hapiValidationResources}</version>
+				<scope>provided</scope>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
