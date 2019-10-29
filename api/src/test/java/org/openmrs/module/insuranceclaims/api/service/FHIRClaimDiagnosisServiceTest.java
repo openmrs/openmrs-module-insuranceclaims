@@ -1,4 +1,4 @@
-package org.openmrs.module.insuranceclaims.api.util;
+package org.openmrs.module.insuranceclaims.api.service;
 
 import org.hamcrest.Matchers;
 import org.hl7.fhir.dstu3.model.Claim;
@@ -20,18 +20,22 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimDiagnosisMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
-import org.openmrs.module.insuranceclaims.api.testutils.TestConstants;
-import org.openmrs.module.insuranceclaims.util.FHIRClaimDiagnosisUtil;
+import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
+import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
+public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTest {
 
-public class TestFHIRClaimDiagnosisUtil extends BaseModuleContextSensitiveTest {
+    @Autowired
+    @Qualifier("insuranceclaims.fhirDiagnosis")
+    private FHIRClaimDiagnosisService util;
 
     private InsuranceClaim testInsuranceClaim;
     private InsuranceClaimDiagnosis testInsuranceDiagnosis;
@@ -52,7 +56,6 @@ public class TestFHIRClaimDiagnosisUtil extends BaseModuleContextSensitiveTest {
 
         claimDao.saveOrUpdate(this.testInsuranceClaim);
         diagnosisDao.saveOrUpdate(this.testInsuranceDiagnosis);
-
     }
 
     @After
@@ -62,9 +65,9 @@ public class TestFHIRClaimDiagnosisUtil extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void testCreateFHIRDiagnosis() throws FHIRException {
+    public void createClaimDiagnosis_shouldContainMalariaComponent() throws FHIRException {
         Claim.DiagnosisComponent diagnosisComponent =
-                FHIRClaimDiagnosisUtil.createClaimDiagnosisComponent(this.testInsuranceDiagnosis);
+                util.createClaimDiagnosisComponent(this.testInsuranceDiagnosis);
 
         CodeableConcept test = diagnosisComponent.getDiagnosisCodeableConcept();
 
@@ -79,11 +82,11 @@ public class TestFHIRClaimDiagnosisUtil extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void testCreateFHIRDiagnosisList() throws FHIRException {
+    public void createClaimDiagnosis_shouldCreateListWithMalariaComponent() throws FHIRException {
         List<InsuranceClaimDiagnosis> testDiagnisis = Collections.singletonList(this.testInsuranceDiagnosis);
 
         List<Claim.DiagnosisComponent> diagnosisComponent =
-                FHIRClaimDiagnosisUtil.createClaimDiagnosisComponent(testDiagnisis);
+                util.createClaimDiagnosisComponent(testDiagnisis);
         String transformedComponentName = diagnosisComponent.get(0).getDiagnosisCodeableConcept().getText();
 
         Assert.assertThat(diagnosisComponent, Matchers.hasSize(1));
@@ -91,12 +94,22 @@ public class TestFHIRClaimDiagnosisUtil extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void testCreateClaimDiagnosis() {
-        Claim.DiagnosisComponent fhirDiagnosis = FHIRClaimDiagnosisUtil
-                .createClaimDiagnosisComponent(this.testInsuranceDiagnosis);
+    public void createClaimDiagnosisFromInsuranceClaim_shouldCreateListWithMalariaComponent() throws FHIRException {
+        List<Claim.DiagnosisComponent> diagnosisComponent =
+                util.createClaimDiagnosisComponent(this.testInsuranceClaim);
+
+        String transformedComponentName = diagnosisComponent.get(0).getDiagnosisCodeableConcept().getText();
+
+        Assert.assertThat(diagnosisComponent, Matchers.hasSize(1));
+        Assert.assertThat(transformedComponentName, Matchers.equalTo("Malaria, confirmed"));
+    }
+
+    @Test
+    public void createInsuranceClaimDiagnosis_shouldCreateDiagnosisWithMalariaConcept() {
+        Claim.DiagnosisComponent fhirDiagnosis = util.createClaimDiagnosisComponent(this.testInsuranceDiagnosis);
         List<String> errors = new LinkedList<>();
 
-        InsuranceClaimDiagnosis created = FHIRClaimDiagnosisUtil.createOmrsClaimDiagnosis(fhirDiagnosis, errors);
+        InsuranceClaimDiagnosis created = util.createOmrsClaimDiagnosis(fhirDiagnosis, errors);
 
         Assert.assertThat(created.getUuid(), Matchers.equalTo(this.testInsuranceDiagnosis.getUuid()));
         Assert.assertThat(created.getConcept(), Matchers.equalTo(this.testInsuranceDiagnosis.getConcept()));

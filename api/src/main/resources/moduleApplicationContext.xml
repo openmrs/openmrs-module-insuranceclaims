@@ -32,6 +32,24 @@
         </property>
     </bean>
 
+    <bean id="insuranceclaims.fhirDiagnosis"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimDiagnosisServiceImpl">
+                <property name="diagnosisDao" ref="insuranceclaims.InsuranceClaimDiagnosisDao"/>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
     <!-- Adds module services to OpenMRS context so it can be accessed
     calling e.g. Context.getService(InsuranceClaimService.class) -->
     <bean parent="serviceContext">
@@ -39,6 +57,16 @@
             <list>
                 <value>org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService</value>
                 <ref bean="insuranceclaims.InsuranceClaimService"/>
+            </list>
+        </property>
+
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService</value>
+                <ref bean="insuranceclaims.fhirDiagnosis"/>
             </list>
         </property>
     </bean>

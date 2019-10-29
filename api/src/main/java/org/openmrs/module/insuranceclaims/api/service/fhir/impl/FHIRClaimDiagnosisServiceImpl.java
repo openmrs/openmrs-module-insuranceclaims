@@ -1,19 +1,32 @@
-package org.openmrs.module.insuranceclaims.util;
+package org.openmrs.module.insuranceclaims.api.service.fhir.impl;
 
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
 import org.openmrs.module.fhir.api.util.BaseOpenMRSDataUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimDiagnosisDao;
+import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
+import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 
+import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FHIRClaimDiagnosisUtil {
+@Transactional
+public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService {
 
-    public static Claim.DiagnosisComponent createClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis) {
+    private InsuranceClaimDiagnosisDao diagnosisDao;
+
+    public FHIRClaimDiagnosisServiceImpl() {
+    }
+
+    public FHIRClaimDiagnosisServiceImpl(InsuranceClaimDiagnosisDao diagnosisDao) {
+        this.diagnosisDao = diagnosisDao;
+    }
+
+    public Claim.DiagnosisComponent createClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis) {
         Claim.DiagnosisComponent newDiagnosis = new Claim.DiagnosisComponent();
 
         Concept diagnosisConcepts = omrsClaimDiagnosis.getConcept();
@@ -25,10 +38,10 @@ public class FHIRClaimDiagnosisUtil {
         return newDiagnosis;
     }
 
-    public static List<Claim.DiagnosisComponent> createClaimDiagnosisComponent(
+    public List<Claim.DiagnosisComponent> createClaimDiagnosisComponent(
             List<InsuranceClaimDiagnosis> omrsClaimDiagnosis) {
         List<Claim.DiagnosisComponent> allDiagnosisComponents = new LinkedList<>();
-
+        diagnosisDao.hashCode();
         for (InsuranceClaimDiagnosis insuranceClaimDiagnosis: omrsClaimDiagnosis) {
             Claim.DiagnosisComponent nextDiagnosis = createClaimDiagnosisComponent(insuranceClaimDiagnosis);
             allDiagnosisComponents.add(nextDiagnosis);
@@ -36,7 +49,13 @@ public class FHIRClaimDiagnosisUtil {
         return allDiagnosisComponents;
     }
 
-    public static InsuranceClaimDiagnosis createOmrsClaimDiagnosis(
+    public List<Claim.DiagnosisComponent> createClaimDiagnosisComponent(InsuranceClaim omrsInsuranceClaim) {
+        List<InsuranceClaimDiagnosis> claimDiagnoses = diagnosisDao.findInsuranceClaimDiagnosis(omrsInsuranceClaim.getId());
+
+        return createClaimDiagnosisComponent(claimDiagnoses);
+    }
+
+    public InsuranceClaimDiagnosis createOmrsClaimDiagnosis(
             Claim.DiagnosisComponent claimDiagnosis, List<String> errors) {
 
         InsuranceClaimDiagnosis diagnosis = new InsuranceClaimDiagnosis();
@@ -49,11 +68,14 @@ public class FHIRClaimDiagnosisUtil {
 
         try {
             diagnosis.setConcept(FHIRUtils.getConceptFromCode(claimDiagnosis.getDiagnosisCodeableConcept(), errors));
-        } catch (FHIRException e) {
+        } catch (Exception e) {
             errors.add(e.getMessage());
         }
 
         return diagnosis;
     }
 
+    public void setDiagnosisDao(InsuranceClaimDiagnosisDao diagnosisDao) {
+        this.diagnosisDao = diagnosisDao;
+    }
 }
