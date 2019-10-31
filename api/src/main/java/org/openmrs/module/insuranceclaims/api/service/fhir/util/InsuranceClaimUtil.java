@@ -33,26 +33,21 @@ public final class InsuranceClaimUtil {
     public static final String HL7_VALUESET_SYSTEM = "https://hl7.org/fhir/valueset-identifier-type.html";
 
     public static List<Claim.DiagnosisComponent> getClaimDiagnosis(InsuranceClaim omrsClaim) {
-        List<Claim.DiagnosisComponent> claimDiagnosis = Context
+        return Context
                 .getService(FHIRClaimDiagnosisService.class)
                 .createClaimDiagnosisComponent(omrsClaim);
-
-        return claimDiagnosis;
     }
 
     public static Reference buildLocationReference(Location location) {
-
-        StringBuilder display = new StringBuilder();
-        display.append(location.getName());
-        display.append(", ");
-        display.append(location.getTags());
-
         Reference locationReference = new Reference();
         String uri = FHIRConstants.LOCATION +
                 "/" +
                 location.getUuid();
         locationReference.setReference(uri);
-        locationReference.setDisplay(display.toString());
+        String display = location.getName() +
+                ", " +
+                location.getTags();
+        locationReference.setDisplay(display);
         locationReference.setId(location.getUuid());
 
         return locationReference;
@@ -74,6 +69,7 @@ public final class InsuranceClaimUtil {
         }
         return visitType.get(0);
     }
+
     public static Patient getClaimPatient(Claim claim, List<String> errors) {
         String patientUuid = FHIRUtils.getObjectUuidByReference(claim.getPatient());
         Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
@@ -183,5 +179,4 @@ public final class InsuranceClaimUtil {
     private static List<VisitType> getVisitTypeByName(String visitTypeName) {
         return Context.getVisitService().getVisitTypes(visitTypeName);
     }
-
 }
