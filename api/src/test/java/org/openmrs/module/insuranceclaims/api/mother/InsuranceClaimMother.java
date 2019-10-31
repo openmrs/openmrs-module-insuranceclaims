@@ -42,6 +42,8 @@ public final class InsuranceClaimMother {
 		insuranceClaim.setRejectionReason(UUID.randomUUID().toString());
 		insuranceClaim.setGuaranteeId(UUID.randomUUID().toString());
 		insuranceClaim.setVisitType(visitType);
+		insuranceClaim.setExplanation("explaination");
+		insuranceClaim.setGuaranteeId("guaranteeID");
 		insuranceClaim.setClaimStatus(InsuranceClaimStatus.ENTERED);
 		return insuranceClaim;
 	}

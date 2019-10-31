@@ -18,6 +18,9 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
 
     private InsuranceClaimDiagnosisDao diagnosisDao;
 
+    public FHIRClaimDiagnosisServiceImpl() {
+    }
+
     public FHIRClaimDiagnosisServiceImpl(InsuranceClaimDiagnosisDao diagnosisDao) {
         this.diagnosisDao = diagnosisDao;
     }
@@ -45,13 +48,13 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
         return allDiagnosisComponents;
     }
 
+    @Transactional
     public List<Claim.DiagnosisComponent> createClaimDiagnosisComponent(InsuranceClaim omrsInsuranceClaim) {
         List<InsuranceClaimDiagnosis> claimDiagnoses = diagnosisDao.findInsuranceClaimDiagnosis(omrsInsuranceClaim.getId());
 
         return createClaimDiagnosisComponent(claimDiagnoses);
     }
 
-    @Transactional
     public InsuranceClaimDiagnosis createOmrsClaimDiagnosis(
             Claim.DiagnosisComponent claimDiagnosis, List<String> errors) {
 
