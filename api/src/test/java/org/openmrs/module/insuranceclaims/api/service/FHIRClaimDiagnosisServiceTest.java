@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -47,7 +46,7 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
     private InsuranceClaimDao claimDao;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         Context.flushSession();
         Context.clearSession();
 
@@ -125,17 +124,11 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
         return InsuranceClaimMother.createTestInstance(location, provider, visitType, identifierType);
     }
 
-    private InsuranceClaimDiagnosis createTestClaimDiagnosis() {
-        try {
-            String conceptPath = "test_malaria_concept.xml";
-            executeDataSet(conceptPath);
-        } catch (Exception e) {
-            Logger log = Logger.getGlobal();
-            log.warning("Problem with loading concept from malaria-concept.xml: \n"
-                    + e.getStackTrace().toString());
-        }
+    private InsuranceClaimDiagnosis createTestClaimDiagnosis() throws Exception {
+        String conceptPath = "test_malaria_concept.xml";
+        executeDataSet(conceptPath);
+
         Concept concept = Context.getConceptService().getConceptByUuid("160148AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         return InsuranceClaimDiagnosisMother.createTestInstance(concept, this.testInsuranceClaim);
     }
-
 }

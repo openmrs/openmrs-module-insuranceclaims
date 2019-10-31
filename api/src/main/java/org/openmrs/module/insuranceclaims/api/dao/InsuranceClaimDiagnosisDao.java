@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface InsuranceClaimDiagnosisDao extends OpenmrsDataDAO<InsuranceClaimDiagnosis> {
 
-    List<InsuranceClaimDiagnosis> findInsuranceClaimDiagnosis(Integer insuranceClaimId);
+    List<InsuranceClaimDiagnosis> findInsuranceClaimDiagnosis(int insuranceClaimId);
 }

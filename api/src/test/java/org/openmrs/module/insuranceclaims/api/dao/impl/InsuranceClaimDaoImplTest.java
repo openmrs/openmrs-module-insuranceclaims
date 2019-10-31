@@ -59,5 +59,4 @@ public class InsuranceClaimDaoImplTest extends BaseModuleContextSensitiveTest {
 				.getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
 		return InsuranceClaimMother.createTestInstance(location, provider, visitType, identifierType);
 	}
-
 }

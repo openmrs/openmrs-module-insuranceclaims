@@ -14,13 +14,9 @@ import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 
-@Transactional
 public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService {
 
     private InsuranceClaimDiagnosisDao diagnosisDao;
-
-    public FHIRClaimDiagnosisServiceImpl() {
-    }
 
     public FHIRClaimDiagnosisServiceImpl(InsuranceClaimDiagnosisDao diagnosisDao) {
         this.diagnosisDao = diagnosisDao;
@@ -55,6 +51,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
         return createClaimDiagnosisComponent(claimDiagnoses);
     }
 
+    @Transactional
     public InsuranceClaimDiagnosis createOmrsClaimDiagnosis(
             Claim.DiagnosisComponent claimDiagnosis, List<String> errors) {
 

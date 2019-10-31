@@ -59,7 +59,6 @@
                 <ref bean="insuranceclaims.InsuranceClaimService"/>
             </list>
         </property>
-
     </bean>
 
     <bean parent="serviceContext">

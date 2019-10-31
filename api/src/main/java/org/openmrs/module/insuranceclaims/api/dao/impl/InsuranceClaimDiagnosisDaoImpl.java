@@ -29,8 +29,8 @@ public class InsuranceClaimDiagnosisDaoImpl extends HibernateOpenmrsDataDAO<Insu
 	 * @param insuranceClaimId - InsuranceClaim id
 	 */
 	@Override
-	public List<InsuranceClaimDiagnosis> findInsuranceClaimDiagnosis(Integer insuranceClaimId) {
-		Criteria crit = getSession().createCriteria(InsuranceClaimDiagnosis.class, "diagnosis");
+	public List<InsuranceClaimDiagnosis> findInsuranceClaimDiagnosis(int insuranceClaimId) {
+		Criteria crit = getCurrentSession().createCriteria(InsuranceClaimDiagnosis.class, "diagnosis");
 		crit.createAlias("diagnosis.insuranceClaim", "claim");
 
 		crit.add(Restrictions.eq("claim.id", insuranceClaimId));
@@ -38,7 +38,7 @@ public class InsuranceClaimDiagnosisDaoImpl extends HibernateOpenmrsDataDAO<Insu
 		return result;
 	}
 
-	private DbSession getSession() {
+	private DbSession getCurrentSession() {
 		return sessionFactory.getCurrentSession();
 	}
 }
