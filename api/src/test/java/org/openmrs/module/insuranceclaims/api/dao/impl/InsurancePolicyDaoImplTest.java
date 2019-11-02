@@ -22,10 +22,7 @@ public class InsurancePolicyDaoImplTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void saveOrUpdate_shouldSaveAllPropertiesInDb() {
-		Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
-		PatientIdentifierType identifierType = Context.getPatientService()
-				.getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
-		InsurancePolicy policy = InsurancePolicyMother.createTestInstance(location, identifierType);
+		InsurancePolicy policy = createTestInstance();
 
 		dao.saveOrUpdate(policy);
 
@@ -39,5 +36,12 @@ public class InsurancePolicyDaoImplTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(savedPolicy, hasProperty("expiryDate", is(policy.getExpiryDate())));
 		Assert.assertThat(savedPolicy, hasProperty("patient", is(policy.getPatient())));
 		Assert.assertThat(savedPolicy, hasProperty("policyStatus", is(policy.getPolicyStatus())));
+	}
+
+	private InsurancePolicy createTestInstance() {
+		Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
+		PatientIdentifierType identifierType = Context.getPatientService()
+				.getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
+		return InsurancePolicyMother.createTestInstance(location, identifierType);
 	}
 }

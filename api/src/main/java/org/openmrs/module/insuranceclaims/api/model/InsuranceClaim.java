@@ -97,7 +97,8 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 	private InsuranceClaimStatus claimStatus;
 
 	@ManyToOne
-	@JoinColumn(name = "bill")
+	@Cascade(CascadeType.SAVE_UPDATE)
+	@JoinColumn(name = "bill", nullable = false)
 	private Bill bill;
 
 	@Override
@@ -228,5 +229,13 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 
 	public void setClaimStatus(InsuranceClaimStatus claimStatus) {
 		this.claimStatus = claimStatus;
+	}
+
+	public Bill getBill() {
+		return bill;
+	}
+
+	public void setBill(Bill bill) {
+		this.bill = bill;
 	}
 }

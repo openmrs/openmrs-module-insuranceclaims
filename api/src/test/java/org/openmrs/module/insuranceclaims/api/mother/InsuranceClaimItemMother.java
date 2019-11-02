@@ -1,9 +1,16 @@
 package org.openmrs.module.insuranceclaims.api.mother;
 
+import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItemStatus;
+import org.openmrs.module.insuranceclaims.api.model.ProcessStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
+import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -22,8 +29,12 @@ public final class InsuranceClaimItemMother {
 	 * @param insuranceClaim - related insurance claim object
 	 * @return - the InsuranceClaimItem instance
 	 */
-	public static InsuranceClaimItem createTestInstance(InsuranceClaim insuranceClaim) {
-		ProvidedItem item = ProvidedItemMother.createTestInstance();
+	public static InsuranceClaimItem createTestInstance(Concept concept, InsuranceClaim insuranceClaim) {
+		Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
+		PatientIdentifierType identifierType = Context.getPatientService().
+				getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
+		ProvidedItem item = ProvidedItemMother.createTestInstance(concept,location, identifierType);
+
 		InsuranceClaimItem claimItem = new InsuranceClaimItem();
 		claimItem.setQuantityApproved(EXAMPLE_QUANTITY_APPROVED);
 		claimItem.setQuantityProvided(EXAMPLE_QUANTITY_PROVIDED);

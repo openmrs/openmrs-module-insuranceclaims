@@ -2,6 +2,7 @@ package org.openmrs.module.insuranceclaims.api.dao.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Provider;
@@ -49,6 +50,7 @@ public class InsuranceClaimDaoImplTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(savedInsuranceClaim, hasProperty("guaranteeId", is(insuranceClaim.getGuaranteeId())));
 		Assert.assertThat(savedInsuranceClaim, hasProperty("visitType", is(insuranceClaim.getVisitType())));
 		Assert.assertThat(savedInsuranceClaim, hasProperty("claimStatus", is(insuranceClaim.getClaimStatus())));
+		Assert.assertThat(savedInsuranceClaim, hasProperty("bill", is(insuranceClaim.getBill())));
 	}
 
 	private InsuranceClaim createTestInstance() {

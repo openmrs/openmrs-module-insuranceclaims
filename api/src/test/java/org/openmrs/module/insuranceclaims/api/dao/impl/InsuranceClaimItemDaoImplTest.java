@@ -2,7 +2,9 @@ package org.openmrs.module.insuranceclaims.api.dao.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Location;
+import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Provider;
 import org.openmrs.VisitType;
@@ -12,6 +14,7 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimItemMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
+import org.openmrs.module.insuranceclaims.api.mother.PatientMother;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,7 @@ public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTes
 	}
 
 	private InsuranceClaimItem createTestInstance() {
+		Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
 		Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
 		Provider provider = Context.getProviderService().getProvider(TestConstants.TEST_PROVIDER_ID);
 		VisitType visitType = Context.getVisitService().getVisitType(TestConstants.TEST_VISIT_TYPE_ID);
@@ -55,6 +59,6 @@ public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTes
 				.getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
 		InsuranceClaim insuranceClaim = InsuranceClaimMother.createTestInstance(location, provider, visitType,
 				identifierType);
-		return InsuranceClaimItemMother.createTestInstance(insuranceClaim);
+		return InsuranceClaimItemMother.createTestInstance(concept, insuranceClaim);
 	}
 }

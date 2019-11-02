@@ -168,7 +168,9 @@
             <column name="claim_status" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="bill" type="int"/>
+            <column name="bill" type="int">
+                <constraints nullable="false"/>
+            </column>
 
             <column name="uuid" type="char(38)">
                 <constraints nullable="false" unique="true"/>

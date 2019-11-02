@@ -1,5 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.openmrs.Concept;
 import org.openmrs.Patient;
 
@@ -46,6 +48,7 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
     private ProcessStatus status;
 
     @ManyToOne
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JoinColumn(name = "patient", nullable = false)
     private Patient patient;
 
@@ -54,6 +57,7 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
     private Concept item;
 
     @ManyToOne
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JoinColumn(name = "bill")
     private Bill bill;
 
