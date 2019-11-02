@@ -15,6 +15,13 @@ public class ProvidedItemMother {
 
     private static final String EXAMPLE_PRICE = "123456.78";
 
+    /**
+     *
+     * @param concept - test object needed to set item and create bill
+     * @param location - test object needed to create a patient
+     * @param patientIdentifierType - test object needed to create a patient
+     * @return
+     */
     public static ProvidedItem createTestInstance(Concept concept, Location location,
                                                   PatientIdentifierType patientIdentifierType) {
 

@@ -12,6 +12,11 @@ public final class BillMother {
 
     private static final String EXAMPLE_TOTAL_AMOUNT = "123456.78";
 
+    /**
+     * Creates the Bill's test instance
+     * @param concept - related diagnosis object
+     * @return - the Bill instance
+     */
     public static Bill createTestInstance(Concept concept) {
         Bill bill = new Bill();
         bill.setStartDate(new Date());

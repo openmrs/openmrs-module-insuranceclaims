@@ -19,7 +19,6 @@ import java.util.Date;
  * Model class that represent a bill.
  * Provides information about the set of provided items.
  */
-
 @Entity(name = "iclm.Bill")
 @Table(name = "iclm_bill")
 public class Bill extends AbstractBaseOpenmrsData {
