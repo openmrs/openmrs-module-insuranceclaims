@@ -80,11 +80,11 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
     }
 
     public Date getDateOfServed() {
-        return dateOfServed;
+        return dateOfServed == null ? null : (Date) dateOfServed.clone();
     }
 
     public void setDateOfServed(Date dateOfServed) {
-        this.dateOfServed = dateOfServed;
+        this.dateOfServed = dateOfServed == null ? null : (Date) dateOfServed.clone();
     }
 
     public ProcessStatus getStatus() {
