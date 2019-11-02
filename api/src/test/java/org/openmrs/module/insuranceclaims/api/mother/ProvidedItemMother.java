@@ -4,10 +4,7 @@ import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.Provider;
-import org.openmrs.VisitType;
 import org.openmrs.module.insuranceclaims.api.model.Bill;
-import org.openmrs.module.insuranceclaims.api.model.PaymentStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProcessStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 

@@ -2,7 +2,6 @@ package org.openmrs.module.insuranceclaims.api.dao.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Provider;
