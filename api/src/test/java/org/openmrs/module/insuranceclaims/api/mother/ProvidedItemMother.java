@@ -29,7 +29,4 @@ public class ProvidedItemMother {
         item.setBill(bill);
         return item;
     }
-
-    public ProvidedItemMother() {
-    }
 }

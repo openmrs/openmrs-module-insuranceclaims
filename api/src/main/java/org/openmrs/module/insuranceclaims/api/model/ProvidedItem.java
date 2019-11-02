@@ -61,9 +61,6 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
     @JoinColumn(name = "bill")
     private Bill bill;
 
-    public ProvidedItem() {
-    }
-
     @Override
     public Integer getId() {
         return id;

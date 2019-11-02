@@ -57,9 +57,6 @@ public class Bill extends AbstractBaseOpenmrsData {
     @JoinColumn(name = "diagnosis")
     private Concept diagnosis;
 
-    public Bill() {
-    }
-
     @Override
     public Integer getId() {
         return id;
