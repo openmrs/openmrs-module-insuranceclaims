@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.buildLocationReference;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.createClaimExplanationInformation;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.createClaimGuaranteeIdInformation;
@@ -43,9 +42,9 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         BaseOpenMRSDataUtil.setBaseExtensionFields(claim, omrsClaim);
 
         //Set Claim id to fhir Claim
-        IdType uuid = new IdType();
-        uuid.setValue(omrsClaim.getUuid());
-        claim.setId(uuid);
+        IdType claimId = new IdType();
+        claimId.setValue(omrsClaim.getClaimCode());
+        claim.setId(claimId);
 
         //Set provider
         Reference providerReference = FHIRUtils.buildPractitionerReference(omrsClaim.getProvider());
@@ -105,9 +104,6 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         BaseOpenMRSDataUtil.readBaseExtensionFields(omrsClaim, claim);
         BaseOpenMRSDataUtil.setBaseExtensionFields(claim, omrsClaim);
 
-        if (claim.getId() != null) {
-            omrsClaim.setUuid(extractUuid(claim.getId()));
-        }
         omrsClaim.setUuid(getClaimUuid(claim, errors));
 
         //Set provider

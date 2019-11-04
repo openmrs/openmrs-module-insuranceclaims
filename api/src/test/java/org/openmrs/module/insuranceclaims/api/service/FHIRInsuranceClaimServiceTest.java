@@ -61,7 +61,7 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
         Claim generatedClaim = insuranceClaimService.generateClaim(savedInsuranceClaim);
 
         Assert.assertThat(generatedClaim, Matchers.notNullValue());
-        Assert.assertThat(generatedClaim.getId(), Matchers.equalTo(insuranceClaim.getUuid()));
+        Assert.assertThat(generatedClaim.getId(), Matchers.equalTo(insuranceClaim.getClaimCode()));
         Assert.assertThat(generatedClaim.getBillablePeriod().getStart(), Matchers.equalTo(insuranceClaim.getDateFrom()));
         Assert.assertThat(generatedClaim.getBillablePeriod().getEnd(), Matchers.equalTo(insuranceClaim.getDateTo()));
         Assert.assertThat(generatedClaim.getFacility().getReference(), Matchers.equalTo(getExpectedLocationReference()));
