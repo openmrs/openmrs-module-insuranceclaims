@@ -42,7 +42,6 @@ public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
 
         //adjustiment
         claim.setDisposition(omrsClaim.getAdjustment());
-        //TODO: MRS says that it should be mapped to disposition, but IMIS don't map disposition and have adjustment in payment instead
 
         //totalBenefit
         Money benefit = new Money();
@@ -87,9 +86,7 @@ public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
         omrsClaim.setClaimStatus(status);
 
         //adjustiment
-        //Use disposition or payment?
         omrsClaim.setAdjustment(claim.getPayment().getAdjustmentReason().getText());
-        //TODO: MRS says that it should be mapped to disposition, but IMIS don't map disposition and have adjustment in payment instead
 
         //approved total
         omrsClaim.setApprovedTotal(claim.getTotalBenefit().getValue());

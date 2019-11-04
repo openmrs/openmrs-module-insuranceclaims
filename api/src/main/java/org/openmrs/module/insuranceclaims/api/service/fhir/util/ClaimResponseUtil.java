@@ -15,9 +15,8 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Identifie
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MEDICAL_RECORD_NUMBER;
 
-public class ClaimResponseUtil {
+public final class ClaimResponseUtil {
 
-    //ClaimResponse utils
     public static CodeableConcept getClaimResponseOutcome(InsuranceClaim insuranceClaim) {
         CodeableConcept outcome = new CodeableConcept();
         outcome.setText(insuranceClaim.getClaimStatus().toString());
@@ -50,7 +49,6 @@ public class ClaimResponseUtil {
     public static String getClaimUuid(ClaimResponse claim, List<String> errors) {
         return getIdentifierValueByCode(claim, ACCESSION_ID, errors);
     }
-
 
     public static Reference buildClaimReference(InsuranceClaim omrsClaim) {
         Reference reference = new Reference();

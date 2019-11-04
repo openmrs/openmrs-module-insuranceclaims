@@ -40,23 +40,6 @@ public final class IdentifierUtil {
         return codeClaimIdentifier;
     }
 
-    private static List<Identifier> getIdentifierBySystemCode(List<Identifier> identifierList, String code) {
-        List<Identifier> result = new LinkedList<>();
-
-        for (Identifier i : identifierList) {
-            List<String> codes = i.getType().getCoding()
-                    .stream()
-                    .map(Coding::getCode)
-                    .collect(Collectors.toList());
-
-            if (codes.contains(code)) {
-                result.add(i);
-            }
-        }
-
-        return result;
-    }
-
     public static String getIdentifierValueByCode(Claim claim, String code, List<String> errors) {
         try {
             return getClaimIdentifierValueBySystemCode(claim, code);
@@ -83,5 +66,20 @@ public final class IdentifierUtil {
         return claimCodeIdentifier.get(0).getValue();
     }
 
+    private static List<Identifier> getIdentifierBySystemCode(List<Identifier> identifierList, String code) {
+        List<Identifier> result = new LinkedList<>();
 
+        for (Identifier i : identifierList) {
+            List<String> codes = i.getType().getCoding()
+                    .stream()
+                    .map(Coding::getCode)
+                    .collect(Collectors.toList());
+
+            if (codes.contains(code)) {
+                result.add(i);
+            }
+        }
+
+        return result;
+    }
 }
