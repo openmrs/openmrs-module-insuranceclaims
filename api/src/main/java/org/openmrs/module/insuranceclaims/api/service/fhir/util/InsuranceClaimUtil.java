@@ -24,14 +24,13 @@ import java.util.Map;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.createIdentifier;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdentifierValueByCode;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.HL7_VALUESET_SYSTEM;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MEDICAL_RECORD_NUMBER;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialComponentUtil.createSpecialComponent;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialComponentUtil.getSpecialConditionComponentFromCategory;
 
 public final class InsuranceClaimUtil {
-    public static final String MEDICAL_RECORD_NUMBER = "MR";
-    public static final String ACCESSION_ID = "ACSN";
-    public static final String HL7_VALUESET_SYSTEM = "https://hl7.org/fhir/valueset-identifier-type.html";
-
     public static List<Claim.DiagnosisComponent> getClaimDiagnosis(InsuranceClaim omrsClaim) {
         return Context
                 .getService(FHIRClaimDiagnosisService.class)

@@ -1,6 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
 import org.hl7.fhir.dstu3.model.Claim;
+import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Identifier;
@@ -14,15 +15,13 @@ import java.util.stream.Collectors;
 public final class IdentifierUtil {
 
     public static String getClaimIdentifierValueBySystemCode(Claim claim, String code) throws FHIRException {
-        List<Identifier> fhirIdList = claim.getIdentifier();
-        List<Identifier> claimCodeIdentifier = getIdentifierBySystemCode(fhirIdList, code);
+        List<Identifier> claimCodeIdentifier = getIdentifierBySystemCode(claim.getIdentifier(), code);
+        return validatedIdentifier(claimCodeIdentifier, code);
+    }
 
-        if (claimCodeIdentifier.size() != 1) {
-            throw new FHIRException("Could not found unique identifier for system code "
-                    + code);
-        }
-
-        return claimCodeIdentifier.get(0).getValue();
+    public static String getClaimIdentifierValueBySystemCode(ClaimResponse claim, String code) throws FHIRException {
+        List<Identifier> claimCodeIdentifier = getIdentifierBySystemCode(claim.getIdentifier(), code);
+        return validatedIdentifier(claimCodeIdentifier, code);
     }
 
     public static Identifier createIdentifier(String value, String codingCode, String codingSystem) {
@@ -66,4 +65,23 @@ public final class IdentifierUtil {
         }
         return null;
     }
+
+    public static String getIdentifierValueByCode(ClaimResponse claim, String code, List<String> errors) {
+        try {
+            return getClaimIdentifierValueBySystemCode(claim, code);
+        } catch (Exception e) {
+            errors.add(e.getMessage());
+        }
+        return null;
+    }
+
+    private static String validatedIdentifier(List<Identifier> claimCodeIdentifier, String code) throws FHIRException {
+        if (claimCodeIdentifier.size() != 1) {
+            throw new FHIRException("Could not found unique identifier for system code "
+                    + code);
+        }
+        return claimCodeIdentifier.get(0).getValue();
+    }
+
+
 }
