@@ -7,12 +7,18 @@ import java.math.BigDecimal;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * Model class that represents an insurance claim item.
+ * Represents the relation between claim and item.
+ */
 @Entity(name = "iclm.InsuranceClaimItem ")
 @Table(name = "iclm_claim_item")
 public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
@@ -36,11 +42,6 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 	@Column(name = "price_approved")
 	private BigDecimal priceApproved;
 
-	@ManyToOne
-	@Cascade(CascadeType.SAVE_UPDATE)
-	@JoinColumn(name = "price_asked")
-	private ItemPrice priceAsked;
-
 	@Basic
 	@Column(name = "explanation", columnDefinition = "TEXT")
 	private String explanation;
@@ -56,7 +57,7 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "item", nullable = false)
-	private Item item;
+	private ProvidedItem item;
 
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
@@ -65,6 +66,7 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 
 	@Basic
 	@Column(name = "claim_item_status")
+	@Enumerated(EnumType.STRING)
 	private InsuranceClaimItemStatus claimItemStatus;
 
 	@Override
@@ -101,14 +103,6 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 		this.priceApproved = priceApproved;
 	}
 
-	public ItemPrice getPriceAsked() {
-		return priceAsked;
-	}
-
-	public void setPriceAsked(ItemPrice priceAsked) {
-		this.priceAsked = priceAsked;
-	}
-
 	public String getExplanation() {
 		return explanation;
 	}
@@ -133,11 +127,11 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 		this.rejectionReason = rejectionReason;
 	}
 
-	public Item getItem() {
+	public ProvidedItem getItem() {
 		return item;
 	}
 
-	public void setItem(Item item) {
+	public void setItem(ProvidedItem item) {
 		this.item = item;
 	}
 

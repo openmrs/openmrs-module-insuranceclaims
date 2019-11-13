@@ -2,6 +2,7 @@ package org.openmrs.module.insuranceclaims.api.dao.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Provider;
@@ -39,7 +40,6 @@ public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTes
 		Assert.assertThat(savedClaimItem, hasProperty("quantityProvided", is(claimItem.getQuantityProvided())));
 		Assert.assertThat(savedClaimItem, hasProperty("quantityApproved", is(claimItem.getQuantityApproved())));
 		Assert.assertThat(savedClaimItem, hasProperty("priceApproved", is(claimItem.getPriceApproved())));
-		Assert.assertThat(savedClaimItem, hasProperty("priceAsked", is(claimItem.getPriceAsked())));
 		Assert.assertThat(savedClaimItem, hasProperty("explanation", is(claimItem.getExplanation())));
 		Assert.assertThat(savedClaimItem, hasProperty("justification", is(claimItem.getJustification())));
 		Assert.assertThat(savedClaimItem, hasProperty("rejectionReason", is(claimItem.getRejectionReason())));
@@ -49,6 +49,7 @@ public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTes
 	}
 
 	private InsuranceClaimItem createTestInstance() {
+		Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
 		Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
 		Provider provider = Context.getProviderService().getProvider(TestConstants.TEST_PROVIDER_ID);
 		VisitType visitType = Context.getVisitService().getVisitType(TestConstants.TEST_VISIT_TYPE_ID);
@@ -56,6 +57,6 @@ public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTes
 				.getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
 		InsuranceClaim insuranceClaim = InsuranceClaimMother.createTestInstance(location, provider, visitType,
 				identifierType);
-		return InsuranceClaimItemMother.createTestInstance(insuranceClaim);
+		return InsuranceClaimItemMother.createTestInstance(concept, insuranceClaim);
 	}
 }
