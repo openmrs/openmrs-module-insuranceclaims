@@ -61,13 +61,13 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
-	@JoinColumn(name = "insurance_claim", nullable = false)
-	private InsuranceClaim insuranceClaim;
+	@JoinColumn(name = "claim", nullable = false)
+	private InsuranceClaim claim;
 
 	@Basic
-	@Column(name = "claim_item_status")
+	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
-	private InsuranceClaimItemStatus claimItemStatus;
+	private InsuranceClaimItemStatus status;
 
 	@Override
 	public Integer getId() {
@@ -135,19 +135,19 @@ public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 		this.item = item;
 	}
 
-	public InsuranceClaim getInsuranceClaim() {
-		return insuranceClaim;
+	public InsuranceClaim getClaim() {
+		return claim;
 	}
 
-	public void setInsuranceClaim(InsuranceClaim insuranceClaim) {
-		this.insuranceClaim = insuranceClaim;
+	public void setClaim(InsuranceClaim claim) {
+		this.claim = claim;
 	}
 
-	public InsuranceClaimItemStatus getClaimItemStatus() {
-		return claimItemStatus;
+	public InsuranceClaimItemStatus getStatus() {
+		return status;
 	}
 
-	public void setClaimItemStatus(InsuranceClaimItemStatus claimItemStatus) {
-		this.claimItemStatus = claimItemStatus;
+	public void setStatus(InsuranceClaimItemStatus status) {
+		this.status = status;
 	}
 }

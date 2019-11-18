@@ -33,8 +33,8 @@ public class InsuranceClaimDiagnosis extends AbstractBaseOpenmrsData {
 
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
-	@JoinColumn(name = "insurance_claim", nullable = false)
-	private InsuranceClaim insuranceClaim;
+	@JoinColumn(name = "claim", nullable = false)
+	private InsuranceClaim claim;
 
 	public InsuranceClaimDiagnosis() {
 	}
@@ -43,12 +43,12 @@ public class InsuranceClaimDiagnosis extends AbstractBaseOpenmrsData {
 	 * Creates the representation of an insurance claim diagnosis
 	 *
 	 * @param concept        - the related concept object
-	 * @param insuranceClaim - the related insurance claim object
+	 * @param claim - the related insurance claim object
 	 */
-	public InsuranceClaimDiagnosis(Concept concept, InsuranceClaim insuranceClaim) {
+	public InsuranceClaimDiagnosis(Concept concept, InsuranceClaim claim) {
 		super();
 		this.concept = concept;
-		this.insuranceClaim = insuranceClaim;
+		this.claim = claim;
 	}
 
 	@Override
@@ -69,11 +69,11 @@ public class InsuranceClaimDiagnosis extends AbstractBaseOpenmrsData {
 		this.concept = concept;
 	}
 
-	public InsuranceClaim getInsuranceClaim() {
-		return insuranceClaim;
+	public InsuranceClaim getClaim() {
+		return claim;
 	}
 
-	public void setInsuranceClaim(InsuranceClaim insuranceClaim) {
-		this.insuranceClaim = insuranceClaim;
+	public void setClaim(InsuranceClaim claim) {
+		this.claim = claim;
 	}
 }

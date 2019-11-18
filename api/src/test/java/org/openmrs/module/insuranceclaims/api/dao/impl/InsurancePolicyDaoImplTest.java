@@ -35,7 +35,7 @@ public class InsurancePolicyDaoImplTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(savedPolicy, hasProperty("startDate", is(policy.getStartDate())));
 		Assert.assertThat(savedPolicy, hasProperty("expiryDate", is(policy.getExpiryDate())));
 		Assert.assertThat(savedPolicy, hasProperty("patient", is(policy.getPatient())));
-		Assert.assertThat(savedPolicy, hasProperty("policyStatus", is(policy.getPolicyStatus())));
+		Assert.assertThat(savedPolicy, hasProperty("status", is(policy.getStatus())));
 	}
 
 	private InsurancePolicy createTestInstance() {
