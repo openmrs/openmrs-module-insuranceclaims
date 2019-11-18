@@ -67,7 +67,6 @@
 				<scope>test</scope>
 			</dependency>
 
-
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>fhir-api</artifactId>

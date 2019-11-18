@@ -5,6 +5,7 @@ import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.exceptions.FHIRException;
 
 import java.util.Collections;
@@ -58,6 +59,15 @@ public final class IdentifierUtil {
         return null;
     }
 
+    public static String getIdFromReference(Reference reference) {
+        try {
+            String x =  reference.getReference().split("/")[1];
+            return x;
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
     private static String validatedIdentifier(List<Identifier> claimCodeIdentifier, String code) throws FHIRException {
         if (claimCodeIdentifier.size() != 1) {
             throw new FHIRException("Could not found unique identifier for system code "
@@ -82,4 +92,6 @@ public final class IdentifierUtil {
 
         return result;
     }
+
+
 }

@@ -20,15 +20,18 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimDiagnosisMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
-import org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRInsuranceClaimServiceImpl;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PATIENT_EXTERNAL_ID_IDENTIFIER_UUID;
+import static org.openmrs.module.insuranceclaims.api.util.TestConstants.EXTERNAL_ID_DATASET_PATH;
 
 public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -38,10 +41,16 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
     @Autowired
     private InsuranceClaimDiagnosisDao insuranceClaimDiagnosisDao;
 
+    @Autowired
+    @Qualifier("insuranceclaims.fhirInsurance")
+    private FHIRInsuranceClaimService insuranceClaimService;
+
     private InsuranceClaim insuranceClaim;
 
     @Before
     public void setUp() throws Exception {
+        executeDataSet(EXTERNAL_ID_DATASET_PATH);
+
         insuranceClaim = createTestInstance();
 
         InsuranceClaim insuranceClaim = createTestInstance();
@@ -49,15 +58,11 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
 
         InsuranceClaimDiagnosis insuranceClaimDiagnosis = createTestClaimDiagnosis();
         insuranceClaimDiagnosisDao.saveOrUpdate(insuranceClaimDiagnosis);
-
-        Context.flushSession();
-        Context.clearSession();
     }
 
     @Test
     public void generateFhirClaim_shouldMapInsuranceClaimToFhirClaim() throws FHIRException {
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
-        FHIRInsuranceClaimService insuranceClaimService = new FHIRInsuranceClaimServiceImpl();
         Claim generatedClaim = insuranceClaimService.generateClaim(savedInsuranceClaim);
 
         Assert.assertThat(generatedClaim, Matchers.notNullValue());
@@ -84,7 +89,7 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
     @Test
     public void generateOmrsClaim_shouldMapFhirClaimToOmrsClaim() throws FHIRException {
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
-        FHIRInsuranceClaimService insuranceClaimService = new FHIRInsuranceClaimServiceImpl();
+
         Claim fhirClaim = insuranceClaimService.generateClaim(savedInsuranceClaim);
         List<String> errors = new LinkedList<>();
         InsuranceClaim generatedClaim = insuranceClaimService.generateOmrsClaim(fhirClaim, errors);
@@ -110,7 +115,7 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
         Provider provider = Context.getProviderService().getProvider(TestConstants.TEST_PROVIDER_ID);
         VisitType visitType = Context.getVisitService().getVisitType(TestConstants.TEST_VISIT_TYPE_ID);
         PatientIdentifierType identifierType = Context.getPatientService()
-                .getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
+                .getPatientIdentifierTypeByUuid(PATIENT_EXTERNAL_ID_IDENTIFIER_UUID);
         return InsuranceClaimMother.createTestInstance(location, provider, visitType, identifierType);
     }
 
@@ -123,15 +128,15 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
     }
 
     private String getExpectedLocationReference() {
-        return "Location/" + insuranceClaim.getLocation().getUuid();
+        return "Location/" + insuranceClaim.getLocation().getActiveAttributes().iterator().next().getValueReference();
     }
 
     private String getExpectedPatientReference() {
-        return "Patient/" + insuranceClaim.getPatient().getUuid();
+        return "Patient/" + insuranceClaim.getPatient().getActiveIdentifiers().get(0).getIdentifier();
     }
 
     private String getExpectedPractitionerReference() {
-        return "Practitioner/" + insuranceClaim.getProvider().getUuid();
+        return "Practitioner/" + insuranceClaim.getProvider().getActiveAttributes().iterator().next().getValueReference();
     }
 
     private BigDecimal getExpectedTotal() {

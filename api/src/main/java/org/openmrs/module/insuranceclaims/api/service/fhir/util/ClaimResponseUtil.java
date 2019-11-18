@@ -10,6 +10,7 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdentifierValueByCode;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
@@ -33,7 +34,8 @@ public final class ClaimResponseUtil {
     public static InsuranceClaimStatus getClaimResponseStatus(ClaimResponse response, List<String> errors) {
         String codeString = response
                 .getOutcome()
-                .getText();
+                .getText()
+                .toUpperCase(Locale.getDefault());
         try {
             return InsuranceClaimStatus.valueOf(codeString);
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -85,6 +87,9 @@ public final class ClaimResponseUtil {
 
     public static String getClaimResponseErrorCode(ClaimResponse claimResponse) {
         ClaimResponse.ErrorComponent ec = claimResponse.getErrorFirstRep();
+        if (ec.getCode().getCoding().size() == 0) {
+            return null;
+        }
         return ec.getCode().getCoding().get(0).getCode();
     }
 

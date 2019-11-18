@@ -457,4 +457,69 @@
                                  referencedTableName="users" referencedColumnNames="user_id"/>
     </changeSet>
 
+    <changeSet id="insuranceclaims-12.11.2019:14:31" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="provider_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM provider_attribute_type WHERE uuid = "bbdf67e8-c020-40ff-8ad6-74ba34893882";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Provider identification for external app
+        </comment>
+        <insert tableName="provider_attribute_type">
+            <column name="name">ExternalId</column>
+            <column name="description">Attribute used for external provider identification.</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.FreeTextDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-12</column>
+            <column name="retired">0</column>
+            <column name="uuid">bbdf67e8-c020-40ff-8ad6-74ba34893882</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-12.11.2019:14:47" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="location_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM location_attribute_type WHERE uuid = "217da59b-6003-43b9-9595-b5c1349f1152";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Location identification for external app
+        </comment>
+        <insert tableName="location_attribute_type">
+            <column name="name">ExternalId</column>
+            <column name="description">Attribute used for external location identification.</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.FreeTextDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-12</column>
+            <column name="retired">0</column>
+            <column name="uuid">217da59b-6003-43b9-9595-b5c1349f1152</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-12.11.2019:14:37" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="patient_identifier_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM patient_identifier_type WHERE uuid ="ee8e82c4-1563-43aa-8c73-c3e4e88cb79b";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Added the externalId patientIdentifierType.
+        </comment>
+        <insert tableName="patient_identifier_type">
+            <column name="name">ExternalId</column>
+            <column name="description">Attribute used for external patient identification</column>
+            <column name="check_digit">0</column>
+            <column name="date_created">2019-08-08</column>
+            <column name="creator">1</column>
+            <column name="required">0</column>
+            <column name="location_behavior">NOT_USED</column>
+            <column name="uuid">ee8e82c4-1563-43aa-8c73-c3e4e88cb79b</column>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
