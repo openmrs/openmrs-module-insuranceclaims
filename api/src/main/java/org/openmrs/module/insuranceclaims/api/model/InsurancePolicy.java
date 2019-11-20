@@ -44,9 +44,9 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 	private Patient patient;
 
 	@Basic
-	@Column(name = "policy_status", nullable = false)
+	@Column(name = "status", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private InsurancePolicyStatus policyStatus;
+	private InsurancePolicyStatus status;
 
 	public InsurancePolicy() {
 	}
@@ -57,15 +57,15 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 	 * @param startDate    - the policy start date
 	 * @param expiryDate   - the policy expiry date
 	 * @param patient      - related patient
-	 * @param policyStatus - the policy status
+	 * @param status - the policy status
 	 */
 	public InsurancePolicy(Date startDate, Date expiryDate, Patient patient,
-			InsurancePolicyStatus policyStatus) {
+			InsurancePolicyStatus status) {
 		super();
 		this.startDate = startDate == null ? null : (Date) startDate.clone();
 		this.expiryDate = expiryDate == null ? null : (Date) expiryDate.clone();
 		this.patient = patient;
-		this.policyStatus = policyStatus;
+		this.status = status;
 	}
 
 	@Override
@@ -102,11 +102,11 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 		this.patient = patient;
 	}
 
-	public InsurancePolicyStatus getPolicyStatus() {
-		return policyStatus;
+	public InsurancePolicyStatus getStatus() {
+		return status;
 	}
 
-	public void setPolicyStatus(InsurancePolicyStatus policyStatus) {
-		this.policyStatus = policyStatus;
+	public void setStatus(InsurancePolicyStatus status) {
+		this.status = status;
 	}
 }

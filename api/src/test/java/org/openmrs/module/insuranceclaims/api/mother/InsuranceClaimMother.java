@@ -50,7 +50,7 @@ public final class InsuranceClaimMother {
 		insuranceClaim.setVisitType(visitType);
 		insuranceClaim.setExplanation("explaination");
 		insuranceClaim.setGuaranteeId("guaranteeID");
-		insuranceClaim.setClaimStatus(InsuranceClaimStatus.ENTERED);
+		insuranceClaim.setStatus(InsuranceClaimStatus.ENTERED);
 		insuranceClaim.setBill(bill);
 		return insuranceClaim;
 	}

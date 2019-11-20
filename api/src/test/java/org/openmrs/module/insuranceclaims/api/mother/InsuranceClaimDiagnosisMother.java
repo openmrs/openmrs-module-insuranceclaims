@@ -16,7 +16,7 @@ public final class InsuranceClaimDiagnosisMother {
 	public static InsuranceClaimDiagnosis createTestInstance(Concept concept, InsuranceClaim insuranceClaim) {
 		InsuranceClaimDiagnosis diagnosis = new InsuranceClaimDiagnosis();
 		diagnosis.setConcept(concept);
-		diagnosis.setInsuranceClaim(insuranceClaim);
+		diagnosis.setClaim(insuranceClaim);
 		return diagnosis;
 	}
 
