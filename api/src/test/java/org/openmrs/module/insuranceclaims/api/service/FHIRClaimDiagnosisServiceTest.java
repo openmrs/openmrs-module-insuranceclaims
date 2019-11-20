@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTest {
@@ -73,9 +73,9 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
     }
 
     @Test
-    public void createClaimDiagnosis_shouldContainMalariaComponent() throws FHIRException {
+    public void generateClaimDiagnosis_shouldContainMalariaComponent() throws FHIRException {
         Claim.DiagnosisComponent diagnosisComponent =
-                util.createClaimDiagnosisComponent(this.testInsuranceDiagnosis);
+                util.generateClaimDiagnosisComponent(this.testInsuranceDiagnosis);
 
         CodeableConcept test = diagnosisComponent.getDiagnosisCodeableConcept();
 
@@ -90,11 +90,11 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
     }
 
     @Test
-    public void createClaimDiagnosis_shouldCreateListWithMalariaComponent() throws FHIRException {
+    public void generateClaimDiagnosis_shouldCreateListWithMalariaComponent() throws FHIRException {
         List<InsuranceClaimDiagnosis> testDiagnisis = Collections.singletonList(this.testInsuranceDiagnosis);
 
         List<Claim.DiagnosisComponent> diagnosisComponent =
-                util.createClaimDiagnosisComponent(testDiagnisis);
+                util.generateClaimDiagnosisComponent(testDiagnisis);
         String transformedComponentName = diagnosisComponent.get(0).getDiagnosisCodeableConcept().getText();
 
         Assert.assertThat(diagnosisComponent, Matchers.hasSize(1));
@@ -102,9 +102,9 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
     }
 
     @Test
-    public void createClaimDiagnosisFromInsuranceClaim_shouldCreateListWithMalariaComponent() throws FHIRException {
+    public void generateClaimDiagnosisFromInsuranceClaim_shouldCreateListWithMalariaComponent() throws FHIRException {
         List<Claim.DiagnosisComponent> diagnosisComponent =
-                util.createClaimDiagnosisComponent(this.testInsuranceClaim);
+                util.generateClaimDiagnosisComponent(this.testInsuranceClaim);
 
         String transformedComponentName = diagnosisComponent.get(0).getDiagnosisCodeableConcept().getText();
 
@@ -114,8 +114,8 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
 
     @Test
     public void createInsuranceClaimDiagnosis_shouldCreateDiagnosisWithMalariaConcept() {
-        Claim.DiagnosisComponent fhirDiagnosis = util.createClaimDiagnosisComponent(this.testInsuranceDiagnosis);
-        List<String> errors = new LinkedList<>();
+        Claim.DiagnosisComponent fhirDiagnosis = util.generateClaimDiagnosisComponent(this.testInsuranceDiagnosis);
+        List<String> errors = new ArrayList<>();
 
         InsuranceClaimDiagnosis created = util.createOmrsClaimDiagnosis(fhirDiagnosis, errors);
 

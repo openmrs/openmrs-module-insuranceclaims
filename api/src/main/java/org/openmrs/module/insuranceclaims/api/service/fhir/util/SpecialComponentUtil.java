@@ -8,18 +8,34 @@ import org.hl7.fhir.exceptions.FHIRException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getUnambiguousElement;
+
 public final class SpecialComponentUtil {
 
     public static String getSpecialConditionComponentFromCategory(Claim claim, String category) throws FHIRException {
         List<Claim.SpecialConditionComponent> information =
                 getConditionsByCategory(claim.getInformation(), category);
 
-        if (information.size() != 1) {
-            throw new FHIRException("Could not found unique SpecialConditionComponent with "
-                    + category + " category");
+        Claim.SpecialConditionComponent component = getUnambiguousElement(information);
+        if (component != null) {
+            return component.getValueStringType().getValue();
+        } else {
+            return null;
         }
-        Claim.SpecialConditionComponent component = information.get(0);
-        return component.getValueStringType().getValue();
+    }
+
+    public static String getSpecialConditionComponentBySequenceNumber(Claim claim, int sequenceId) throws FHIRException {
+        List<Claim.SpecialConditionComponent> information = claim.getInformation();
+        Claim.SpecialConditionComponent requested = information.stream()
+                .filter(c -> c.getSequence() == sequenceId)
+                .findFirst()
+                .orElse(null);
+
+        if (requested == null) {
+            return null;
+        } else {
+            return requested.getValueStringType().getValue();
+        }
     }
 
     public static Claim.SpecialConditionComponent createSpecialComponent(String value, String categoryName) {
@@ -40,5 +56,7 @@ public final class SpecialComponentUtil {
                 .filter(c -> c.getCategory().getText().equals(category))
                 .collect(Collectors.toList());
     }
+
+    private SpecialComponentUtil() {}
 }
 

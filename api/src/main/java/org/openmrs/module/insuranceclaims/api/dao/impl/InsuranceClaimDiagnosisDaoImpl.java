@@ -34,8 +34,7 @@ public class InsuranceClaimDiagnosisDaoImpl extends HibernateOpenmrsDataDAO<Insu
 		crit.createAlias("diagnosis.insuranceClaim", "claim");
 
 		crit.add(Restrictions.eq("claim.id", insuranceClaimId));
-		List<InsuranceClaimDiagnosis> result = crit.list();
-		return result;
+		return crit.list();
 	}
 
 	private DbSession getCurrentSession() {

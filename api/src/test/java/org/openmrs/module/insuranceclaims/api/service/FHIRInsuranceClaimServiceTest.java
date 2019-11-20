@@ -15,25 +15,29 @@ import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimDao;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimDiagnosisDao;
+import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimItemDao;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
+import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimDiagnosisMother;
+import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimItemMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PATIENT_EXTERNAL_ID_IDENTIFIER_UUID;
 import static org.openmrs.module.insuranceclaims.api.util.TestConstants.EXTERNAL_ID_DATASET_PATH;
+import static org.openmrs.module.insuranceclaims.api.util.TestConstants.INSURANCE_CLAIM_TEST_DIAGNOSIS_DATASET;
+import static org.openmrs.module.insuranceclaims.api.util.TestConstants.INSURANCE_CLAIM_TEST_ITEM_CONCEPT_DATASET;
 
-public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiveTest {
+public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     private InsuranceClaimDao insuranceClaimDao;
@@ -42,7 +46,9 @@ public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiv
     private InsuranceClaimDiagnosisDao insuranceClaimDiagnosisDao;
 
     @Autowired
-    @Qualifier("insuranceclaims.fhirInsurance")
+    private InsuranceClaimItemDao insuranceClaimItemDao;
+
+    @Autowired
     private FHIRInsuranceClaimService insuranceClaimService;
 
     private InsuranceClaim insuranceClaim;
@@ -58,6 +64,9 @@ public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiv
 
         InsuranceClaimDiagnosis insuranceClaimDiagnosis = createTestClaimDiagnosis();
         insuranceClaimDiagnosisDao.saveOrUpdate(insuranceClaimDiagnosis);
+
+        InsuranceClaimItem insuranceClaimItem = createTestClaimItem();
+        insuranceClaimItemDao.saveOrUpdate(insuranceClaimItem);
     }
 
     @Test
@@ -81,6 +90,8 @@ public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiv
 
         Assert.assertThat(generatedClaim.getDiagnosis(), Matchers.hasSize(1));
 
+        Assert.assertThat(generatedClaim.getItem(), Matchers.hasSize(1));
+
         String diagnosisName = generatedClaim.getDiagnosis().get(0).getDiagnosisCodeableConcept().getText();
         Assert.assertThat(diagnosisName, Matchers.equalTo("Malaria, confirmed"));
         //TODO: Add item and information after changes in database
@@ -91,7 +102,7 @@ public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiv
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
 
         Claim fhirClaim = insuranceClaimService.generateClaim(savedInsuranceClaim);
-        List<String> errors = new LinkedList<>();
+        List<String> errors = new ArrayList<>();
         InsuranceClaim generatedClaim = insuranceClaimService.generateOmrsClaim(fhirClaim, errors);
 
         Assert.assertThat(errors, Matchers.hasSize(0));
@@ -120,11 +131,17 @@ public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiv
     }
 
     private InsuranceClaimDiagnosis createTestClaimDiagnosis() throws Exception {
-        String conceptPath = "test_malaria_concept.xml";
-        executeDataSet(conceptPath);
-
+        executeDataSet(INSURANCE_CLAIM_TEST_DIAGNOSIS_DATASET);
         Concept concept = Context.getConceptService().getConceptByUuid("160148AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         return InsuranceClaimDiagnosisMother.createTestInstance(concept, this.insuranceClaim);
+    }
+
+    private InsuranceClaimItem createTestClaimItem() throws Exception {
+        executeDataSet(INSURANCE_CLAIM_TEST_ITEM_CONCEPT_DATASET);
+        Concept concept = Context.getConceptService().getConceptByUuid("160148BAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        InsuranceClaimItem testItem = InsuranceClaimItemMother.createTestInstance(concept, this.insuranceClaim);
+        testItem.getItem().setItem(concept);
+        return testItem;
     }
 
     private String getExpectedLocationReference() {
@@ -144,7 +161,7 @@ public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiv
     }
 
     private List<String> getExpectedIdentifierCodes() {
-        List<String> expectedCodes = new LinkedList<>();
+        List<String> expectedCodes = new ArrayList<>();
         expectedCodes.add(insuranceClaim.getUuid());
         expectedCodes.add(insuranceClaim.getClaimCode());
         return expectedCodes;

@@ -22,7 +22,7 @@ import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +67,7 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
 
         Assert.assertThat(
                 Integer.parseInt(generated.getOutcome().getCoding().get(0).getCode()),
-                Matchers.equalTo(InsuranceClaimStatus.ENTERED.getValue()));
+                Matchers.equalTo(InsuranceClaimStatus.ENTERED.getNumericStatus()));
 
         //TODO: Add item and processNote after changes in database
     }
@@ -77,7 +77,7 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
         FHIRClaimResponseService insuranceClaimService = new FHIRClaimResponseServiceImpl();
         ClaimResponse response = insuranceClaimService.generateClaimResponse(savedInsuranceClaim);
-        List<String> errors = new LinkedList<>();
+        List<String> errors = new ArrayList<>();
         InsuranceClaim generated = insuranceClaimService.generateOmrsClaim(response, errors);
 
         Assert.assertThat(errors, Matchers.hasSize(0));
@@ -111,7 +111,7 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
     }
 
     private List<String> getExpectedIdentifierCodes() {
-        List<String> expectedCodes = new LinkedList<>();
+        List<String> expectedCodes = new ArrayList<>();
         expectedCodes.add(insuranceClaim.getUuid());
         expectedCodes.add(insuranceClaim.getClaimCode());
         return expectedCodes;

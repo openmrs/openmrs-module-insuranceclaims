@@ -8,14 +8,12 @@ import java.util.List;
 
 public interface FHIRClaimDiagnosisService {
 
-    Claim.DiagnosisComponent createClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis);
+    Claim.DiagnosisComponent generateClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis);
 
-    List<Claim.DiagnosisComponent> createClaimDiagnosisComponent(
-     List<InsuranceClaimDiagnosis> omrsClaimDiagnosis);
+    List<Claim.DiagnosisComponent> generateClaimDiagnosisComponent(List<InsuranceClaimDiagnosis> omrsClaimDiagnosis);
 
-    List<Claim.DiagnosisComponent> createClaimDiagnosisComponent(InsuranceClaim omrsInsuranceClaim);
+    List<Claim.DiagnosisComponent> generateClaimDiagnosisComponent(InsuranceClaim omrsInsuranceClaim);
 
-    InsuranceClaimDiagnosis createOmrsClaimDiagnosis(
-            Claim.DiagnosisComponent claimDiagnosis, List<String> errors);
+    InsuranceClaimDiagnosis createOmrsClaimDiagnosis(Claim.DiagnosisComponent claimDiagnosis, List<String> errors);
 
 }

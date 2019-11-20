@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_UUID;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CATEGORY_SERVICE;
 import static org.openmrs.module.insuranceclaims.api.util.TestConstants.INSURANCE_CLAIM_TEST_ITEM_CONCEPT_DATASET;
 
 public class FHIRClaimItemServiceTest extends BaseModuleContextSensitiveTest {
@@ -73,11 +73,11 @@ public class FHIRClaimItemServiceTest extends BaseModuleContextSensitiveTest {
 
         Claim.ItemComponent actual = generatedClaimItem.get(0);
         Assert.assertThat(generatedClaimItem, Matchers.hasSize(1));
-        Assert.assertThat(actual.getCategory().getText(), Matchers.equalTo("item"));
+        Assert.assertThat(actual.getCategory().getText(), Matchers.equalTo(CATEGORY_SERVICE));
         Assert.assertThat(actual.getQuantity().getValue().intValue(),
                 Matchers.equalTo(testInsuranceItem.getQuantityProvided()));
         Assert.assertThat(actual.getService().getText(), Matchers.equalTo(getExpectedCode()));
-        Assert.assertThat(actual.getUnitPrice().getValue().floatValue(), Matchers.equalTo(10.10f));
+        Assert.assertThat(actual.getUnitPrice().getValue().floatValue(), Matchers.equalTo(21000.00f));
     }
 
     @Test
@@ -123,12 +123,9 @@ public class FHIRClaimItemServiceTest extends BaseModuleContextSensitiveTest {
 
     private String getExpectedCode() {
         Concept concept = Context.getConceptService().getConceptByUuid("160148BAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
         return concept.getConceptMappings().stream()
-                .filter(c -> c.getConceptReferenceTerm()
-                        .getUuid()
-                        .equals(EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_UUID))
                 .map(c -> c.getConceptReferenceTerm().toString())
+                .filter(s -> s.equals("M9"))
                 .findFirst()
                 .orElseThrow(() -> new InvalidGeneratorSetupException("Concept was not correctly exported from dataset"));
     }

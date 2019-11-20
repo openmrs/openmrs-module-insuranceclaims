@@ -10,25 +10,23 @@ import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
-import org.openmrs.api.IdentifierNotUniqueException;
 import org.openmrs.module.fhir.api.util.BaseOpenMRSDataUtil;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.service.db.AttributeService;
+import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
+import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdFromReference;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.buildLocationReference;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.buildPatientReference;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.buildPractitionerReference;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getUnambiguousElement;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PERIOD_FROM;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PERIOD_TO;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.createClaimExplanationInformation;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.createClaimGuaranteeIdInformation;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.createClaimIdentifier;
@@ -36,16 +34,24 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimBillablePeriod;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimCode;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimDateCreated;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimDiagnosis;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimExplanation;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimGuaranteeId;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimUuid;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimVisitType;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.LocationUtil.buildLocationReference;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.PatientUtil.buildPatientReference;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.PractitionerUtil.buildPractitionerReference;
 
 public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService {
 
     @Autowired
     private AttributeService attributeService;
+
+    @Autowired
+    private FHIRClaimItemService claimItemService;
+
+    @Autowired
+    private FHIRClaimDiagnosisService claimDiagnosisService;
 
     public Claim generateClaim(InsuranceClaim omrsClaim) {
         Claim claim = new Claim();
@@ -87,26 +93,21 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         claim.setCreated(omrsClaim.getDateCreated());
 
         //Set information
-        List<Claim.SpecialConditionComponent> claimInformation = new LinkedList<>();
+        List<Claim.SpecialConditionComponent> claimInformation = new ArrayList<>();
 
         claimInformation.add(createClaimGuaranteeIdInformation(omrsClaim));
         claimInformation.add(createClaimExplanationInformation(omrsClaim));
 
         claim.setInformation(claimInformation);
-        //Set items
-        claim.setItem(new ArrayList<>());
-        //TODO: Add after item model update
 
         //Set type
         claim.setType(createClaimVisitType(omrsClaim));
 
+        //Set items
+        claim.setItem(claimItemService.generateClaimItemComponent(omrsClaim));
+
         //Set diagnosis
-        try {
-            claim.setDiagnosis(getClaimDiagnosis(omrsClaim));
-        } catch (NullPointerException nlp) {
-            //TODO: Change this
-            System.out.println("Diagnosis not found");
-        }
+        claim.setDiagnosis(claimDiagnosisService.generateClaimDiagnosisComponent(omrsClaim));
         return claim;
     }
 
@@ -135,8 +136,8 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
 
         //Set billablePeriod
         Map<String, Date> period = getClaimBillablePeriod(claim, errors);
-        omrsClaim.setDateFrom(period.get("from"));
-        omrsClaim.setDateTo(period.get("to"));
+        omrsClaim.setDateFrom(period.get(PERIOD_FROM));
+        omrsClaim.setDateTo(period.get(PERIOD_TO));
 
         //Set total
         Money total = claim.getTotal();
@@ -154,9 +155,6 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         //Set type
         omrsClaim.setVisitType(getClaimVisitType(claim, errors));
 
-        //Set items
-        //TODO: Add after item model update
-
         return omrsClaim;
     }
 
@@ -166,33 +164,20 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
 
     private Provider getClaimProviderByExternalId(Claim claim) {
         String practitionerExternalId = getIdFromReference(claim.getEnterer());
-        List<Provider> p = attributeService.getProviderByExternalIdAttribute(practitionerExternalId);
-        return getUniqueElement(p, practitionerExternalId);
+        List<Provider> providersWithExernalId = attributeService.getProviderByExternalIdAttribute(practitionerExternalId);
+        return getUnambiguousElement(providersWithExernalId);
     }
 
     private Location getClaimLocationByExternalId(Claim claim) {
         String locationExternalId = getIdFromReference(claim.getFacility());
-        List<Location> p = attributeService.getLocationByExternalIdAttribute(locationExternalId);
-        return getUniqueElement(p, locationExternalId);
+        List<Location> locationsWithExternalId = attributeService.getLocationByExternalIdAttribute(locationExternalId);
+        return getUnambiguousElement(locationsWithExternalId);
     }
 
     private Patient getClaimPatientByExternalIdentifier(Claim claim) {
         String patientExternalId = getIdFromReference(claim.getPatient());
-        List<Patient> p = attributeService.getPatientByExternalIdIdentifier(patientExternalId);
-        return getUniqueElement(p, patientExternalId);
-    }
-
-    private <T> T getUniqueElement(List<T> p, String identifier) {
-        if (p.isEmpty()) {
-            return null;
-        }
-        Set<T> set = new HashSet<>(p);
-        if (set.size() == 1) {
-            return p.get(0);
-        } else {
-            throw new IdentifierNotUniqueException("Could not find unique element of with identifier "
-            + identifier + ", elements with identifier: " + p.toString());
-        }
+        List<Patient> patientsWithExternalId = attributeService.getPatientByExternalIdIdentifier(patientExternalId);
+        return getUnambiguousElement(patientsWithExternalId);
     }
 }
 

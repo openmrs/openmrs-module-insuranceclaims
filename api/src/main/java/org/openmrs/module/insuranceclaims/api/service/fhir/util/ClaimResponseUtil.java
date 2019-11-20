@@ -14,6 +14,9 @@ import java.util.Locale;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdentifierValueByCode;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CLAIM_REFERENCE;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.COMMUNICATION_REQUEST;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.DEFAULT_ERROR_CODE;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MEDICAL_RECORD_NUMBER;
 
 public final class ClaimResponseUtil {
@@ -23,7 +26,7 @@ public final class ClaimResponseUtil {
         outcome.setText(insuranceClaim.getClaimStatus().toString());
 
         Coding outcomeCoding = new Coding();
-        String code = String.valueOf(insuranceClaim.getClaimStatus().getValue());
+        String code = String.valueOf(insuranceClaim.getClaimStatus().getNumericStatus());
         outcomeCoding.setCode(code);
 
         outcome.setCoding(Collections.singletonList(outcomeCoding));
@@ -54,21 +57,20 @@ public final class ClaimResponseUtil {
 
     public static Reference buildClaimReference(InsuranceClaim omrsClaim) {
         Reference reference = new Reference();
-        String stringReference = "Claim/" + omrsClaim.getClaimCode();
+        String stringReference = CLAIM_REFERENCE + "/" + omrsClaim.getClaimCode();
         reference.setReference(stringReference);
         return reference;
     }
 
     public static List<Reference> buildCommunicationRequestReference(InsuranceClaim omrsClaim) {
         Reference reference = new Reference();
-        String stringReference = "CommunicationRequest/" + omrsClaim.getUuid();
+        String stringReference = COMMUNICATION_REQUEST + "/" + omrsClaim.getUuid();
         reference.setReference(stringReference);
         return Collections.singletonList(reference);
     }
 
     public static List<ClaimResponse.ErrorComponent> getClaimErrors(InsuranceClaim omrsClaim) {
         ClaimResponse.ErrorComponent error = new ClaimResponse.ErrorComponent();
-
         CodeableConcept codeableConcept = new CodeableConcept();
         String rejectionReason = omrsClaim.getRejectionReason();
         Coding reasonCoding = new Coding();
@@ -78,7 +80,7 @@ public final class ClaimResponseUtil {
             reasonCoding.setCode(rejectionReason);
         }
         else {
-            reasonCoding.setCode("0");
+            reasonCoding.setCode(DEFAULT_ERROR_CODE);
         }
         codeableConcept.setCoding(Collections.singletonList(reasonCoding));
         error.setCode(codeableConcept);
@@ -87,19 +89,31 @@ public final class ClaimResponseUtil {
 
     public static String getClaimResponseErrorCode(ClaimResponse claimResponse) {
         ClaimResponse.ErrorComponent ec = claimResponse.getErrorFirstRep();
-        if (ec.getCode().getCoding().size() == 0) {
+        if (hasErrors(ec)) {
+            return getCodeableConceptFirstCode(ec.getCode());
+        } else {
             return null;
         }
-        return ec.getCode().getCoding().get(0).getCode();
     }
 
     public static ClaimResponse.PaymentComponent createPaymentComponent(InsuranceClaim omrsClaim) {
         ClaimResponse.PaymentComponent payment = new ClaimResponse.PaymentComponent();
         CodeableConcept adjustmentReason = new CodeableConcept();
+
         adjustmentReason.setText(omrsClaim.getAdjustment());
         payment.setAdjustmentReason(adjustmentReason);
         payment.setDate(omrsClaim.getDateProcessed());
 
         return payment;
     }
+
+    private static boolean hasErrors(ClaimResponse.ErrorComponent errorComponent) {
+        return errorComponent.getCode().getCoding().size() != 0;
+    }
+
+    private static String getCodeableConceptFirstCode(CodeableConcept codeableConcept) {
+        return codeableConcept.getCodingFirstRep().getCode();
+    }
+
+    private ClaimResponseUtil() {}
 }
