@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasProperty;
@@ -54,6 +55,12 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
         for (ProvidedItem item : providedItemsDb) {
             Assert.assertThat(item, hasProperty("status", is(ProcessStatus.PROCESSED)));
         }
+
+        providedItems.sort(Comparator.comparing(ProvidedItem::getPrice));
+        providedItemsDb.sort(Comparator.comparing(ProvidedItem::getPrice));
+        for (int i = 0; i < providedItems.size(); i++) {
+            Assert.assertThat(providedItems.get(i), is(providedItemsDb.get(i)));
+        }
     }
 
     @Test
@@ -83,6 +90,12 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
         for (ProvidedItem item : providedEnteredItems) {
             Assert.assertThat(item, hasProperty("status", is(ProcessStatus.ENTERED)));
             Assert.assertThat(item, hasProperty("bill", is(nullValue())));
+        }
+
+        providedItems.sort(Comparator.comparing(ProvidedItem::getPrice));
+        providedEnteredItems.sort(Comparator.comparing(ProvidedItem::getPrice));
+        for (int i = 0; i < providedItems.size(); i++) {
+            Assert.assertThat(providedItems.get(i), is(providedEnteredItems.get(i)));
         }
     }
 
