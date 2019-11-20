@@ -68,8 +68,7 @@
         </property>
     </bean>
 
-
-    <bean id="insuranceclaims.fhirCItem"
+    <bean id="insuranceclaims.fhirItem"
           class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
         <property name="transactionManager">
             <ref bean="transactionManager"/>
@@ -77,25 +76,6 @@
         <property name="target">
             <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimItemServiceImpl">
                 <property name="insuranceClaimItemDao" ref="insuranceclaims.InsuranceClaimItemDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
-
-    <bean id="insuranceclaims.fhirRestClient"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.client.impl.ClaimHttpRequestImpl">
-                <property name="insuranceClaimService" ref="insuranceclaims.fhirInsurance"/>
-                <property name="diagnosisService" ref="insuranceclaims.fhirDiagnosis"/>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -122,15 +102,6 @@
             <list>
                 <value>org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService</value>
                 <ref bean="insuranceclaims.fhirDiagnosis"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean parent="serviceContext">
-        <property name="moduleService">
-            <list>
-                <value>org.openmrs.module.insuranceclaims.api.client.ClaimHttpRequest</value>
-                <ref bean="insuranceclaims.fhirRestClient"/>
             </list>
         </property>
     </bean>
