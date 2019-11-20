@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FHIRClaimResponseServiceImplTest extends BaseModuleContextSensitiveTest {
+public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     private InsuranceClaimDao insuranceClaimDao;

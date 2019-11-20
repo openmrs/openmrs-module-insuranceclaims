@@ -444,4 +444,68 @@
             <column name="uuid">ee8e82c4-1563-43aa-8c73-c3e4e88cb79b</column>
         </insert>
     </changeSet>
+
+    <changeSet id="insuranceclaims-18.11.2019:14:39" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="concept_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_attribute_type WHERE uuid ="925e4987-3104-4d74-989b-3ec96197b532";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Attribute defining whether the concept is item or service.
+        </comment>
+        <insert tableName="concept_attribute_type">
+            <column name="name">isService</column>
+            <column name="description">Attribute defining whether the concept is item or service</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.BooleanDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-17</column>
+            <column name="retired">0</column>
+            <column name="uuid">925e4987-3104-4d74-989b-3ec96197b532</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-18.11.2019:14:41" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="concept_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_attribute_type WHERE uuid ="ddc082c8-db30-4796-890e-f0d487fb9085";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Item/Service price
+        </comment>
+        <insert tableName="concept_attribute_type">
+            <column name="name">Price</column>
+            <column name="description">Item/Service price</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.FloatDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-17</column>
+            <column name="retired">0</column>
+            <column name="uuid">ddc082c8-db30-4796-890e-f0d487fb9085</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-18.11.2019:15:12" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="concept_reference_source" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_source_id WHERE uuid ="e730f72a-2789-4d82-8e71-d7707babc0e6";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Item/Service price
+        </comment>
+        <insert tableName="concept_reference_source">
+            <column name="name">External Code</column>
+            <column name="description">Code used by external server</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-17</column>
+            <column name="retired">0</column>
+            <column name="uuid">e730f72a-2789-4d82-8e71-d7707babc0e6</column>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

@@ -14,6 +14,10 @@ public final class TestConstants {
 
 	public static final String EXTERNAL_ID_DATASET_PATH = "test_externalId_attribute_types.xml";
 
+	public static final String INSURANCE_CLAIM_TEST_ITEM_CONCEPT_DATASET = "test_item_concept.xml";
+
+	public static final String INSURANCE_CLAIM_TEST_DIAGNOSIS_DATASET = "test_malaria_concept.xml";
+
 	private TestConstants() {
 	}
 }

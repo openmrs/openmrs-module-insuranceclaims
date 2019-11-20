@@ -16,9 +16,12 @@ import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimDao;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimDiagnosisDao;
+import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimItemDao;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
+import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimDiagnosisMother;
+import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimItemMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
@@ -38,6 +41,10 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
 
     private InsuranceClaim testInsuranceClaim;
     private InsuranceClaimDiagnosis testInsuranceDiagnosis;
+    private InsuranceClaimItem testInsuranceItem;
+
+    @Autowired
+    private InsuranceClaimItemDao itemDao;
 
     @Autowired
     private InsuranceClaimDiagnosisDao diagnosisDao;
@@ -52,9 +59,11 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
 
         this.testInsuranceClaim = createTestClaim();
         this.testInsuranceDiagnosis = createTestClaimDiagnosis();
+        this.testInsuranceItem = createTestClaimItem();
 
         claimDao.saveOrUpdate(this.testInsuranceClaim);
         diagnosisDao.saveOrUpdate(this.testInsuranceDiagnosis);
+        itemDao.saveOrUpdate(this.testInsuranceItem);
     }
 
     @After
@@ -130,5 +139,11 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
 
         Concept concept = Context.getConceptService().getConceptByUuid("160148AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         return InsuranceClaimDiagnosisMother.createTestInstance(concept, this.testInsuranceClaim);
+    }
+
+
+    private InsuranceClaimItem createTestClaimItem() {
+        Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
+        return InsuranceClaimItemMother.createTestInstance(concept, this.testInsuranceClaim);
     }
 }

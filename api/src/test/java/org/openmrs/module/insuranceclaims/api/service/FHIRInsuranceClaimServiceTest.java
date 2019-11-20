@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PATIENT_EXTERNAL_ID_IDENTIFIER_UUID;
 import static org.openmrs.module.insuranceclaims.api.util.TestConstants.EXTERNAL_ID_DATASET_PATH;
 
-public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTest {
+public class FHIRInsuranceClaimServiceImplTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     private InsuranceClaimDao insuranceClaimDao;
