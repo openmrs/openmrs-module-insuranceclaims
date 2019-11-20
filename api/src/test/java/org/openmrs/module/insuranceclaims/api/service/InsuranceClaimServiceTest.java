@@ -48,7 +48,7 @@ public class InsuranceClaimServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(savedClaim, hasProperty("rejectionReason", is(claim.getRejectionReason())));
 		Assert.assertThat(savedClaim, hasProperty("guaranteeId", is(claim.getGuaranteeId())));
 		Assert.assertThat(savedClaim, hasProperty("visitType", is(claim.getVisitType())));
-		Assert.assertThat(savedClaim, hasProperty("claimStatus", is(claim.getClaimStatus())));
+		Assert.assertThat(savedClaim, hasProperty("status", is(claim.getStatus())));
 	}
 
 	@Test

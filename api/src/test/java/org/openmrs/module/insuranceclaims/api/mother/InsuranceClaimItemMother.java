@@ -41,8 +41,8 @@ public final class InsuranceClaimItemMother {
 		claimItem.setJustification(UUID.randomUUID().toString());
 		claimItem.setRejectionReason(UUID.randomUUID().toString());
 		claimItem.setItem(item);
-		claimItem.setInsuranceClaim(insuranceClaim);
-		claimItem.setClaimItemStatus(InsuranceClaimItemStatus.PASSED);
+		claimItem.setClaim(insuranceClaim);
+		claimItem.setStatus(InsuranceClaimItemStatus.PASSED);
 		return claimItem;
 	}
 

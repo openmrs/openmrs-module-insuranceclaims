@@ -44,8 +44,8 @@ public class InsuranceClaimItemDaoImplTest extends BaseModuleContextSensitiveTes
 		Assert.assertThat(savedClaimItem, hasProperty("justification", is(claimItem.getJustification())));
 		Assert.assertThat(savedClaimItem, hasProperty("rejectionReason", is(claimItem.getRejectionReason())));
 		Assert.assertThat(savedClaimItem, hasProperty("item", is(claimItem.getItem())));
-		Assert.assertThat(savedClaimItem, hasProperty("insuranceClaim", is(claimItem.getInsuranceClaim())));
-		Assert.assertThat(savedClaimItem, hasProperty("claimItemStatus", is(claimItem.getClaimItemStatus())));
+		Assert.assertThat(savedClaimItem, hasProperty("claim", is(claimItem.getClaim())));
+		Assert.assertThat(savedClaimItem, hasProperty("status", is(claimItem.getStatus())));
 	}
 
 	private InsuranceClaimItem createTestInstance() {

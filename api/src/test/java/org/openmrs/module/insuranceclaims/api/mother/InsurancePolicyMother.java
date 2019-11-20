@@ -21,7 +21,7 @@ public final class InsurancePolicyMother {
 		policy.setStartDate(new Date());
 		policy.setExpiryDate(new Date());
 		policy.setPatient(PatientMother.createTestInstance(location, identifierType));
-		policy.setPolicyStatus(InsurancePolicyStatus.ACTIVE);
+		policy.setStatus(InsurancePolicyStatus.ACTIVE);
 		return policy;
 	}
 
