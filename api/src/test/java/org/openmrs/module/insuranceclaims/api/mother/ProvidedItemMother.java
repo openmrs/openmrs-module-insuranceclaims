@@ -36,4 +36,25 @@ public class ProvidedItemMother {
         item.setBill(bill);
         return item;
     }
+
+    /**
+     *
+     * @param concept - test object needed to set item and create bill
+     * @param patient - test object needed to create a patient
+     * @param price - test object needed to create a price
+     * @param processStatus - test object needed to create a processStatus
+     * @return
+     */
+    public static ProvidedItem createTestInstanceForProvidedItem(Concept concept, Patient patient, BigDecimal price,
+                                                                 ProcessStatus processStatus) {
+
+        ProvidedItem item = new ProvidedItem();
+        item.setPrice(price);
+        item.setDateOfServed(new Date());
+        item.setItem(concept);
+        item.setPatient(patient);
+        item.setStatus(processStatus);
+        item.setBill(null);
+        return item;
+    }
 }

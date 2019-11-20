@@ -32,6 +32,26 @@
         </property>
     </bean>
 
+    <!-- Wraps ProvidedItemService methods in DB transactions and OpenMRS interceptors,
+    which set audit info like dateCreated, changedBy, etc.-->
+    <bean id="insuranceclaims.ProvidedItemService"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.ProvidedItemServiceImpl">
+                <property name="dao" ref="insuranceclaims.ProvidedItemDao"/>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
     <!-- Adds module services to OpenMRS context so it can be accessed
     calling e.g. Context.getService(InsuranceClaimService.class) -->
     <bean parent="serviceContext">
@@ -39,6 +59,9 @@
             <list>
                 <value>org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService</value>
                 <ref bean="insuranceclaims.InsuranceClaimService"/>
+
+                <value>org.openmrs.module.insuranceclaims.api.service.ProvidedItemService</value>
+                <ref bean="insuranceclaims.ProvidedItemService"/>
             </list>
         </property>
     </bean>
