@@ -38,7 +38,7 @@ public class InsuranceClaimDiagnosisDaoImplTest extends BaseModuleContextSensiti
 
 		Assert.assertThat(savedDiagnosis, hasProperty("uuid", is(diagnosis.getUuid())));
 		Assert.assertThat(savedDiagnosis, hasProperty("concept", is(diagnosis.getConcept())));
-		Assert.assertThat(savedDiagnosis, hasProperty("insuranceClaim", is(diagnosis.getInsuranceClaim())));
+		Assert.assertThat(savedDiagnosis, hasProperty("claim", is(diagnosis.getClaim())));
 
 	}
 

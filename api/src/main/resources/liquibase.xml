@@ -58,14 +58,14 @@
         <addForeignKeyConstraint constraintName="iclm_bill_diagnosis_fk"
                                  baseTableName="iclm_bill" baseColumnNames="diagnosis"
                                  referencedTableName="concept" referencedColumnNames="concept_id"/>
-        <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_creator_fk"
-                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="creator"
+        <addForeignKeyConstraint constraintName="iclm_bill_creator_fk"
+                                 baseTableName="iclm_bill" baseColumnNames="creator"
                                  referencedTableName="users" referencedColumnNames="user_id"/>
-        <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_changed_by_fk"
-                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="changed_by"
+        <addForeignKeyConstraint constraintName="iclm_bill_changed_by_fk"
+                                 baseTableName="iclm_bill" baseColumnNames="changed_by"
                                  referencedTableName="users" referencedColumnNames="user_id"/>
-        <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_voided_by_fk"
-                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="voided_by"
+        <addForeignKeyConstraint constraintName="iclm_bill_voided_by_fk"
+                                 baseTableName="iclm_bill" baseColumnNames="voided_by"
                                  referencedTableName="users" referencedColumnNames="user_id"/>
     </changeSet>
 
@@ -122,14 +122,14 @@
         <addForeignKeyConstraint constraintName="iclm_provided_item_bill_fk"
                                  baseTableName="iclm_provided_item" baseColumnNames="bill"
                                  referencedTableName="iclm_bill" referencedColumnNames="iclm_bill_id"/>
-        <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_creator_fk"
-                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="creator"
+        <addForeignKeyConstraint constraintName="iclm_provided_item_creator_fk"
+                                 baseTableName="iclm_provided_item" baseColumnNames="creator"
                                  referencedTableName="users" referencedColumnNames="user_id"/>
-        <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_changed_by_fk"
-                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="changed_by"
+        <addForeignKeyConstraint constraintName="iclm_provided_item_changed_by_fk"
+                                 baseTableName="iclm_provided_item" baseColumnNames="changed_by"
                                  referencedTableName="users" referencedColumnNames="user_id"/>
-        <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_voided_by_fk"
-                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="voided_by"
+        <addForeignKeyConstraint constraintName="iclm_provided_item_voided_by_fk"
+                                 baseTableName="iclm_provided_item" baseColumnNames="voided_by"
                                  referencedTableName="users" referencedColumnNames="user_id"/>
     </changeSet>
 
@@ -165,7 +165,7 @@
             <column name="rejection_reason" type="varchar(255)"/>
             <column name="guarantee_id" type="varchar(255)"/>
             <column name="visit_type" type="int"/>
-            <column name="claim_status" type="varchar(50)">
+            <column name="status" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="bill" type="int">
@@ -230,7 +230,7 @@
             <column name="concept" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="insurance_claim" type="int">
+            <column name="claim" type="int">
                 <constraints nullable="false"/>
             </column>
 
@@ -254,7 +254,7 @@
                                  baseTableName="iclm_claim_diagnosis" baseColumnNames="concept"
                                  referencedTableName="concept" referencedColumnNames="concept_id"/>
         <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_claim_fk"
-                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="insurance_claim"
+                                 baseTableName="iclm_claim_diagnosis" baseColumnNames="claim"
                                  referencedTableName="iclm_claim" referencedColumnNames="iclm_claim_id"/>
         <addForeignKeyConstraint constraintName="iclm_claim_diagnosis_creator_fk"
                                  baseTableName="iclm_claim_diagnosis" baseColumnNames="creator"
@@ -289,10 +289,10 @@
             <column name="item" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="insurance_claim" type="int">
+            <column name="claim" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="claim_item_status" type="varchar(50)"/>
+            <column name="status" type="varchar(50)"/>
 
             <column name="uuid" type="char(38)">
                 <constraints nullable="false" unique="true"/>
@@ -314,7 +314,7 @@
                                  baseTableName="iclm_claim_item" baseColumnNames="item"
                                  referencedTableName="iclm_provided_item" referencedColumnNames="iclm_provided_item_id"/>
         <addForeignKeyConstraint constraintName="iclm_claim_item_claim_fk"
-                                 baseTableName="iclm_claim_item" baseColumnNames="insurance_claim"
+                                 baseTableName="iclm_claim_item" baseColumnNames="claim"
                                  referencedTableName="iclm_claim" referencedColumnNames="iclm_claim_id"/>
         <addForeignKeyConstraint constraintName="iclm_claim_item_creator_fk"
                                  baseTableName="iclm_claim_item" baseColumnNames="creator"
@@ -345,7 +345,7 @@
             <column name="patient" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="policy_status" type="varchar(50)">
+            <column name="status" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
 

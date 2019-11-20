@@ -92,9 +92,9 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 	private VisitType visitType;
 
 	@Basic
-	@Column(name = "claim_status", nullable = false)
+	@Column(name = "status", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private InsuranceClaimStatus claimStatus;
+	private InsuranceClaimStatus status;
 
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
@@ -223,12 +223,12 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 		this.visitType = visitType;
 	}
 
-	public InsuranceClaimStatus getClaimStatus() {
-		return claimStatus;
+	public InsuranceClaimStatus getStatus() {
+		return status;
 	}
 
-	public void setClaimStatus(InsuranceClaimStatus claimStatus) {
-		this.claimStatus = claimStatus;
+	public void setStatus(InsuranceClaimStatus status) {
+		this.status = status;
 	}
 
 	public Bill getBill() {
