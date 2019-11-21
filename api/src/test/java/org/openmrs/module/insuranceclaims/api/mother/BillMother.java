@@ -27,4 +27,19 @@ public final class BillMother {
         bill.setDiagnosis(concept);
         return bill;
     }
+
+    /**
+     * Creates the Bill's test instance
+     * @param totalAmount - value of total amount price
+     * @return - the Bill instance
+     */
+    public static Bill createTestInstanceWithAmount(BigDecimal totalAmount) {
+        Bill bill = new Bill();
+        bill.setStartDate(new Date());
+        bill.setEndDate(new Date());
+        bill.setTotalAmount(totalAmount);
+        bill.setPaymentStatus(PaymentStatus.ENTERED);
+        bill.setPaymentType(null);
+        return bill;
+    }
 }
