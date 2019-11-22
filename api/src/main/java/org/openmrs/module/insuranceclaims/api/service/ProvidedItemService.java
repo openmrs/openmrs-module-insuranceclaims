@@ -9,4 +9,5 @@ public interface ProvidedItemService extends OpenmrsDataService<ProvidedItem> {
 
     List<ProvidedItem> getProvidedItems(Integer patientId, ProcessStatus processStatus);
     List<ProvidedItem> getProvidedEnteredItems(Integer patientId);
+    void updateStatusProvidedItems(List<ProvidedItem> providedItems);
 }

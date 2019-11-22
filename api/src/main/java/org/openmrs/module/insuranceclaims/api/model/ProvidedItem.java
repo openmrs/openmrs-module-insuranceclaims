@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Model class that represent a provided item.
@@ -116,5 +117,28 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
 
     public void setBill(Bill bill) {
         this.bill = bill;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProvidedItem)) {
+            return false;
+        }
+        final ProvidedItem other = (ProvidedItem) o;
+
+        return Objects.equals(this.price, other.price)
+                && Objects.equals(this.status, other.status)
+                && Objects.equals(this.item, other.item)
+                && Objects.equals(this.bill, other.bill)
+                && Objects.equals(this.patient.getId(), other.patient.getId())
+                && Objects.equals(this.dateOfServed, other.dateOfServed);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUuid());
     }
 }

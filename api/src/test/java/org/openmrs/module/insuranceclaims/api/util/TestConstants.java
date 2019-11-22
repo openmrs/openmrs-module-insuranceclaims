@@ -12,7 +12,7 @@ public final class TestConstants {
 
 	public static final int TEST_CONCEPT_ID = 3;
 
-	public static final String[] PRICES = {"35", "150.99", "0", "5555", "99999999.99", "0.00", "0.01", "1"};
+	public static final String[] PRICES = {"35", "150.99", "0", "5555", "99999999.99", "0.09", "0.01", "1"};
 
 	private TestConstants() {
 	}

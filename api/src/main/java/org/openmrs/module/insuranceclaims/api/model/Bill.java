@@ -1,5 +1,6 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.openmrs.Concept;
 
 import javax.persistence.Basic;
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Model class that represent a bill.
@@ -43,9 +45,10 @@ public class Bill extends AbstractBaseOpenmrsData {
     private BigDecimal totalAmount;
 
     @Basic
+    @ColumnDefault(value = "'ENTERED'")
     @Column(name = "payment_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus paymentStatus = PaymentStatus.ENTERED;
 
     @Basic
     @Column(name = "payment_type")
@@ -112,5 +115,28 @@ public class Bill extends AbstractBaseOpenmrsData {
 
     public void setDiagnosis(Concept diagnosis) {
         this.diagnosis = diagnosis;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Bill)) {
+            return false;
+        }
+        final Bill other = (Bill) o;
+
+        return Objects.equals(this.startDate, other.startDate)
+                && Objects.equals(this.endDate, other.endDate)
+                && Objects.equals(this.paymentStatus, other.paymentStatus)
+                && Objects.equals(this.paymentType, other.paymentType)
+                && Objects.equals(this.totalAmount, other.totalAmount)
+                && Objects.equals(this.diagnosis, other.diagnosis);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUuid());
     }
 }

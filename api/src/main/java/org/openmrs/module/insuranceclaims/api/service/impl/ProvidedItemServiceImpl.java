@@ -19,13 +19,18 @@ public class ProvidedItemServiceImpl extends BaseOpenmrsDataService<ProvidedItem
 
     @Override
     public List<ProvidedItem> getProvidedItems(Integer patientId, ProcessStatus processStatus) {
-
         return providedItemDAO.getProvidedItems(patientId, processStatus);
     }
 
     @Override
     public List<ProvidedItem> getProvidedEnteredItems(Integer patientId) {
-
         return providedItemDAO.getProvidedItems(patientId, ProcessStatus.ENTERED);
+    }
+
+    public void updateStatusProvidedItems(List<ProvidedItem> providedItems) {
+        for (ProvidedItem item : providedItems) {
+            item.setStatus(ProcessStatus.PROCESSED);
+            this.saveOrUpdate(item);
+        }
     }
 }

@@ -31,15 +31,15 @@ public final class BillMother {
     /**
      * Creates the Bill's test instance
      * @param totalAmount - value of total amount price
+     * @param endDate - value of end date
      * @return - the Bill instance
      */
-    public static Bill createTestInstanceWithAmount(BigDecimal totalAmount) {
+    public static Bill createTestInstanceWithAmount(BigDecimal totalAmount, Date startDate, Date endDate) {
         Bill bill = new Bill();
-        bill.setStartDate(new Date());
-        bill.setEndDate(new Date());
+        bill.setStartDate(startDate);
+        bill.setEndDate(endDate);
         bill.setTotalAmount(totalAmount);
         bill.setPaymentStatus(PaymentStatus.ENTERED);
-        bill.setPaymentType(null);
         return bill;
     }
 }

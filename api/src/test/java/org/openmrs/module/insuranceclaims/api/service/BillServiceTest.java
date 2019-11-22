@@ -1,14 +1,21 @@
 package org.openmrs.module.insuranceclaims.api.service;
 
+import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Patient;
-import org.openmrs.api.context.Context;
+import org.openmrs.Concept;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.module.insuranceclaims.api.model.Bill;
 import org.openmrs.module.insuranceclaims.api.model.ProcessStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 import org.openmrs.module.insuranceclaims.api.mother.BillMother;
+import org.openmrs.module.insuranceclaims.api.mother.PatientMother;
 import org.openmrs.module.insuranceclaims.api.mother.ProvidedItemMother;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -18,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 
 public class BillServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -28,11 +35,28 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
     @Autowired
     private BillService billService;
 
+    @Autowired
+    private PatientService patientService;
+
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
+    private ConceptService conceptService;
+
+    private Patient patient;
+
+    @Before
+    public void setUp() {
+        Location location = locationService.getLocation(TestConstants.TEST_LOCATION_ID);
+        PatientIdentifierType identifierType = patientService
+                .getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
+
+        patient = PatientMother.createTestInstance(location, identifierType);
+    }
+
     @Test
     public void getProvidedItems_shouldCorrectlyGetItemsForPatient() {
-
-        Patient patient = Context.getPatientService().getAllPatients().get(0);
-
         List<ProvidedItem> providedItems = new ArrayList<>();
 
         for (String item : TestConstants.PRICES) {
@@ -43,27 +67,24 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
             providedItemService.saveOrUpdate(item);
         }
 
-        List<ProvidedItem> providedEnteredItems = providedItemService.getProvidedEnteredItems(patient.getPatientId());
+        List<ProvidedItem> actualProvidedItems = providedItemService.getProvidedEnteredItems(patient.getPatientId());
 
-        Bill billDb = billService.generateBill(providedEnteredItems);
+        Bill actualBill = billService.generateBill(actualProvidedItems);
 
-        List<ProvidedItem> providedEnteredItemsDb = providedItemService.getProvidedItems(patient.getPatientId(),
+        List<ProvidedItem> enteredProvidedItems = providedItemService.getProvidedItems(patient.getPatientId(),
                 ProcessStatus.ENTERED);
 
-        BigDecimal sumProvideItems = new BigDecimal("100005741.99");
-        Bill bill = createTestInstanceWithAmount(sumProvideItems);
+        BigDecimal sumProvideItems = new BigDecimal("100005742.08");
 
-        Assert.assertThat(billDb.getPaymentStatus(), is(bill.getPaymentStatus()));
-        Assert.assertThat(billDb.getTotalAmount(), is(bill.getTotalAmount()));
-        Assert.assertThat(providedEnteredItemsDb.size(), is(0));
-    }
+        Bill expectedBill = BillMother.createTestInstanceWithAmount(sumProvideItems, actualBill.getStartDate(),
+                actualBill.getEndDate());
 
-    private Bill createTestInstanceWithAmount(BigDecimal totalAmount) {
-        return BillMother.createTestInstanceWithAmount(totalAmount);
+        Assert.assertThat(actualBill, is(expectedBill));
+        Assert.assertThat(enteredProvidedItems, IsEmptyCollection.empty());
     }
 
     private ProvidedItem createTestInstanceForProvidedItem(ProcessStatus processStatus, String price, Patient patient) {
-        Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
+        Concept concept = conceptService.getConcept(TestConstants.TEST_CONCEPT_ID);
 
         return ProvidedItemMother.createTestInstanceForProvidedItem(concept, patient, new BigDecimal(price),
                 processStatus);
