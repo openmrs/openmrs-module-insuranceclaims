@@ -33,10 +33,9 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
 
         List<ProvidedItem> providedItems = new ArrayList<>();
 
-        providedItems.add(createTestInstanceForProvidedItem(ProcessStatus.PROCESSED, TestConstants.PRICES[0], patient));
-        providedItems.add(createTestInstanceForProvidedItem(ProcessStatus.PROCESSED, TestConstants.PRICES[1], patient));
-        providedItems.add(createTestInstanceForProvidedItem(ProcessStatus.PROCESSED, TestConstants.PRICES[2], patient));
-        providedItems.add(createTestInstanceForProvidedItem(ProcessStatus.PROCESSED, TestConstants.PRICES[2], patient));
+        for (String item : TestConstants.PRICES) {
+            providedItems.add(createTestInstanceForProvidedItem(ProcessStatus.PROCESSED, item, patient));
+        }
 
         for (ProvidedItem item : providedItems) {
             providedItemService.saveOrUpdate(item);
