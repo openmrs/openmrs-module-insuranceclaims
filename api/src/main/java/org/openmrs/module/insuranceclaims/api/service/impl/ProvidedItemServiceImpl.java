@@ -27,6 +27,7 @@ public class ProvidedItemServiceImpl extends BaseOpenmrsDataService<ProvidedItem
         return providedItemDAO.getProvidedItems(patientId, ProcessStatus.ENTERED);
     }
 
+    @Override
     public void updateStatusProvidedItems(List<ProvidedItem> providedItems) {
         for (ProvidedItem item : providedItems) {
             item.setStatus(ProcessStatus.PROCESSED);

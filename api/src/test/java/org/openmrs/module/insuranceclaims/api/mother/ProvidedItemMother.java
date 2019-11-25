@@ -24,7 +24,6 @@ public class ProvidedItemMother {
      */
     public static ProvidedItem createTestInstance(Concept concept, Location location,
                                                   PatientIdentifierType patientIdentifierType) {
-
         Patient patient = PatientMother.createTestInstance(location, patientIdentifierType);
         Bill bill = BillMother.createTestInstance(concept);
         ProvidedItem item = new ProvidedItem();
@@ -47,7 +46,6 @@ public class ProvidedItemMother {
      */
     public static ProvidedItem createTestInstanceForProvidedItem(Concept concept, Patient patient, BigDecimal price,
                                                                  ProcessStatus processStatus) {
-
         ProvidedItem item = new ProvidedItem();
         item.setPrice(price);
         item.setDateOfServed(new Date());

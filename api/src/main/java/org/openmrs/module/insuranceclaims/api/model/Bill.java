@@ -1,5 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.ColumnDefault;
 import org.openmrs.Concept;
 
@@ -15,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * Model class that represent a bill.
@@ -122,21 +123,18 @@ public class Bill extends AbstractBaseOpenmrsData {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Bill)) {
+
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Bill other = (Bill) o;
 
-        return Objects.equals(this.startDate, other.startDate)
-                && Objects.equals(this.endDate, other.endDate)
-                && Objects.equals(this.paymentStatus, other.paymentStatus)
-                && Objects.equals(this.paymentType, other.paymentType)
-                && Objects.equals(this.totalAmount, other.totalAmount)
-                && Objects.equals(this.diagnosis, other.diagnosis);
+        return EqualsBuilder.reflectionEquals(this, o, "id", "uuid", "dateCreated", "startDate",
+                "endDate", "creator", "totalAmount");
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUuid());
+        return HashCodeBuilder.reflectionHashCode(this, "id", "uuid", "dateCreated", "startDate",
+                "endDate", "creator", "totalAmount");
     }
 }

@@ -1,6 +1,5 @@
 package org.openmrs.module.insuranceclaims.api.service;
 
-import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -56,16 +56,10 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void getProvidedItems_shouldCorrectlyGetItemsForPatient() {
-        List<ProvidedItem> providedItems = new ArrayList<>();
+    public void generateBill_shouldCorrectlyGenerateBill() {
+        setAndSaveTestProvidedItems(ProcessStatus.ENTERED, TestConstants.TEST_ENTERED_PRICES);
+        setAndSaveTestProvidedItems(ProcessStatus.PROCESSED, TestConstants.TEST_PROCESSED_PRICES);
 
-        for (String item : TestConstants.PRICES) {
-            providedItems.add(createTestInstanceForProvidedItem(ProcessStatus.ENTERED, item, patient));
-        }
-
-        for (ProvidedItem item : providedItems) {
-            providedItemService.saveOrUpdate(item);
-        }
 
         List<ProvidedItem> actualProvidedItems = providedItemService.getProvidedEnteredItems(patient.getPatientId());
 
@@ -73,14 +67,21 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
 
         List<ProvidedItem> enteredProvidedItems = providedItemService.getProvidedItems(patient.getPatientId(),
                 ProcessStatus.ENTERED);
+        List<ProvidedItem> processedProvidedItems = providedItemService.getProvidedItems(patient.getPatientId(),
+                ProcessStatus.PROCESSED);
 
-        BigDecimal sumProvideItems = new BigDecimal("100005742.08");
+        double sumProvidedItemsDouble = Arrays.asList(TestConstants.TEST_ENTERED_PRICES).stream()
+                .mapToDouble(s -> Double.parseDouble(s)).sum();
+        BigDecimal sumProvidedItems = new BigDecimal(Double.toString(sumProvidedItemsDouble));
 
-        Bill expectedBill = BillMother.createTestInstanceWithAmount(sumProvideItems, actualBill.getStartDate(),
-                actualBill.getEndDate());
+        Bill expectedBill = BillMother.createTestInstanceWithAmount(sumProvidedItems);
+
 
         Assert.assertThat(actualBill, is(expectedBill));
-        Assert.assertThat(enteredProvidedItems, IsEmptyCollection.empty());
+        Assert.assertTrue(actualBill.getTotalAmount().compareTo(expectedBill.getTotalAmount()) == 0);
+        Assert.assertTrue(enteredProvidedItems.isEmpty());
+        Assert.assertTrue(processedProvidedItems.size() == (TestConstants.TEST_PROCESSED_PRICES.length
+                + TestConstants.TEST_ENTERED_PRICES.length));
     }
 
     private ProvidedItem createTestInstanceForProvidedItem(ProcessStatus processStatus, String price, Patient patient) {
@@ -88,5 +89,23 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
 
         return ProvidedItemMother.createTestInstanceForProvidedItem(concept, patient, new BigDecimal(price),
                 processStatus);
+    }
+
+    private List<ProvidedItem> setAndSaveTestProvidedItems(ProcessStatus processStatus, String[] prices) {
+        List<ProvidedItem> testProvidedItems = new ArrayList<>();
+
+        for (String item : prices) {
+            testProvidedItems.add(createTestInstanceForProvidedItem(processStatus, item, patient));
+        }
+
+        saveProvidedItems(testProvidedItems);
+
+        return testProvidedItems;
+    }
+
+    private void saveProvidedItems(List<ProvidedItem> providedItems) {
+        for (ProvidedItem item : providedItems) {
+            providedItemService.saveOrUpdate(item);
+        }
     }
 }

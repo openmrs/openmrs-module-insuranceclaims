@@ -6,7 +6,7 @@ import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 import org.openmrs.module.insuranceclaims.api.service.BillService;
 import org.openmrs.module.insuranceclaims.api.service.ProvidedItemService;
 import org.openmrs.module.insuranceclaims.util.ConstantValues;
-import org.openmrs.module.insuranceclaims.util.DateComponent;
+import org.openmrs.module.insuranceclaims.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +29,10 @@ public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements Bil
     public Bill generateBill(List<ProvidedItem> providedItems) {
         Bill bill = new Bill();
 
-        Date date = DateComponent.getDateWithDefaultTimeZone(new Date());
+        Date date = DateUtil.now();
 
         bill.setStartDate(date);
-        bill.setEndDate(DateComponent.plusDays(date, ConstantValues.DURATION_BILL_DAYS));
+        bill.setEndDate(DateUtil.plusDays(date, ConstantValues.DEFAULT_DURATION_BILL_DAYS));
 
         BigDecimal sumProvidedItems = providedItems.stream().map(ProvidedItem::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

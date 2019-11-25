@@ -20,10 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 
 public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
@@ -53,40 +51,29 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void getProvidedItems_shouldCorrectlyGetItemsForPatient() {
-        setAndSaveTestProvidedItems(ProcessStatus.PROCESSED);
+    public void getProvidedProcessedItems_shouldCorrectlyGetItemsForPatient() {
+        expectedProvidedItems = getAndSaveTestProvidedItems(ProcessStatus.PROCESSED,
+                TestConstants.TEST_PROCESSED_PRICES);
+
 
         List<ProvidedItem> actualProvidedItems = providedItemService.getProvidedItems(patient.getPatientId(),
                 ProcessStatus.PROCESSED);
 
-        Assert.assertThat(actualProvidedItems.size(), is(expectedProvidedItems.size()));
-        for (ProvidedItem item : actualProvidedItems) {
-            Assert.assertThat(item, hasProperty("status", is(ProcessStatus.PROCESSED)));
-        }
 
-        expectedProvidedItems.sort(Comparator.comparing(ProvidedItem::getPrice));
-        actualProvidedItems.sort(Comparator.comparing(ProvidedItem::getPrice));
-        for (int i = 0; i < expectedProvidedItems.size(); i++) {
-            Assert.assertThat(actualProvidedItems.get(i), is(expectedProvidedItems.get(i)));
-        }
+        Assert.assertThat(actualProvidedItems.size(), is(expectedProvidedItems.size()));
+        Assert.assertArrayEquals(expectedProvidedItems.toArray(), actualProvidedItems.toArray());
     }
 
     @Test
     public void getProvidedEnteredItems_shouldCorrectlyGetItemsForPatient() {
-        setAndSaveTestProvidedItems(ProcessStatus.ENTERED);
+        expectedProvidedItems = getAndSaveTestProvidedItems(ProcessStatus.ENTERED, TestConstants.TEST_ENTERED_PRICES);
+
 
         List<ProvidedItem> actualProvidedItems = providedItemService.getProvidedEnteredItems(patient.getPatientId());
 
-        Assert.assertThat(actualProvidedItems.size(), is(expectedProvidedItems.size()));
-        for (ProvidedItem item : actualProvidedItems) {
-            Assert.assertThat(item, hasProperty("status", is(ProcessStatus.ENTERED)));
-        }
 
-        expectedProvidedItems.sort(Comparator.comparing(ProvidedItem::getPrice));
-        actualProvidedItems.sort(Comparator.comparing(ProvidedItem::getPrice));
-        for (int i = 0; i < expectedProvidedItems.size(); i++) {
-            Assert.assertThat(expectedProvidedItems.get(i), is(actualProvidedItems.get(i)));
-        }
+        Assert.assertThat(actualProvidedItems.size(), is(expectedProvidedItems.size()));
+        Assert.assertArrayEquals(expectedProvidedItems.toArray(), actualProvidedItems.toArray());
     }
 
     private ProvidedItem createTestInstanceForProvidedItem(ProcessStatus processStatus, String price, Patient patient) {
@@ -96,20 +83,20 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
                 processStatus);
     }
 
-    private void setAndSaveTestProvidedItems(ProcessStatus processStatus) {
+    private List<ProvidedItem> getAndSaveTestProvidedItems(ProcessStatus processStatus, String[] prices) {
         List<ProvidedItem> testProvidedItems = new ArrayList<>();
 
-        for (String item : TestConstants.PRICES) {
+        for (String item : prices) {
             testProvidedItems.add(createTestInstanceForProvidedItem(processStatus, item, patient));
         }
 
-        expectedProvidedItems = testProvidedItems;
+        saveProvidedItems(testProvidedItems);
 
-        saveProvidedItems();
+        return testProvidedItems;
     }
 
-    private void saveProvidedItems() {
-        for (ProvidedItem item : expectedProvidedItems) {
+    private void saveProvidedItems(List<ProvidedItem> providedItems) {
+        for (ProvidedItem item : providedItems) {
             providedItemService.saveOrUpdate(item);
         }
     }

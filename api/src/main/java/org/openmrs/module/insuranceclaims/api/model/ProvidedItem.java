@@ -1,5 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.openmrs.Concept;
@@ -17,7 +19,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * Model class that represent a provided item.
@@ -124,21 +125,16 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ProvidedItem)) {
+
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final ProvidedItem other = (ProvidedItem) o;
 
-        return Objects.equals(this.price, other.price)
-                && Objects.equals(this.status, other.status)
-                && Objects.equals(this.item, other.item)
-                && Objects.equals(this.bill, other.bill)
-                && Objects.equals(this.patient.getId(), other.patient.getId())
-                && Objects.equals(this.dateOfServed, other.dateOfServed);
+        return EqualsBuilder.reflectionEquals(this, o, "id", "uuid");
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUuid());
+        return HashCodeBuilder.reflectionHashCode(this, "id", "uuid");
     }
 }

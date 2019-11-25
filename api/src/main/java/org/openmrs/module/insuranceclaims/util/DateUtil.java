@@ -1,10 +1,13 @@
 package org.openmrs.module.insuranceclaims.util;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public final class DateComponent {
+@Component
+public final class DateUtil {
 
     private static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getTimeZone("UTC");
 
