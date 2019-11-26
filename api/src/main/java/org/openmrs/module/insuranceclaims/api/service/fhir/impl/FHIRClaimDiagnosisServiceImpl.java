@@ -151,8 +151,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
         Concept concept = null;
         if (FHIRConstants.OPENMRS_URI.equals(systemName)) {
             concept = Context.getConceptService().getConceptByUuid(conceptCode);
-        } else {
-            if (StringUtils.isNotEmpty(systemName)) {
+        } else { if (StringUtils.isNotEmpty(systemName)) {
                 List<Concept> concepts =  Context.getConceptService().getConceptsByMapping(conceptCode, systemName);
                 concept = getUnambiguousElement(concepts);
             }

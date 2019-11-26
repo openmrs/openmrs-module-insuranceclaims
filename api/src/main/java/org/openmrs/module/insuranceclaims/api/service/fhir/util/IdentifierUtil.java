@@ -12,7 +12,9 @@ import org.openmrs.api.IdentifierNotUniqueException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ELEMENTS;
@@ -64,8 +66,8 @@ public final class IdentifierUtil {
         if (CollectionUtils.isEmpty(listOfElements)) {
             return null;
         }
-
-        if (org.springframework.util.CollectionUtils.hasUniqueObject(listOfElements)) {
+        Set<T> distinctElements = new HashSet<>(listOfElements);
+        if (hasOneUniqueElement(distinctElements)) {
             return listOfElements.get(0);
         } else {
             throw new IdentifierNotUniqueException("Could not get unambiguous element of type "
@@ -88,6 +90,10 @@ public final class IdentifierUtil {
             }
         }
         return result;
+    }
+
+    private static <T> boolean hasOneUniqueElement(Set<T> setOfElements) {
+        return CollectionUtils.size(setOfElements) == 1;
     }
 
     private IdentifierUtil() {}

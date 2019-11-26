@@ -139,7 +139,6 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
         return InsuranceClaimDiagnosisMother.createTestInstance(concept, this.testInsuranceClaim);
     }
 
-
     private InsuranceClaimItem createTestClaimItem() {
         Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
         return InsuranceClaimItemMother.createTestInstance(concept, this.testInsuranceClaim);
