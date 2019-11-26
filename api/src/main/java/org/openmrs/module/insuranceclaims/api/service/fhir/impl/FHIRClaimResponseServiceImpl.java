@@ -8,7 +8,6 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -25,9 +24,9 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 
 public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
 
-    @Autowired
     private FHIRClaimItemService itemService;
 
+    @Override
     public ClaimResponse generateClaimResponse(InsuranceClaim omrsClaim) {
         ClaimResponse claim = new ClaimResponse();
 
@@ -74,6 +73,7 @@ public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
         return claim;
     }
 
+    @Override
     public InsuranceClaim generateOmrsClaim(ClaimResponse claim, List<String> errors) {
         InsuranceClaim omrsClaim = new InsuranceClaim();
 

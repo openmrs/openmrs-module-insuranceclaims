@@ -21,6 +21,8 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Identifie
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.HL7_VALUESET_SYSTEM;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MEDICAL_RECORD_NUMBER;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MISSING_DATE_FROM;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MISSING_DATE_TO;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PERIOD_FROM;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PERIOD_TO;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialComponentUtil.createSpecialComponent;
@@ -54,11 +56,11 @@ public final class InsuranceClaimUtil {
         Period billablePeriod = claim.getBillablePeriod();
         Date from = billablePeriod.getStart();
         if (from == null) {
-            errors.add("Date 'from' is missing");
+            errors.add(MISSING_DATE_FROM);
         }
         Date to = billablePeriod.getEnd();
         if (to == null) {
-            errors.add("Date 'to' is missing");
+            errors.add(MISSING_DATE_TO);
         }
         claimPeriod.put(PERIOD_FROM, from);
         claimPeriod.put(PERIOD_TO, to);

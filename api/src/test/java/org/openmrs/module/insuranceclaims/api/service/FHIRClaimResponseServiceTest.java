@@ -20,6 +20,7 @@ import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseServ
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,8 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
     private InsuranceClaimDao insuranceClaimDao;
 
     @Autowired
-    FHIRClaimResponseService insuranceClaimService;
+    @Qualifier("insuranceclaims.fhirClaimResponse")
+    FHIRClaimResponseService insuranceClaimResponseService;
 
     private InsuranceClaim insuranceClaim;
 
@@ -47,7 +49,7 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
     @Test
     public void generateFhirClaimResponse_shouldMapInsuranceClaimToFhirClaimResponse() throws FHIRException {
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
-        ClaimResponse generated = insuranceClaimService.generateClaimResponse(savedInsuranceClaim);
+        ClaimResponse generated = insuranceClaimResponseService.generateClaimResponse(savedInsuranceClaim);
 
         Assert.assertThat(generated, Matchers.notNullValue());
         Assert.assertThat(generated.getId(), Matchers.equalTo(insuranceClaim.getClaimCode()));
@@ -76,9 +78,9 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
     @Test
     public void generateOmrsClaim_shouldMapFhirClaimResponseToOmrsClaim() throws FHIRException {
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
-        ClaimResponse response = insuranceClaimService.generateClaimResponse(savedInsuranceClaim);
+        ClaimResponse response = insuranceClaimResponseService.generateClaimResponse(savedInsuranceClaim);
         List<String> errors = new ArrayList<>();
-        InsuranceClaim generated = insuranceClaimService.generateOmrsClaim(response, errors);
+        InsuranceClaim generated = insuranceClaimResponseService.generateOmrsClaim(response, errors);
 
         Assert.assertThat(errors, Matchers.hasSize(0));
         Assert.assertThat(generated.getUuid(), Matchers.equalTo(savedInsuranceClaim.getUuid()));

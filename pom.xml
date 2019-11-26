@@ -42,6 +42,7 @@
 		<hapiFhirBaseVersion>2.5</hapiFhirBaseVersion>
 		<hapiFhirStructuresDstuVersion>2.5</hapiFhirStructuresDstuVersion>
 		<hapiValidationResources>2.5</hapiValidationResources>
+		<apiResourceDir>${basedir}/src/main/resources</apiResourceDir>
 	</properties>
 
 	<dependencyManagement>
@@ -178,6 +179,7 @@
 					<configuration>
 						<effort>Max</effort>
 						<threshold>Low</threshold>
+						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
 					</configuration>
 					<executions>
 						<execution>

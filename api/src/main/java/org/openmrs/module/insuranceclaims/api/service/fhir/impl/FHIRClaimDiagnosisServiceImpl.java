@@ -1,11 +1,13 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.impl;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
-import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.BaseOpenMRSDataUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
@@ -14,26 +16,17 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getUnambiguousElement;
 
-@Transactional
 public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService {
 
-    @Autowired
     private InsuranceClaimDiagnosisDao diagnosisDao;
-
-    @Autowired
-    private ConceptService conceptService;
 
     @Override
     public Claim.DiagnosisComponent generateClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis) {
@@ -90,7 +83,6 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
         return diagnosis;
     }
 
-    @Override
     public void setDiagnosisDao(InsuranceClaimDiagnosisDao diagnosisDao) {
         this.diagnosisDao = diagnosisDao;
     }
@@ -121,7 +113,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
 
     private void validateDiagnosisCodingSystem(Claim.DiagnosisComponent diagnosis) throws FHIRException {
         //Method assigns diagnosis system (ICD-10, CIEL, etc.) from type to the concept coding if it don't have assigned system
-        if (isEmpty(diagnosis.getType())) {
+        if (CollectionUtils.isEmpty(diagnosis.getType())) {
             return;
         }
         String codingSystem = diagnosis.getTypeFirstRep().getText();
@@ -158,10 +150,10 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
 
         Concept concept = null;
         if (FHIRConstants.OPENMRS_URI.equals(systemName)) {
-            concept = conceptService.getConceptByUuid(conceptCode);
+            concept = Context.getConceptService().getConceptByUuid(conceptCode);
         } else {
-            if (isNotEmpty(systemName)) {
-                List<Concept> concepts = conceptService.getConceptsByMapping(conceptCode, systemName);
+            if (StringUtils.isNotEmpty(systemName)) {
+                List<Concept> concepts =  Context.getConceptService().getConceptsByMapping(conceptCode, systemName);
                 concept = getUnambiguousElement(concepts);
             }
         }

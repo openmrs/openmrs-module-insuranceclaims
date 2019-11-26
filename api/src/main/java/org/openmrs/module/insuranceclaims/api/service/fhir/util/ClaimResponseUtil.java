@@ -1,5 +1,6 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
@@ -12,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdentifierValueByCode;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CLAIM_REFERENCE;
@@ -40,12 +40,7 @@ public final class ClaimResponseUtil {
                 .getOutcome()
                 .getText()
                 .toUpperCase(Locale.getDefault());
-        try {
-            return InsuranceClaimStatus.valueOf(codeString);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            errors.add("Status code " + codeString + " is invalid");
-            return null;
-        }
+        return InsuranceClaimStatus.valueOf(codeString);
     }
 
     public static String getClaimCode(ClaimResponse claim, List<String> errors) {
@@ -104,7 +99,7 @@ public final class ClaimResponseUtil {
         return payment;
     }
 
-    public static String getProcessNote(ClaimResponse response, int noteNumber) {
+    public static String getProcessNote(ClaimResponse response, Integer noteNumber) {
         List<ClaimResponse.NoteComponent> notes = response.getProcessNote();
 
         return notes.stream()
@@ -115,7 +110,7 @@ public final class ClaimResponseUtil {
     }
 
     private static boolean hasErrors(ClaimResponse.ErrorComponent errorComponent) {
-        return isNotEmpty(errorComponent.getCode().getCoding());
+        return CollectionUtils.isNotEmpty(errorComponent.getCode().getCoding());
     }
 
     private static String getCodeableConceptFirstCode(CodeableConcept codeableConcept) {

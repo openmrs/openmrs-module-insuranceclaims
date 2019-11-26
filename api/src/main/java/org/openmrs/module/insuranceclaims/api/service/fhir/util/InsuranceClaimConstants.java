@@ -9,6 +9,9 @@ public final class InsuranceClaimConstants {
     public static final String DEFAULT_ERROR_CODE = "0"; // Used when no error occurs
     public static final String PERIOD_FROM = "from";
     public static final String PERIOD_TO = "to";
+    public static final String MISSING_DATE_FROM = "Date 'from' is missing";
+    public static final String MISSING_DATE_TO = "Date 'to' is missing";
+
 
     public static final String MEDICAL_RECORD_NUMBER = "MR";
     public static final String ACCESSION_ID = "ACSN";
@@ -16,6 +19,7 @@ public final class InsuranceClaimConstants {
 
     public static final int ENUMERATION_FROM = 1;
     public static final int SEQUENCE_FIRST = 1;
+    public static final int NEXT_SEQUENCE = 1;
 
     public static final String ITEM_ADJUDICATION_GENERAL_CATEGORY = "general";
     public static final String ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY = "rejection_reason";

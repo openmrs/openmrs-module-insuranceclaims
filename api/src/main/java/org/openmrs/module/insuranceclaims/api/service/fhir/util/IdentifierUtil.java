@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ELEMENTS;
-import static org.springframework.util.CollectionUtils.hasUniqueObject;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 public final class IdentifierUtil {
 
@@ -63,11 +61,11 @@ public final class IdentifierUtil {
 
     public static <T> T getUnambiguousElement(List<T> listOfElements) {
         CollectionUtils.filter(listOfElements, PredicateUtils.notNullPredicate());
-        if (isEmpty(listOfElements)) {
+        if (CollectionUtils.isEmpty(listOfElements)) {
             return null;
         }
 
-        if (hasUniqueObject(listOfElements)) {
+        if (org.springframework.util.CollectionUtils.hasUniqueObject(listOfElements)) {
             return listOfElements.get(0);
         } else {
             throw new IdentifierNotUniqueException("Could not get unambiguous element of type "

@@ -1,28 +1,29 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.PositiveIntType;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
-import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimItemDao;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.ClaimResponseUtil.getProcessNote;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getUnambiguousElement;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_GENERAL_CATEGORY;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.NEXT_SEQUENCE;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.SEQUENCE_FIRST;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.createFhirItemService;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.createItemGeneralAdjudication;
@@ -37,11 +38,7 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialCo
 
 public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
 
-    @Autowired
     private InsuranceClaimItemDao insuranceClaimItemDao;
-
-    @Autowired
-    private ConceptService conceptService;
 
     @Override
     public List<Claim.ItemComponent> generateClaimItemComponent(InsuranceClaim claim) {
@@ -95,7 +92,7 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
 
             nextItem.setSequenceLinkId(sequence);
             nextItem.addNoteNumber(sequence);
-            sequence += 1;
+            sequence += NEXT_SEQUENCE;
 
             items.add(nextItem);
         }
@@ -145,12 +142,11 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
             nextNote.setNumber(noteNumber);
 
             claimNotes.add(nextNote);
-            noteNumber += 1;
+            noteNumber += NEXT_SEQUENCE;
         }
         return claimNotes;
     }
 
-    @Override
     public void setInsuranceClaimItemDao(InsuranceClaimItemDao insuranceClaimItemDao) {
         this.insuranceClaimItemDao = insuranceClaimItemDao;
     }
@@ -163,7 +159,7 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
 
     private Concept getConceptByExternalId(List<String> itemCodes) {
         List<Concept> conceptList = itemCodes.stream()
-                .map(code -> conceptService.getConceptByMapping(code, EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME))
+                .map(code -> Context.getConceptService().getConceptByMapping(code, EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME))
                 .collect(Collectors.toList());
         return getUnambiguousElement(conceptList);
     }
@@ -180,7 +176,7 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
 
     private Concept findItemConcept(Claim.ItemComponent item) {
         String itemCode = item.getService().getText();
-        return conceptService.getConceptByMapping(itemCode, EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME);
+        return Context.getConceptService().getConceptByMapping(itemCode, EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME);
     }
 
     private String getLinkedInformation(Claim claim, Integer informationSequenceId) throws FHIRException {
@@ -188,10 +184,12 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
     }
 
     private Integer getItemComponentInformationLinkId(Claim.ItemComponent item) {
-       return isEmpty(item.getInformationLinkId()) ? null : item.getInformationLinkId().get(0).getValue();
+       return CollectionUtils.isEmpty(item.getInformationLinkId()) ?
+               null : getUnambiguousElement(item.getInformationLinkId()).getValue();
     }
 
-    private int getFirstItemNoteNumber(ClaimResponse.ItemComponent item) {
-        return item.getNoteNumber().get(0).getValue();
+    private Integer getFirstItemNoteNumber(ClaimResponse.ItemComponent item) {
+        PositiveIntType note = getUnambiguousElement(item.getNoteNumber());
+        return note != null ? note.getValue() : null;
     }
 }

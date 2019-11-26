@@ -7,7 +7,6 @@ import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.api.db.hibernate.HibernateOpenmrsDataDAO;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimDiagnosisDao;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
 public class InsuranceClaimDiagnosisDaoImpl extends HibernateOpenmrsDataDAO<InsuranceClaimDiagnosis>
 		implements InsuranceClaimDiagnosisDao {
 
-	@Autowired
 	private DbSessionFactory sessionFactory;
 
 	public InsuranceClaimDiagnosisDaoImpl() {
@@ -35,6 +33,10 @@ public class InsuranceClaimDiagnosisDaoImpl extends HibernateOpenmrsDataDAO<Insu
 
 		crit.add(Restrictions.eq("claim.id", insuranceClaimId));
 		return crit.list();
+	}
+
+	public void setSessionFactory(DbSessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
 	private DbSession getCurrentSession() {

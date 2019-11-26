@@ -26,6 +26,7 @@ import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimSer
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
     private InsuranceClaimItemDao insuranceClaimItemDao;
 
     @Autowired
+    @Qualifier("insuranceclaims.fhirClaim")
     private FHIRInsuranceClaimService insuranceClaimService;
 
     private InsuranceClaim insuranceClaim;

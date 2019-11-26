@@ -26,6 +26,7 @@ import org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialComponent
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class FHIRClaimItemServiceTest extends BaseModuleContextSensitiveTest {
     private final static Boolean IS_SERVICE = false;
 
     @Autowired
+    @Qualifier("insuranceclaims.fhirItem")
     private FHIRClaimItemService claimItemService;
 
     @Autowired

@@ -27,16 +27,14 @@ import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisSer
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
-    @Qualifier("insuranceclaims.fhirDiagnosis")
     private FHIRClaimDiagnosisService claimDiagnosisService;
 
     private InsuranceClaim testInsuranceClaim;

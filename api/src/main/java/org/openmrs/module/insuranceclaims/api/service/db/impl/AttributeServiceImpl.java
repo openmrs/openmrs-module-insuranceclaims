@@ -13,7 +13,6 @@ import org.openmrs.ProviderAttribute;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.attribute.BaseAttribute;
 import org.openmrs.module.insuranceclaims.api.service.db.AttributeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,7 +27,6 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 public class AttributeServiceImpl extends BaseOpenmrsService
         implements AttributeService {
 
-    @Autowired
     private SessionFactory sessionFactory;
 
     @Override
@@ -49,16 +47,6 @@ public class AttributeServiceImpl extends BaseOpenmrsService
                 .collect(Collectors.toList());
     }
 
-    private List getOmrsObjectAttributesByAttributeTypeValue(
-            Class<? extends BaseAttribute> attributeClass, String attributeValue, String attributeUuid) {
-        Criteria crit = getCurrentSession().createCriteria(attributeClass, "attribute");
-        crit.createAlias("attribute.attributeType", "attribute_type");
-
-        crit.add(Restrictions.eq("attribute_type.uuid", attributeUuid));
-        crit.add(Restrictions.eq("attribute.valueReference", attributeValue));
-        return crit.list();
-    }
-
     @Override
     public List<Patient> getPatientByExternalIdIdentifier(String externalId) {
         Criteria crit = getCurrentSession().createCriteria(PatientIdentifier.class, "attribute");
@@ -72,7 +60,22 @@ public class AttributeServiceImpl extends BaseOpenmrsService
                 .collect(Collectors.toList());
     }
 
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
     private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
     }
+
+    private List getOmrsObjectAttributesByAttributeTypeValue(
+            Class<? extends BaseAttribute> attributeClass, String attributeValue, String attributeUuid) {
+        Criteria crit = getCurrentSession().createCriteria(attributeClass, "attribute");
+        crit.createAlias("attribute.attributeType", "attribute_type");
+
+        crit.add(Restrictions.eq("attribute_type.uuid", attributeUuid));
+        crit.add(Restrictions.eq("attribute.valueReference", attributeValue));
+        return crit.list();
+    }
+
 }

@@ -16,7 +16,6 @@ import org.openmrs.module.insuranceclaims.api.service.db.AttributeService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,13 +43,10 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Practitio
 
 public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService {
 
-    @Autowired
     private AttributeService attributeService;
 
-    @Autowired
     private FHIRClaimItemService claimItemService;
 
-    @Autowired
     private FHIRClaimDiagnosisService claimDiagnosisService;
 
     @Override
@@ -160,9 +156,15 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         return omrsClaim;
     }
 
-    @Override
     public void setAttributeService(AttributeService attributeService) {
         this.attributeService = attributeService;
+    }
+
+    public void setClaimItemService(FHIRClaimItemService claimItemService) {
+        this.claimItemService = claimItemService;
+    }
+    public void setClaimDiagnosisService(FHIRClaimDiagnosisService claimDiagnosisService) {
+        this.claimDiagnosisService = claimDiagnosisService;
     }
 
     private Provider getClaimProviderByExternalId(Claim claim) {
