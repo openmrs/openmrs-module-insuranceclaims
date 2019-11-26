@@ -6,7 +6,6 @@ import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Reference;
-import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.api.IdentifierNotUniqueException;
 
 import java.util.ArrayList;
@@ -18,13 +17,13 @@ import java.util.stream.Collectors;
 
 public final class IdentifierUtil {
 
-    public static String getClaimIdentifierValueBySystemCode(Claim claim, String code) throws FHIRException {
+    public static String getClaimIdentifierValueBySystemCode(Claim claim, String code) {
         List<Identifier> claimCodeIdentifier = getIdentifierBySystemCode(claim.getIdentifier(), code);
         Identifier identifier = getUnambiguousElement(claimCodeIdentifier);
         return identifier.getValue();
     }
 
-    public static String getClaimIdentifierValueBySystemCode(ClaimResponse claim, String code) throws FHIRException {
+    public static String getClaimIdentifierValueBySystemCode(ClaimResponse claim, String code) {
         List<Identifier> claimCodeIdentifier = getIdentifierBySystemCode(claim.getIdentifier(), code);
         Identifier identifier = getUnambiguousElement(claimCodeIdentifier);
         return identifier.getValue();
@@ -47,21 +46,11 @@ public final class IdentifierUtil {
     }
 
     public static String getIdentifierValueByCode(Claim claim, String code, List<String> errors) {
-        try {
-            return getClaimIdentifierValueBySystemCode(claim, code);
-        } catch (FHIRException e) {
-            errors.add(e.getMessage());
-        }
-        return null;
+        return getClaimIdentifierValueBySystemCode(claim, code);
     }
 
     public static String getIdentifierValueByCode(ClaimResponse claim, String code, List<String> errors) {
-        try {
-            return getClaimIdentifierValueBySystemCode(claim, code);
-        } catch (FHIRException e) {
-            errors.add(e.getMessage());
-        }
-        return null;
+        return getClaimIdentifierValueBySystemCode(claim, code);
     }
 
     public static String getIdFromReference(Reference reference) {

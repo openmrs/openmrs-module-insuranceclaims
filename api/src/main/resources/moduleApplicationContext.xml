@@ -50,7 +50,7 @@
         </property>
     </bean>
 
-    <bean id="insuranceclaims.fhirInsurance"
+    <bean id="insuranceclaims.fhirClaim"
           class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
         <property name="transactionManager">
             <ref bean="transactionManager"/>
@@ -76,6 +76,24 @@
         <property name="target">
             <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimItemServiceImpl">
                 <property name="insuranceClaimItemDao" ref="insuranceclaims.InsuranceClaimItemDao"/>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
+    <bean id="insuranceclaims.fhirClaimResponse"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimResponseServiceImpl">
+                <property name="itemService" ref="insuranceclaims.fhirItem"/>
             </bean>
         </property>
         <property name="preInterceptors">

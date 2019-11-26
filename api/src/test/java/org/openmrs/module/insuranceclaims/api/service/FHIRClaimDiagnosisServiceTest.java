@@ -37,7 +37,7 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
 
     @Autowired
     @Qualifier("insuranceclaims.fhirDiagnosis")
-    private FHIRClaimDiagnosisService util;
+    private FHIRClaimDiagnosisService claimDiagnosisService;
 
     private InsuranceClaim testInsuranceClaim;
     private InsuranceClaimDiagnosis testInsuranceDiagnosis;
@@ -75,7 +75,7 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
     @Test
     public void generateClaimDiagnosis_shouldContainMalariaComponent() throws FHIRException {
         Claim.DiagnosisComponent diagnosisComponent =
-                util.generateClaimDiagnosisComponent(this.testInsuranceDiagnosis);
+                claimDiagnosisService.generateClaimDiagnosisComponent(this.testInsuranceDiagnosis);
 
         CodeableConcept test = diagnosisComponent.getDiagnosisCodeableConcept();
 
@@ -94,7 +94,7 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
         List<InsuranceClaimDiagnosis> testDiagnisis = Collections.singletonList(this.testInsuranceDiagnosis);
 
         List<Claim.DiagnosisComponent> diagnosisComponent =
-                util.generateClaimDiagnosisComponent(testDiagnisis);
+                claimDiagnosisService.generateClaimDiagnosisComponent(testDiagnisis);
         String transformedComponentName = diagnosisComponent.get(0).getDiagnosisCodeableConcept().getText();
 
         Assert.assertThat(diagnosisComponent, Matchers.hasSize(1));
@@ -104,7 +104,7 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
     @Test
     public void generateClaimDiagnosisFromInsuranceClaim_shouldCreateListWithMalariaComponent() throws FHIRException {
         List<Claim.DiagnosisComponent> diagnosisComponent =
-                util.generateClaimDiagnosisComponent(this.testInsuranceClaim);
+                claimDiagnosisService.generateClaimDiagnosisComponent(this.testInsuranceClaim);
 
         String transformedComponentName = diagnosisComponent.get(0).getDiagnosisCodeableConcept().getText();
 
@@ -114,10 +114,10 @@ public class FHIRClaimDiagnosisServiceTest extends BaseModuleContextSensitiveTes
 
     @Test
     public void createInsuranceClaimDiagnosis_shouldCreateDiagnosisWithMalariaConcept() {
-        Claim.DiagnosisComponent fhirDiagnosis = util.generateClaimDiagnosisComponent(this.testInsuranceDiagnosis);
+        Claim.DiagnosisComponent fhirDiagnosis = claimDiagnosisService.generateClaimDiagnosisComponent(this.testInsuranceDiagnosis);
         List<String> errors = new ArrayList<>();
 
-        InsuranceClaimDiagnosis created = util.createOmrsClaimDiagnosis(fhirDiagnosis, errors);
+        InsuranceClaimDiagnosis created = claimDiagnosisService.createOmrsClaimDiagnosis(fhirDiagnosis, errors);
 
         Assert.assertThat(created.getUuid(), Matchers.equalTo(this.testInsuranceDiagnosis.getUuid()));
         Assert.assertThat(created.getConcept(), Matchers.equalTo(this.testInsuranceDiagnosis.getConcept()));

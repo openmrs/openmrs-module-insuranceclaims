@@ -28,6 +28,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
     @Autowired
     private InsuranceClaimDiagnosisDao diagnosisDao;
 
+    @Override
     public Claim.DiagnosisComponent generateClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis) {
         Claim.DiagnosisComponent newDiagnosis = new Claim.DiagnosisComponent();
 
@@ -45,7 +46,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
             List<InsuranceClaimDiagnosis> omrsClaimDiagnosis) {
         List<Claim.DiagnosisComponent> allDiagnosisComponents = new ArrayList<>();
 
-        for (InsuranceClaimDiagnosis insuranceClaimDiagnosis: omrsClaimDiagnosis) {
+        for (InsuranceClaimDiagnosis insuranceClaimDiagnosis : omrsClaimDiagnosis) {
             Claim.DiagnosisComponent nextDiagnosis = generateClaimDiagnosisComponent(insuranceClaimDiagnosis);
             allDiagnosisComponents.add(nextDiagnosis);
         }
@@ -55,7 +56,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
     @Override
     public List<Claim.DiagnosisComponent> generateClaimDiagnosisComponent(InsuranceClaim omrsInsuranceClaim) {
         List<InsuranceClaimDiagnosis> claimDiagnoses = diagnosisDao.findInsuranceClaimDiagnosis(omrsInsuranceClaim.getId());
-        List<Claim.DiagnosisComponent> fhirDiagnosisComponent =  generateClaimDiagnosisComponent(claimDiagnoses);
+        List<Claim.DiagnosisComponent> fhirDiagnosisComponent = generateClaimDiagnosisComponent(claimDiagnoses);
         addCodingToDiagnosis(fhirDiagnosisComponent);
         return fhirDiagnosisComponent;
     }
@@ -101,11 +102,12 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
             }
         }
     }
+
     private void setDiagnosisPrimaryCoding(Claim.DiagnosisComponent diagnosis) throws FHIRException {
         String primaryCoding = InsuranceClaimConstants.PRIMARY_DIAGNOSIS_MAPPING;
 
         List<Coding> diagnosisCoding = diagnosis.getDiagnosisCodeableConcept().getCoding();
-        for (Coding c: diagnosisCoding) {
+        for (Coding c : diagnosisCoding) {
             if (c.getSystem().equals(primaryCoding)) {
                 Collections.swap(diagnosisCoding, 0, diagnosisCoding.indexOf(c));
                 break;

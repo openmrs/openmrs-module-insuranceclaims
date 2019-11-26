@@ -6,9 +6,7 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import java.util.List;
 
 public interface FHIRInsuranceClaimService {
-
     Claim generateClaim(InsuranceClaim omrsClaim);
 
     InsuranceClaim generateOmrsClaim(Claim claim, List<String> errors);
-
 }

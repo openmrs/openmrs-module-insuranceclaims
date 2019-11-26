@@ -98,7 +98,7 @@ public class FHIRInsuranceClaimServiceTest extends BaseModuleContextSensitiveTes
     }
 
     @Test
-    public void generateOmrsClaim_shouldMapFhirClaimToOmrsClaim() throws FHIRException {
+    public void generateOmrsClaim_shouldMapFhirClaimToOmrsClaim() {
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
 
         Claim fhirClaim = insuranceClaimService.generateClaim(savedInsuranceClaim);

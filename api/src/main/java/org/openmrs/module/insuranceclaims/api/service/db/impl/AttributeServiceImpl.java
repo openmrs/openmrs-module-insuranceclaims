@@ -11,6 +11,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.attribute.BaseAttribute;
 import org.openmrs.module.insuranceclaims.api.service.db.AttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -32,13 +33,8 @@ public class AttributeServiceImpl extends BaseOpenmrsService
 
     @Override
     public List<Provider> getProviderByExternalIdAttribute(String externalId) {
-        Criteria crit = getCurrentSession().createCriteria(ProviderAttribute.class, "attribute");
-        crit.createAlias("attribute.attributeType", "attribute_type");
-
-        crit.add(Restrictions.eq("attribute_type.uuid", PROVIDER_EXTERNAL_ID_ATTRIBUTE_UUID));
-        crit.add(Restrictions.eq("attribute.valueReference", externalId));
-
-        List<ProviderAttribute> result = crit.list();
+        List<ProviderAttribute> result = getOmrsObjectAttributesByAttributeTypeValue(ProviderAttribute.class,
+                externalId, PROVIDER_EXTERNAL_ID_ATTRIBUTE_UUID);
         return result.stream()
                 .map(ProviderAttribute::getProvider)
                 .collect(Collectors.toList());
@@ -46,16 +42,21 @@ public class AttributeServiceImpl extends BaseOpenmrsService
 
     @Override
     public List<Location> getLocationByExternalIdAttribute(String externalId) {
-        Criteria crit = getCurrentSession().createCriteria(LocationAttribute.class, "attribute");
-        crit.createAlias("attribute.attributeType", "attribute_type");
-
-        crit.add(Restrictions.eq("attribute_type.uuid", LOCATION_EXTERNAL_ID_ATTRIBUTE_UUID));
-        crit.add(Restrictions.eq("attribute.valueReference", externalId));
-
-        List<LocationAttribute> result = crit.list();
+        List<LocationAttribute> result = getOmrsObjectAttributesByAttributeTypeValue(LocationAttribute.class,
+                externalId, LOCATION_EXTERNAL_ID_ATTRIBUTE_UUID);
         return result.stream()
                 .map(LocationAttribute::getLocation)
                 .collect(Collectors.toList());
+    }
+
+    private List getOmrsObjectAttributesByAttributeTypeValue(
+            Class<? extends BaseAttribute> attributeClass, String attributeValue, String attributeUuid) {
+        Criteria crit = getCurrentSession().createCriteria(attributeClass, "attribute");
+        crit.createAlias("attribute.attributeType", "attribute_type");
+
+        crit.add(Restrictions.eq("attribute_type.uuid", attributeUuid));
+        crit.add(Restrictions.eq("attribute.valueReference", attributeValue));
+        return crit.list();
     }
 
     @Override
@@ -71,9 +72,6 @@ public class AttributeServiceImpl extends BaseOpenmrsService
                 .collect(Collectors.toList());
     }
 
-    public  void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
     private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
     }

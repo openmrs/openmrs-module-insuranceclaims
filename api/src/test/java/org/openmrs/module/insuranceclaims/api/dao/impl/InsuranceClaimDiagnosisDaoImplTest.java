@@ -62,7 +62,7 @@ public class InsuranceClaimDiagnosisDaoImplTest extends BaseModuleContextSensiti
 		Context.flushSession();
 		Context.clearSession();
 
-		InsuranceClaim insuranceClaim = diagnosis.getInsuranceClaim();
+		InsuranceClaim insuranceClaim = diagnosis.getClaim();
 		InsuranceClaimDiagnosis savedDiagnosis = dao.getByUuid(diagnosis.getUuid());
 
 		List<InsuranceClaimDiagnosis> received = dao.findInsuranceClaimDiagnosis(insuranceClaim.getId());

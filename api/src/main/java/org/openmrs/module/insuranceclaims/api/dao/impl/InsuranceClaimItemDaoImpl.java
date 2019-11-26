@@ -30,7 +30,7 @@ public class InsuranceClaimItemDaoImpl extends HibernateOpenmrsDataDAO<Insurance
 	@Override
 	public List<InsuranceClaimItem> findInsuranceClaimItems(int insuranceClaimId) {
 		Criteria crit = getCurrentSession().createCriteria(InsuranceClaimItem.class, "item");
-		crit.createAlias("item.insuranceClaim", "claim");
+		crit.createAlias("item.claim", "claim");
 
 		crit.add(Restrictions.eq("claim.id", insuranceClaimId));
 		return crit.list();

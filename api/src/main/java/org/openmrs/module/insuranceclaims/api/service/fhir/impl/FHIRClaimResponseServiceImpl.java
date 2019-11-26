@@ -6,7 +6,9 @@ import org.hl7.fhir.dstu3.model.Money;
 import org.openmrs.module.fhir.api.util.BaseOpenMRSDataUtil;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
+import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -22,6 +24,9 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.ClaimResp
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.createClaimIdentifier;
 
 public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
+
+    @Autowired
+    private FHIRClaimItemService itemService;
 
     public ClaimResponse generateClaimResponse(InsuranceClaim omrsClaim) {
         ClaimResponse claim = new ClaimResponse();
@@ -55,9 +60,10 @@ public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
         claim.setError(getClaimErrors(omrsClaim));
 
         //processNote
-        //TODO: add when item mappings updated
+        claim.setProcessNote(itemService.generateClaimResponseNotes(omrsClaim));
+
         //items
-        //TODO: Add item mappings after database changes
+        claim.setItem(itemService.generateClaimResponseItemComponent(omrsClaim));
 
         //request
         claim.setRequest(buildClaimReference(omrsClaim));
@@ -81,9 +87,8 @@ public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
         omrsClaim.setClaimCode(getClaimCode(claim, errors));
 
         //status
-        //Use outcome or process note?
         InsuranceClaimStatus status = getClaimResponseStatus(claim, errors);
-        omrsClaim.setClaimStatus(status);
+        omrsClaim.setStatus(status);
 
         //adjustiment
         omrsClaim.setAdjustment(claim.getPayment().getAdjustmentReason().getText());
@@ -98,9 +103,10 @@ public class FHIRClaimResponseServiceImpl implements FHIRClaimResponseService {
         //error
         omrsClaim.setRejectionReason(getClaimResponseErrorCode(claim));
 
-        //items
-        //TODO: Add item mappings after database changes
-
         return omrsClaim;
+    }
+
+    public void setItemService(FHIRClaimItemService itemService) {
+        this.itemService = itemService;
     }
 }

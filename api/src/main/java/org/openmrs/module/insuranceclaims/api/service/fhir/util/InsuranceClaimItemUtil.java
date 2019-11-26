@@ -2,6 +2,7 @@ package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Money;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.openmrs.Concept;
@@ -47,10 +48,15 @@ public final class InsuranceClaimItemUtil {
         return unitPrice;
     }
 
-    public static CodeableConcept getItemService(InsuranceClaimItem item) {
+    public static CodeableConcept createFhirItemService(InsuranceClaimItem item) {
         ProvidedItem providedItem = item.getItem();
         String externalCode = getExternalCode(providedItem.getItem());
-        return new CodeableConcept().setText(externalCode);
+        Coding coding = new Coding();
+        coding.setCode(externalCode);
+        CodeableConcept serviceConcept = new CodeableConcept();
+        serviceConcept.addCoding(coding);
+        serviceConcept.setText(externalCode);
+        return serviceConcept;
     }
 
     private static String getExternalCode(Concept concept) {

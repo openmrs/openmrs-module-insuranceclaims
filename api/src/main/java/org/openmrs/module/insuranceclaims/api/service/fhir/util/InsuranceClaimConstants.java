@@ -13,8 +13,12 @@ public final class InsuranceClaimConstants {
     public static final String MEDICAL_RECORD_NUMBER = "MR";
     public static final String ACCESSION_ID = "ACSN";
     public static final String HL7_VALUESET_SYSTEM = "https://hl7.org/fhir/valueset-identifier-type.html";
-    public static final int ENUMERATION_FROM = 1;
 
+    public static final int ENUMERATION_FROM = 1;
+    public static final int SEQUENCE_FIRST = 1;
+
+    public static final String ITEM_ADJUDICATION_GENERAL_CATEGORY = "general";
+    public static final String ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY = "rejection_reason";
 
     public static final String PROVIDER_EXTERNAL_ID_ATTRIBUTE_UUID = "bbdf67e8-c020-40ff-8ad6-74ba34893882";
     public static final String LOCATION_EXTERNAL_ID_ATTRIBUTE_UUID = "217da59b-6003-43b9-9595-b5c1349f1152";

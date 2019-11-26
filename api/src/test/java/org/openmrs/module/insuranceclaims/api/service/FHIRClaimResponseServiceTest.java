@@ -17,7 +17,6 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseService;
-import org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimResponseServiceImpl;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,9 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
 
     @Autowired
     private InsuranceClaimDao insuranceClaimDao;
+
+    @Autowired
+    FHIRClaimResponseService insuranceClaimService;
 
     private InsuranceClaim insuranceClaim;
 
@@ -45,7 +47,6 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
     @Test
     public void generateFhirClaimResponse_shouldMapInsuranceClaimToFhirClaimResponse() throws FHIRException {
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
-        FHIRClaimResponseService insuranceClaimService = new FHIRClaimResponseServiceImpl();
         ClaimResponse generated = insuranceClaimService.generateClaimResponse(savedInsuranceClaim);
 
         Assert.assertThat(generated, Matchers.notNullValue());
@@ -75,7 +76,6 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
     @Test
     public void generateOmrsClaim_shouldMapFhirClaimResponseToOmrsClaim() throws FHIRException {
         InsuranceClaim savedInsuranceClaim = insuranceClaimDao.getByUuid(insuranceClaim.getUuid());
-        FHIRClaimResponseService insuranceClaimService = new FHIRClaimResponseServiceImpl();
         ClaimResponse response = insuranceClaimService.generateClaimResponse(savedInsuranceClaim);
         List<String> errors = new ArrayList<>();
         InsuranceClaim generated = insuranceClaimService.generateOmrsClaim(response, errors);
@@ -87,10 +87,7 @@ public class FHIRClaimResponseServiceTest extends BaseModuleContextSensitiveTest
         Assert.assertThat(generated.getAdjustment(), Matchers.equalTo(savedInsuranceClaim.getAdjustment()));
         Assert.assertThat(generated.getApprovedTotal(), Matchers.equalTo(savedInsuranceClaim.getApprovedTotal()));
         Assert.assertThat(generated.getRejectionReason(), Matchers.equalTo(savedInsuranceClaim.getRejectionReason()));
-        Assert.assertThat(generated.getClaimStatus(), Matchers.equalTo(savedInsuranceClaim.getClaimStatus()));
-
-        //TODO: Add item and processNote after changes in database
-
+        Assert.assertThat(generated.getStatus(), Matchers.equalTo(savedInsuranceClaim.getStatus()));
     }
 
     private InsuranceClaim createTestInstance() {

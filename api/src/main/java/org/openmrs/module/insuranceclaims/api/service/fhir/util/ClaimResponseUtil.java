@@ -23,10 +23,10 @@ public final class ClaimResponseUtil {
 
     public static CodeableConcept getClaimResponseOutcome(InsuranceClaim insuranceClaim) {
         CodeableConcept outcome = new CodeableConcept();
-        outcome.setText(insuranceClaim.getClaimStatus().toString());
+        outcome.setText(insuranceClaim.getStatus().toString());
 
         Coding outcomeCoding = new Coding();
-        String code = String.valueOf(insuranceClaim.getClaimStatus().getNumericStatus());
+        String code = String.valueOf(insuranceClaim.getStatus().getNumericStatus());
         outcomeCoding.setCode(code);
 
         outcome.setCoding(Collections.singletonList(outcomeCoding));

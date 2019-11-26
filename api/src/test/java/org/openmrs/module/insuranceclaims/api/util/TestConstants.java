@@ -18,6 +18,10 @@ public final class TestConstants {
 
 	public static final String INSURANCE_CLAIM_TEST_DIAGNOSIS_DATASET = "test_malaria_concept.xml";
 
+	public static final String TEST_SERVICE_UUID = "160148BAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+	public static final String TEST_SERVICE_CODE = "M9";
+
 	private TestConstants() {
 	}
 }
