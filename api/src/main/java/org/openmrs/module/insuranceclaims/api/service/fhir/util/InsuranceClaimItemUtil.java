@@ -1,22 +1,31 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
 import org.hl7.fhir.dstu3.model.Claim;
+import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Money;
+import org.hl7.fhir.dstu3.model.PositiveIntType;
+import org.hl7.fhir.dstu3.model.PrimitiveType;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
+import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItemStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CATEGORY_ITEM;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CATEGORY_SERVICE;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONCEPT_PRICE_ATTRIBUTE_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.IS_SERVICE_CONCEPT_ATTRIBUTE_UUID;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_GENERAL_CATEGORY;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY;
 
 public final class InsuranceClaimItemUtil {
     public static SimpleQuantity getItemQuantity(InsuranceClaimItem item) {
@@ -27,12 +36,7 @@ public final class InsuranceClaimItemUtil {
     }
 
     public static Integer getItemQuantity(Claim.ItemComponent item) {
-        if (item.getQuantity() != null) {
-            return item.getQuantity().getValue().intValue();
-        }
-        else {
-            return null;
-        }
+        return item.getQuantity() != null ?  item.getQuantity().getValue().intValue() : null;
     }
 
     public static CodeableConcept getItemCategory(InsuranceClaimItem item) {
@@ -59,6 +63,91 @@ public final class InsuranceClaimItemUtil {
         return serviceConcept;
     }
 
+    public static InsuranceClaimItemStatus getAdjudicationStatus(ClaimResponse.AdjudicationComponent adjudicationComponent) {
+        Coding reasonCoding = adjudicationComponent.getReason().getCodingFirstRep();
+        return InsuranceClaimItemStatus.valueOf(reasonCoding.getSystem());
+    }
+
+    public static String getAdjudicationRejectionReason(ClaimResponse.AdjudicationComponent adjudicationComponent) {
+        Coding reasonCoding = adjudicationComponent.getReason().getCodingFirstRep();
+        return reasonCoding.getCode();
+    }
+
+    public static ClaimResponse.AdjudicationComponent createItemGeneralAdjudication(
+            InsuranceClaimItem insuranceClaimItem) {
+        ClaimResponse.AdjudicationComponent adjudication = new ClaimResponse.AdjudicationComponent();
+        adjudication.setReason(getItemStatusReason(insuranceClaimItem)); //Set reason
+        adjudication.setValue(getItemQuantityApproved(insuranceClaimItem)); //Set value
+        adjudication.setAmount(getItemAmount(insuranceClaimItem)); //Set amount
+        adjudication.setCategory(getReasonCategory(ITEM_ADJUDICATION_GENERAL_CATEGORY)); //setCategory
+        return adjudication;
+    }
+
+    public static ClaimResponse.AdjudicationComponent createRejectionReasonAdjudication(
+            InsuranceClaimItem insuranceClaimItem) {
+        ClaimResponse.AdjudicationComponent adjudicationComponent = new ClaimResponse.AdjudicationComponent();
+        adjudicationComponent.setReason(getItemRejectionReason(insuranceClaimItem));
+        adjudicationComponent.setCategory(getReasonCategory(ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY));
+        return adjudicationComponent;
+    }
+
+    public static CodeableConcept getItemStatusReason(InsuranceClaimItem insuranceClaimItem) {
+        InsuranceClaimItemStatus status = insuranceClaimItem.getStatus();
+        CodeableConcept reason = new CodeableConcept();
+        Coding reasonCoding = new Coding();
+        reasonCoding.setCode(String.valueOf(status.ordinal()));
+        reasonCoding.setSystem(status.toString());
+        reason.addCoding(reasonCoding);
+        return reason;
+    }
+
+    public static CodeableConcept getItemRejectionReason(InsuranceClaimItem insuranceClaimItem) {
+        CodeableConcept codeableConcept = new CodeableConcept();
+        Coding coding = new Coding();
+        coding.setCode(insuranceClaimItem.getRejectionReason());
+        codeableConcept.addCoding(coding);
+        return codeableConcept;
+    }
+
+    public static Money getItemAmount(InsuranceClaimItem insuranceClaimItem) {
+        Money amount = new Money();
+        amount.setValue(insuranceClaimItem.getPriceApproved());
+        return amount;
+    }
+
+    public static int getItemQuantityApproved(InsuranceClaimItem insuranceClaimItem) {
+        return insuranceClaimItem.getQuantityApproved();
+    }
+
+    public static CodeableConcept getReasonCategory(String categoryName) {
+        CodeableConcept categoryConcept = new CodeableConcept();
+        categoryConcept.setText(categoryName);
+        return categoryConcept;
+    }
+
+    public static List<String> getItemCodeBySequence(ClaimResponse response, int sequenceId) throws FHIRException {
+        List<ClaimResponse.AddedItemComponent> addedItemComponents = response.getAddItem();
+
+        ClaimResponse.AddedItemComponent correspondingAddItem = addedItemComponents.stream()
+                .filter(addItem -> isValueInSequence(addItem.getSequenceLinkId(), sequenceId))
+                .findFirst()
+                .orElse(null);
+
+        if (correspondingAddItem == null) {
+            throw new FHIRException("No item code corresponding to " + sequenceId + " found");
+        }
+
+        List<Coding> itemCoding = correspondingAddItem.getService().getCoding();
+        return itemCoding.stream()
+                .map(Coding::getCode)
+                .collect(Collectors.toList());
+    }
+
+    private static boolean isValueInSequence(List<PositiveIntType> sequence, int sequenceLinkId) {
+        return sequence.stream().map(PrimitiveType::getValue)
+                .anyMatch(value -> value.equals(sequenceLinkId));
+    }
+
     private static String getExternalCode(Concept concept) {
         Collection<ConceptMap> mappings = concept.getConceptMappings();
         return mappings
@@ -70,12 +159,12 @@ public final class InsuranceClaimItemUtil {
     }
 
     private static String getConceptCategory(Concept concept) {
-        boolean isService = (Boolean) getConceptAttributeValueByTypeUuid(concept, IS_SERVICE_CONCEPT_ATTRIBUTE_UUID, null);
+        boolean isService = (Boolean) getConceptAttributeValueByTypeUuid(concept, IS_SERVICE_CONCEPT_ATTRIBUTE_UUID);
         return isService ? CATEGORY_SERVICE : CATEGORY_ITEM;
     }
 
     private static float getConceptUnitPrice(Concept concept) {
-        return (Float) getConceptAttributeValueByTypeUuid(concept, CONCEPT_PRICE_ATTRIBUTE_UUID, null);
+        return (Float) getConceptAttributeValueByTypeUuid(concept, CONCEPT_PRICE_ATTRIBUTE_UUID);
     }
 
     private static boolean isExternalSystemReferenceSource(ConceptMap conceptMap) {
@@ -86,13 +175,13 @@ public final class InsuranceClaimItemUtil {
                 .equals(EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_UUID);
     }
 
-    private static Object getConceptAttributeValueByTypeUuid(Concept concept, String attributeTypeUuid, Object defaultValue) {
+    private static Object getConceptAttributeValueByTypeUuid(Concept concept, String attributeTypeUuid) {
         return concept
                 .getAttributes()
                 .stream()
                 .filter(c -> c.getAttributeType().getUuid().equals(attributeTypeUuid))
                 .map(c -> c.getValue())
                 .findFirst()
-                .orElse(defaultValue);
+                .orElse(null);
     }
 }

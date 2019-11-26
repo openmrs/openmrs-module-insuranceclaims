@@ -1,12 +1,12 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.impl;
 
-
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Money;
 import org.hl7.fhir.dstu3.model.Period;
 import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
@@ -53,7 +53,8 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
     @Autowired
     private FHIRClaimDiagnosisService claimDiagnosisService;
 
-    public Claim generateClaim(InsuranceClaim omrsClaim) {
+    @Override
+    public Claim generateClaim(InsuranceClaim omrsClaim) throws FHIRException {
         Claim claim = new Claim();
         BaseOpenMRSDataUtil.setBaseExtensionFields(claim, omrsClaim);
 
@@ -111,6 +112,7 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         return claim;
     }
 
+    @Override
     public InsuranceClaim generateOmrsClaim(Claim claim, List<String> errors) {
         InsuranceClaim omrsClaim = new InsuranceClaim();
 
@@ -158,6 +160,7 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         return omrsClaim;
     }
 
+    @Override
     public void setAttributeService(AttributeService attributeService) {
         this.attributeService = attributeService;
     }

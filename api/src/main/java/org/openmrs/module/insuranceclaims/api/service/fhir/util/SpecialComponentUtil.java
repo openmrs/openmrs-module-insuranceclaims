@@ -17,11 +17,7 @@ public final class SpecialComponentUtil {
                 getConditionsByCategory(claim.getInformation(), category);
 
         Claim.SpecialConditionComponent component = getUnambiguousElement(information);
-        if (component != null) {
-            return component.getValueStringType().getValue();
-        } else {
-            return null;
-        }
+        return component != null ? component.getValueStringType().getValue() : null;
     }
 
     public static String getSpecialConditionComponentBySequenceNumber(Claim claim, int sequenceId) throws FHIRException {
@@ -31,11 +27,7 @@ public final class SpecialComponentUtil {
                 .findFirst()
                 .orElse(null);
 
-        if (requested == null) {
-            return null;
-        } else {
-            return requested.getValueStringType().getValue();
-        }
+        return requested == null ? null : requested.getValueStringType().getValue();
     }
 
     public static Claim.SpecialConditionComponent createSpecialComponent(String value, String categoryName) {

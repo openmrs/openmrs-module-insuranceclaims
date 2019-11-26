@@ -24,6 +24,8 @@ public final class InsuranceClaimConstants {
     public static final String LOCATION_EXTERNAL_ID_ATTRIBUTE_UUID = "217da59b-6003-43b9-9595-b5c1349f1152";
     public static final String PATIENT_EXTERNAL_ID_IDENTIFIER_UUID = "ee8e82c4-1563-43aa-8c73-c3e4e88cb79b";
 
+    public static final String ELEMENTS = "Elements";
+
     public static final String IS_SERVICE_CONCEPT_ATTRIBUTE_UUID = "925e4987-3104-4d74-989b-3ec96197b532";
     public static final String CONCEPT_PRICE_ATTRIBUTE_UUID = "ddc082c8-db30-4796-890e-f0d487fb9085";
     public static final String EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_UUID = "e730f72a-2789-4d82-8e71-d7707babc0e6";

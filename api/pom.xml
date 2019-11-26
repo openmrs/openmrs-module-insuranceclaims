@@ -45,11 +45,6 @@
             <artifactId>fhir-api</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>ca.uhn.hapi.fhir</groupId>-->
-<!--            <artifactId>hapi-fhir-base</artifactId>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-structures-dstu3</artifactId>

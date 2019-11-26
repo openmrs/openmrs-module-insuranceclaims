@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdentifierValueByCode;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CLAIM_REFERENCE;
@@ -89,11 +90,7 @@ public final class ClaimResponseUtil {
 
     public static String getClaimResponseErrorCode(ClaimResponse claimResponse) {
         ClaimResponse.ErrorComponent ec = claimResponse.getErrorFirstRep();
-        if (hasErrors(ec)) {
-            return getCodeableConceptFirstCode(ec.getCode());
-        } else {
-            return null;
-        }
+        return hasErrors(ec) ? getCodeableConceptFirstCode(ec.getCode()) : null;
     }
 
     public static ClaimResponse.PaymentComponent createPaymentComponent(InsuranceClaim omrsClaim) {
@@ -107,8 +104,18 @@ public final class ClaimResponseUtil {
         return payment;
     }
 
+    public static String getProcessNote(ClaimResponse response, int noteNumber) {
+        List<ClaimResponse.NoteComponent> notes = response.getProcessNote();
+
+        return notes.stream()
+                .filter(note -> note.getNumber() == noteNumber)
+                .findFirst()
+                .map(ClaimResponse.NoteComponent::getText)
+                .orElse(null);
+    }
+
     private static boolean hasErrors(ClaimResponse.ErrorComponent errorComponent) {
-        return errorComponent.getCode().getCoding().size() != 0;
+        return isNotEmpty(errorComponent.getCode().getCoding());
     }
 
     private static String getCodeableConceptFirstCode(CodeableConcept codeableConcept) {

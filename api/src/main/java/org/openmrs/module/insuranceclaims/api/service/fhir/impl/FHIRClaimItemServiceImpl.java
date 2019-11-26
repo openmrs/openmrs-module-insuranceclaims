@@ -3,17 +3,12 @@ package org.openmrs.module.insuranceclaims.api.service.fhir.impl;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
-import org.hl7.fhir.dstu3.model.Money;
-import org.hl7.fhir.dstu3.model.PositiveIntType;
-import org.hl7.fhir.dstu3.model.PrimitiveType;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimItemDao;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
-import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItemStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.ClaimResponseUtil.getProcessNote;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getUnambiguousElement;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_GENERAL_CATEGORY;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.SEQUENCE_FIRST;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.createFhirItemService;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.createItemGeneralAdjudication;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.createRejectionReasonAdjudication;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.getAdjudicationRejectionReason;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.getAdjudicationStatus;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.getItemCategory;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.getItemCodeBySequence;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.getItemQuantity;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.getItemUnitPrice;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialComponentUtil.getSpecialConditionComponentBySequenceNumber;
@@ -96,7 +98,6 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
             sequence += 1;
 
             items.add(nextItem);
-            //TODO: Add processNotes
         }
         return items;
     }
@@ -154,26 +155,6 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
         this.insuranceClaimItemDao = insuranceClaimItemDao;
     }
 
-    private String getProcessNote(ClaimResponse response, int noteNumber) {
-        List<ClaimResponse.NoteComponent> notes = response.getProcessNote();
-
-        return notes.stream()
-                .filter(note -> note.getNumber() == noteNumber)
-                .findFirst()
-                .map(ClaimResponse.NoteComponent::getText)
-                .orElse(null);
-    }
-
-    private InsuranceClaimItemStatus getAdjudicationStatus(ClaimResponse.AdjudicationComponent adjudicationComponent) {
-        Coding reasonCoding = adjudicationComponent.getReason().getCodingFirstRep();
-        return InsuranceClaimItemStatus.valueOf(reasonCoding.getSystem());
-    }
-
-    private String getAdjudicationRejectionReason(ClaimResponse.AdjudicationComponent adjudicationComponent) {
-        Coding reasonCoding = adjudicationComponent.getReason().getCodingFirstRep();
-        return reasonCoding.getCode();
-    }
-
     private ProvidedItem generateProvidedItem(List<String> itemCodes) {
         ProvidedItem providedItem = new ProvidedItem();
         providedItem.setItem(getConceptByExternalId(itemCodes));
@@ -184,95 +165,17 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
         List<Concept> conceptList = itemCodes.stream()
                 .map(code -> conceptService.getConceptByMapping(code, EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME))
                 .collect(Collectors.toList());
-
         return getUnambiguousElement(conceptList);
-    }
-
-    private int getItemQuantityApproved(InsuranceClaimItem insuranceClaimItem) {
-        return insuranceClaimItem.getQuantityApproved();
-    }
-
-    private ClaimResponse.AdjudicationComponent createItemGeneralAdjudication(
-            InsuranceClaimItem insuranceClaimItem) {
-        ClaimResponse.AdjudicationComponent adjudication = new ClaimResponse.AdjudicationComponent();
-        adjudication.setReason(getItemStatusReason(insuranceClaimItem)); //Set reason
-        adjudication.setValue(getItemQuantityApproved(insuranceClaimItem)); //Set value
-        adjudication.setAmount(getItemAmount(insuranceClaimItem)); //Set amount
-        adjudication.setCategory(getReasonCategory(ITEM_ADJUDICATION_GENERAL_CATEGORY)); //setCategory
-        return adjudication;
-    }
-
-    private ClaimResponse.AdjudicationComponent createRejectionReasonAdjudication(
-            InsuranceClaimItem insuranceClaimItem) {
-        ClaimResponse.AdjudicationComponent adjudicationComponent = new ClaimResponse.AdjudicationComponent();
-        adjudicationComponent.setReason(getItemRejectionReason(insuranceClaimItem));
-        adjudicationComponent.setCategory(getReasonCategory(ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY));
-        return adjudicationComponent;
-    }
-
-    private CodeableConcept getItemStatusReason(InsuranceClaimItem insuranceClaimItem) {
-        InsuranceClaimItemStatus status = insuranceClaimItem.getStatus();
-        CodeableConcept reason = new CodeableConcept();
-        Coding reasonCoding = new Coding();
-        reasonCoding.setCode(String.valueOf(status.ordinal()));
-        reasonCoding.setSystem(status.toString());
-        reason.addCoding(reasonCoding);
-        return reason;
-    }
-
-    private CodeableConcept getItemRejectionReason(InsuranceClaimItem insuranceClaimItem) {
-        CodeableConcept codeableConcept = new CodeableConcept();
-        Coding coding = new Coding();
-        coding.setCode(insuranceClaimItem.getRejectionReason());
-        codeableConcept.addCoding(coding);
-        return codeableConcept;
-    }
-
-    private Money getItemAmount(InsuranceClaimItem insuranceClaimItem) {
-        Money amount = new Money();
-        amount.setValue(insuranceClaimItem.getPriceApproved());
-        return amount;
-    }
-
-    private CodeableConcept getReasonCategory(String categoryName) {
-        CodeableConcept categoryConcept = new CodeableConcept();
-        categoryConcept.setText(categoryName);
-        return categoryConcept;
-    }
-
-    private List<String> getItemCodeBySequence(ClaimResponse response, int sequenceId) throws FHIRException {
-        List<ClaimResponse.AddedItemComponent> addedItemComponents = response.getAddItem();
-
-        ClaimResponse.AddedItemComponent correspondingAdditem = addedItemComponents.stream()
-                .filter(addItem -> isValueInSequence(addItem.getSequenceLinkId(), sequenceId))
-                .findFirst()
-                .orElse(null);
-
-        if (correspondingAdditem == null) {
-            throw new FHIRException("No item code corresponding to " + sequenceId + " found");
-        }
-
-        List<Coding> itemCoding = correspondingAdditem.getService().getCoding();
-        return itemCoding.stream()
-                .map(Coding::getCode)
-                .collect(Collectors.toList());
     }
 
     private InsuranceClaimItem generateOmrsClaimItem(Claim.ItemComponent item) {
         InsuranceClaimItem omrsItem = new InsuranceClaimItem();
         omrsItem.setQuantityProvided(getItemQuantity(item));
-
         ProvidedItem providedItem = new ProvidedItem();
         providedItem.setItem(findItemConcept(item));
-
         omrsItem.setItem(providedItem);
 
         return omrsItem;
-    }
-
-    private boolean isValueInSequence(List<PositiveIntType> sequence, int sequenceLinkId) {
-        return sequence.stream().map(PrimitiveType::getValue)
-                .anyMatch(value -> value.equals(sequenceLinkId));
     }
 
     private Concept findItemConcept(Claim.ItemComponent item) {
@@ -280,19 +183,12 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
         return conceptService.getConceptByMapping(itemCode, EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME);
     }
 
-    private String getLinkedInformation(Claim claim, Integer informationSequenceId) throws FHIRException  {
-        if (informationSequenceId == null) {
-            return null;
-        }
-        return getSpecialConditionComponentBySequenceNumber(claim, informationSequenceId);
+    private String getLinkedInformation(Claim claim, Integer informationSequenceId) throws FHIRException {
+        return informationSequenceId == null ? null : getSpecialConditionComponentBySequenceNumber(claim, informationSequenceId);
     }
 
     private Integer getItemComponentInformationLinkId(Claim.ItemComponent item) {
-        if (item.getInformationLinkId().isEmpty()) {
-            return null;
-        } else {
-            return item.getInformationLinkId().get(0).getValue();
-        }
+       return isEmpty(item.getInformationLinkId()) ? null : item.getInformationLinkId().get(0).getValue();
     }
 
     private int getFirstItemNoteNumber(ClaimResponse.ItemComponent item) {

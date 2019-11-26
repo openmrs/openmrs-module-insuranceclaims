@@ -1,5 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.PredicateUtils;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
@@ -10,10 +12,12 @@ import org.openmrs.api.IdentifierNotUniqueException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ELEMENTS;
+import static org.springframework.util.CollectionUtils.hasUniqueObject;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public final class IdentifierUtil {
 
@@ -54,25 +58,21 @@ public final class IdentifierUtil {
     }
 
     public static String getIdFromReference(Reference reference) {
-        try {
-            //References are in format: Category/referenceCode
-            return reference.getReference().split("/")[1];
-        } catch (NullPointerException e) {
-            return null;
-        }
+        return reference.getReference().split("/")[1];
     }
 
     public static <T> T getUnambiguousElement(List<T> listOfElements) {
-        if (listOfElements.isEmpty()) {
+        CollectionUtils.filter(listOfElements, PredicateUtils.notNullPredicate());
+        if (isEmpty(listOfElements)) {
             return null;
         }
-        Set<T> set = new HashSet<>(listOfElements);
-        if (set.size() == 1) {
+
+        if (hasUniqueObject(listOfElements)) {
             return listOfElements.get(0);
         } else {
             throw new IdentifierNotUniqueException("Could not get unambiguous element of type "
                     + listOfElements.get(0).getClass()
-                    + " Elements:\n" + listOfElements.toString());
+                    + ELEMENTS + ":\n" + listOfElements.toString());
         }
     }
 
