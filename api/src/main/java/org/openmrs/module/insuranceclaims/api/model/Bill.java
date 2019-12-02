@@ -128,13 +128,11 @@ public class Bill extends AbstractBaseOpenmrsData {
             return false;
         }
 
-        return EqualsBuilder.reflectionEquals(this, o, "id", "uuid", "dateCreated", "startDate",
-                "endDate", "creator", "totalAmount");
+        return EqualsBuilder.reflectionEquals(this, o, "id", "uuid", "creator");
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, "id", "uuid", "dateCreated", "startDate",
-                "endDate", "creator", "totalAmount");
+        return HashCodeBuilder.reflectionHashCode(this, "id", "uuid", "creator");
     }
 }

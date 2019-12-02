@@ -52,7 +52,6 @@ public class ProvidedItemMother {
         item.setItem(concept);
         item.setPatient(patient);
         item.setStatus(processStatus);
-        item.setBill(null);
         return item;
     }
 }

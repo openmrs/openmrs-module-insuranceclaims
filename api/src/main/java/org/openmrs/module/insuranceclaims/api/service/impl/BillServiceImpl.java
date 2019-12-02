@@ -7,32 +7,40 @@ import org.openmrs.module.insuranceclaims.api.service.BillService;
 import org.openmrs.module.insuranceclaims.api.service.ProvidedItemService;
 import org.openmrs.module.insuranceclaims.util.ConstantValues;
 import org.openmrs.module.insuranceclaims.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Service("insuranceclaims.BillService")
-@Transactional
 public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements BillService {
 
-    @Autowired
+    private DateUtil dateUtil;
+
+    private BillDao billDao;
+
     private ProvidedItemService providedItemService;
 
-    @Autowired
-    private BillDao billDao;
+    public void setBillDao(BillDao billDao) {
+        this.billDao = billDao;
+    }
+
+    public void setDateUtil(DateUtil dateUtil) {
+        this.dateUtil = dateUtil;
+    }
+
+    public void setProvidedItemService(ProvidedItemService providedItemService) {
+        this.providedItemService = providedItemService;
+    }
 
     @Override
     public Bill generateBill(List<ProvidedItem> providedItems) {
         Bill bill = new Bill();
 
-        Date date = DateUtil.now();
+        Date date = dateUtil.now();
 
         bill.setStartDate(date);
-        bill.setEndDate(DateUtil.plusDays(date, ConstantValues.DEFAULT_DURATION_BILL_DAYS));
+        bill.setEndDate(dateUtil.plusDays(date, ConstantValues.DEFAULT_DURATION_BILL_DAYS));
+        bill.setDateCreated(date);
 
         BigDecimal sumProvidedItems = providedItems.stream().map(ProvidedItem::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

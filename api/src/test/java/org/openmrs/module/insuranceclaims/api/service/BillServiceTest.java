@@ -1,5 +1,6 @@
 package org.openmrs.module.insuranceclaims.api.service;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +18,19 @@ import org.openmrs.module.insuranceclaims.api.mother.BillMother;
 import org.openmrs.module.insuranceclaims.api.mother.PatientMother;
 import org.openmrs.module.insuranceclaims.api.mother.ProvidedItemMother;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
+import org.openmrs.module.insuranceclaims.util.ConstantValues;
+import org.openmrs.module.insuranceclaims.util.DateUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -44,6 +51,9 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
     @Autowired
     private ConceptService conceptService;
 
+    @Autowired
+    private DateUtil dateUtil;
+
     private Patient patient;
 
     @Before
@@ -53,13 +63,15 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
                 .getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
 
         patient = PatientMother.createTestInstance(location, identifierType);
+
+        Clock clock = Clock.fixed(Instant.parse(ConstantValues.INSTANT_EXPECTED), ZoneId.of("UTC"));
+        dateUtil.setClock(clock);
     }
 
     @Test
     public void generateBill_shouldCorrectlyGenerateBill() {
         setAndSaveTestProvidedItems(ProcessStatus.ENTERED, TestConstants.TEST_ENTERED_PRICES);
         setAndSaveTestProvidedItems(ProcessStatus.PROCESSED, TestConstants.TEST_PROCESSED_PRICES);
-
 
         List<ProvidedItem> actualProvidedItems = providedItemService.getProvidedEnteredItems(patient.getPatientId());
 
@@ -70,18 +82,24 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
         List<ProvidedItem> processedProvidedItems = providedItemService.getProvidedItems(patient.getPatientId(),
                 ProcessStatus.PROCESSED);
 
-        double sumProvidedItemsDouble = Arrays.asList(TestConstants.TEST_ENTERED_PRICES).stream()
-                .mapToDouble(s -> Double.parseDouble(s)).sum();
+        double sumProvidedItemsDouble = DoubleStream.of(TestConstants.TEST_ENTERED_PRICES).sum();
+
         BigDecimal sumProvidedItems = new BigDecimal(Double.toString(sumProvidedItemsDouble));
 
-        Bill expectedBill = BillMother.createTestInstanceWithAmount(sumProvidedItems);
-
+        Date date = dateUtil.now();
+        Bill expectedBill = BillMother.createTestInstanceWithAmount(sumProvidedItems, date, dateUtil.plusDays(date,
+                ConstantValues.DEFAULT_DURATION_BILL_DAYS));
 
         Assert.assertThat(actualBill, is(expectedBill));
         Assert.assertTrue(actualBill.getTotalAmount().compareTo(expectedBill.getTotalAmount()) == 0);
         Assert.assertTrue(enteredProvidedItems.isEmpty());
         Assert.assertTrue(processedProvidedItems.size() == (TestConstants.TEST_PROCESSED_PRICES.length
                 + TestConstants.TEST_ENTERED_PRICES.length));
+    }
+
+    @After
+    public void resetClock() {
+        dateUtil.setClock(Clock.systemUTC());
     }
 
     private ProvidedItem createTestInstanceForProvidedItem(ProcessStatus processStatus, String price, Patient patient) {
@@ -91,11 +109,11 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
                 processStatus);
     }
 
-    private List<ProvidedItem> setAndSaveTestProvidedItems(ProcessStatus processStatus, String[] prices) {
+    private List<ProvidedItem> setAndSaveTestProvidedItems(ProcessStatus processStatus, double[] prices) {
         List<ProvidedItem> testProvidedItems = new ArrayList<>();
 
-        for (String item : prices) {
-            testProvidedItems.add(createTestInstanceForProvidedItem(processStatus, item, patient));
+        for (double item : prices) {
+            testProvidedItems.add(createTestInstanceForProvidedItem(processStatus, String.valueOf(item), patient));
         }
 
         saveProvidedItems(testProvidedItems);
@@ -105,7 +123,7 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
 
     private void saveProvidedItems(List<ProvidedItem> providedItems) {
         for (ProvidedItem item : providedItems) {
-            providedItemService.saveOrUpdate(item);
+            providedItemService.getProvidedItemDao().saveOrUpdate(item);
         }
     }
 }

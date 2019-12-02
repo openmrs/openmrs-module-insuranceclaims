@@ -1,42 +1,47 @@
 package org.openmrs.module.insuranceclaims.util;
 
-import org.springframework.stereotype.Component;
-
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-@Component
-public final class DateUtil {
+public class DateUtil {
 
     private static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getTimeZone("UTC");
 
-    public static Date now() {
-        return getDateWithDefaultTimeZone(new Date());
+    private Clock clock = Clock.systemUTC();
+
+    public Date now() {
+        return Date.from(Instant.now(clock));
     }
 
-    public static Date plusDays(Date date, int duration) {
+    public Date plusDays(Date date, int duration) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DATE, duration);
         return calendar.getTime();
     }
 
-    public static Date getDateWithDefaultTimeZone(Date timestamp) {
+    public void setClock(Clock clock) {
+        this.clock = clock;
+    }
+
+    public Date getDateWithDefaultTimeZone(Date timestamp) {
         return getDateWithTimeZone(timestamp, DEFAULT_TIME_ZONE);
     }
 
-    public static Date getDateWithLocalTimeZone(Date timestamp) {
+    public Date getDateWithLocalTimeZone(Date timestamp) {
         return getDateWithTimeZone(timestamp, getLocalTimeZone());
     }
 
-    public static Date getDateWithTimeZone(Date timestamp, TimeZone timeZone) {
+    public Date getDateWithTimeZone(Date timestamp, TimeZone timeZone) {
         Calendar calendar = Calendar.getInstance(timeZone);
         calendar.setTime(timestamp);
         return calendar.getTime();
     }
 
-    public static TimeZone getLocalTimeZone() {
+    public TimeZone getLocalTimeZone() {
         return TimeZone.getDefault();
     }
 }

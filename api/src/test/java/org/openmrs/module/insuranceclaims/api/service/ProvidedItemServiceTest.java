@@ -55,10 +55,8 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
         expectedProvidedItems = getAndSaveTestProvidedItems(ProcessStatus.PROCESSED,
                 TestConstants.TEST_PROCESSED_PRICES);
 
-
         List<ProvidedItem> actualProvidedItems = providedItemService.getProvidedItems(patient.getPatientId(),
                 ProcessStatus.PROCESSED);
-
 
         Assert.assertThat(actualProvidedItems.size(), is(expectedProvidedItems.size()));
         Assert.assertArrayEquals(expectedProvidedItems.toArray(), actualProvidedItems.toArray());
@@ -68,9 +66,7 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
     public void getProvidedEnteredItems_shouldCorrectlyGetItemsForPatient() {
         expectedProvidedItems = getAndSaveTestProvidedItems(ProcessStatus.ENTERED, TestConstants.TEST_ENTERED_PRICES);
 
-
         List<ProvidedItem> actualProvidedItems = providedItemService.getProvidedEnteredItems(patient.getPatientId());
-
 
         Assert.assertThat(actualProvidedItems.size(), is(expectedProvidedItems.size()));
         Assert.assertArrayEquals(expectedProvidedItems.toArray(), actualProvidedItems.toArray());
@@ -83,11 +79,11 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
                 processStatus);
     }
 
-    private List<ProvidedItem> getAndSaveTestProvidedItems(ProcessStatus processStatus, String[] prices) {
+    private List<ProvidedItem> getAndSaveTestProvidedItems(ProcessStatus processStatus, double[] prices) {
         List<ProvidedItem> testProvidedItems = new ArrayList<>();
 
-        for (String item : prices) {
-            testProvidedItems.add(createTestInstanceForProvidedItem(processStatus, item, patient));
+        for (double item : prices) {
+            testProvidedItems.add(createTestInstanceForProvidedItem(processStatus, String.valueOf(item), patient));
         }
 
         saveProvidedItems(testProvidedItems);
@@ -97,7 +93,7 @@ public class ProvidedItemServiceTest extends BaseModuleContextSensitiveTest {
 
     private void saveProvidedItems(List<ProvidedItem> providedItems) {
         for (ProvidedItem item : providedItems) {
-            providedItemService.saveOrUpdate(item);
+            providedItemService.getProvidedItemDao().saveOrUpdate(item);
         }
     }
 }

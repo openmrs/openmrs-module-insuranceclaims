@@ -8,16 +8,16 @@ import org.openmrs.api.db.hibernate.HibernateOpenmrsDataDAO;
 import org.openmrs.module.insuranceclaims.api.dao.ProvidedItemDao;
 import org.openmrs.module.insuranceclaims.api.model.ProcessStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("insuranceclaims.ProvidedItemDao")
 public class ProvidedItemDaoImpl extends HibernateOpenmrsDataDAO<ProvidedItem> implements ProvidedItemDao {
 
-    @Autowired
     private DbSessionFactory sessionFactory;
+
+    public void setSessionFactory(DbSessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     public ProvidedItemDaoImpl() {
         super(ProvidedItem.class);
