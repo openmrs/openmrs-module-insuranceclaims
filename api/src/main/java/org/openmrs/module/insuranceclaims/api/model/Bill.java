@@ -1,5 +1,8 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.ColumnDefault;
 import org.openmrs.Concept;
 
 import javax.persistence.Basic;
@@ -43,9 +46,10 @@ public class Bill extends AbstractBaseOpenmrsData {
     private BigDecimal totalAmount;
 
     @Basic
+    @ColumnDefault(value = "'ENTERED'")
     @Column(name = "payment_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus paymentStatus = PaymentStatus.ENTERED;
 
     @Basic
     @Column(name = "payment_type")
@@ -112,5 +116,23 @@ public class Bill extends AbstractBaseOpenmrsData {
 
     public void setDiagnosis(Concept diagnosis) {
         this.diagnosis = diagnosis;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        return EqualsBuilder.reflectionEquals(this, o, "id", "uuid", "creator");
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this, "id", "uuid", "creator");
     }
 }

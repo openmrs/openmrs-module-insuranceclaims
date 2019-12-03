@@ -12,6 +12,10 @@ public final class TestConstants {
 
 	public static final int TEST_CONCEPT_ID = 3;
 
+	public static final double[] TEST_ENTERED_PRICES = {30, 150, 0, 20, 500, 100};
+
+	public static final double[] TEST_PROCESSED_PRICES = {100, 500, 50, 0};
+
 	private TestConstants() {
 	}
 }

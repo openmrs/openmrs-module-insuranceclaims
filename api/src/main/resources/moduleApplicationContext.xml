@@ -12,6 +12,12 @@
 
     <context:component-scan base-package="org.openmrs.module.insuranceclaims"/>
 
+    <bean id="insuranceclaims.DateUtil" class="org.openmrs.module.insuranceclaims.util.DateUtil" />
+    <bean id="insuranceclaims.BillDao" class="org.openmrs.module.insuranceclaims.api.dao.impl.BillDaoImpl" />
+    <bean id="insuranceclaims.ProvidedItemDao" class="org.openmrs.module.insuranceclaims.api.dao.impl.ProvidedItemDaoImpl" >
+        <property name="sessionFactory" ref="dbSessionFactory" />
+    </bean>
+
     <!-- Wraps InsuranceClaimService methods in DB transactions and OpenMRS interceptors,
     which set audit info like dateCreated, changedBy, etc.-->
     <bean id="insuranceclaims.InsuranceClaimService"
@@ -41,5 +47,15 @@
                 <ref bean="insuranceclaims.InsuranceClaimService"/>
             </list>
         </property>
+    </bean>
+
+    <bean id="insuranceclaims.ProvidedItemService" class="org.openmrs.module.insuranceclaims.api.service.impl.ProvidedItemServiceImpl">
+        <property name="providedItemDao" ref="insuranceclaims.ProvidedItemDao" />
+    </bean>
+
+    <bean id="insuranceclaims.BillService" class="org.openmrs.module.insuranceclaims.api.service.impl.BillServiceImpl">
+        <property name="billDao" ref="insuranceclaims.BillDao" />
+        <property name="dateUtil" ref="insuranceclaims.DateUtil" />
+        <property name="providedItemService" ref="insuranceclaims.ProvidedItemService" />
     </bean>
 </beans>
