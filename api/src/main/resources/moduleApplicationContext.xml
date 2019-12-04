@@ -12,114 +12,13 @@
 
     <context:component-scan base-package="org.openmrs.module.insuranceclaims"/>
 
+    <import resource="classpath:components/daoComponents.xml" />
+
     <!-- Wraps InsuranceClaimService methods in DB transactions and OpenMRS interceptors,
     which set audit info like dateCreated, changedBy, etc.-->
-    <bean id="insuranceclaims.InsuranceClaimService"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimServiceImpl">
-                <property name="dao" ref="insuranceclaims.InsuranceClaimDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
-
-    <bean id="insuranceclaims.fhirDiagnosis"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimDiagnosisServiceImpl">
-                <property name="diagnosisDao" ref="insuranceclaims.InsuranceClaimDiagnosisDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
-
-    <bean id="insuranceclaims.fhirItem"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimItemServiceImpl">
-                <property name="insuranceClaimItemDao" ref="insuranceclaims.InsuranceClaimItemDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
-
-    <bean id="insuranceclaims.fhirClaim"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRInsuranceClaimServiceImpl">
-                <property name="attributeService" ref="insuranceclaims.AttributeServiceDao"/>
-                <property name="claimItemService" ref="insuranceclaims.fhirItem"/>
-                <property name="claimDiagnosisService" ref="insuranceclaims.fhirDiagnosis"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
-
-    <bean id="insuranceclaims.fhirClaimResponse"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimResponseServiceImpl">
-                <property name="itemService" ref="insuranceclaims.fhirItem"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
-
-    <bean id="insuranceclaims.AttributeServiceDao"
-            class="org.openmrs.module.insuranceclaims.api.service.db.impl.AttributeServiceImpl">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="insuranceclaims.InsuranceClaimDiagnosisDao"
-            class="org.openmrs.module.insuranceclaims.api.dao.impl.InsuranceClaimDiagnosisDaoImpl">
-        <property name="sessionFactory" ref="dbSessionFactory" />
-    </bean>
-
-    <bean id="insuranceclaims.InsuranceClaimItemDao"
-            class="org.openmrs.module.insuranceclaims.api.dao.impl.InsuranceClaimItemDaoImpl">
-        <property name="sessionFactory" ref="dbSessionFactory" />
-    </bean>
+    <import resource="classpath:components/insuranceServiceComponents.xml" />
+    <import resource="classpath:components/dbComponents.xml" />
+    <import resource="classpath:components/fhirComponents.xml" />
 
     <!-- Adds module services to OpenMRS context so it can be accessed
     calling e.g. Context.getService(InsuranceClaimService.class) -->
@@ -135,9 +34,28 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService</value>
-                <ref bean="insuranceclaims.fhirDiagnosis"/>
+                <value>org.openmrs.module.insuranceclaims.api.service.BillService</value>
+                <ref bean="insuranceclaims.BillService"/>
             </list>
         </property>
     </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService</value>
+                <ref bean="insuranceclaims.InsuranceClaimItemService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.insuranceclaims.api.service.InsuranceClaimDiagnosisService</value>
+                <ref bean="insuranceclaims.InsuranceClaimDiagnosisService"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>
