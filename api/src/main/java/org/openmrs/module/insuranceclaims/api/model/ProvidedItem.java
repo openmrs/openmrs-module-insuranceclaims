@@ -11,7 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -24,12 +27,13 @@ import java.util.Date;
  */
 @Entity(name = "iclm.ProvidedItem")
 @Table(name = "iclm_provided_item")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ProvidedItem extends AbstractBaseOpenmrsData {
 
     private static final long serialVersionUID = 100458655928687702L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "iclm_provided_item_id")
     private Integer id;
 

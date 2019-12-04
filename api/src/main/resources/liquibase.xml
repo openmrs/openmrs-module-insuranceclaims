@@ -23,7 +23,7 @@
             Creating the iclm_bill table
         </comment>
         <createTable tableName="iclm_bill">
-            <column name="iclm_bill_id" type="int">
+            <column name="iclm_bill_id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" unique="true"/>
             </column>
             <column name="start_date" type="DATETIME">
@@ -79,7 +79,7 @@
             Creating the iclm_provided_item table
         </comment>
         <createTable tableName="iclm_provided_item">
-            <column name="iclm_provided_item_id" type="int">
+            <column name="iclm_provided_item_id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" unique="true"/>
             </column>
             <column name="price" type="decimal(10,2)">
@@ -140,8 +140,8 @@
             </not>
         </preConditions>
         <createTable tableName="iclm_claim">
-            <column name="iclm_claim_id" type="int">
-                <constraints primaryKey="true" unique="true"/>
+            <column name="iclm_claim_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" unique="true" />
             </column>
             <column name="provider" type="int"/>
             <column name="patient" type="int">
@@ -379,7 +379,7 @@
                                  referencedTableName="users" referencedColumnNames="user_id"/>
     </changeSet>
 
-    <changeSet id="insuranceclaims-12.11.2019:14:31" author="Damian Borowiecki">
+    <changeSet id="insuranceclaims-12.11.2019:14:01" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="provider_attribute_type" />
             <sqlCheck expectedResult="0">
@@ -401,7 +401,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="insuranceclaims-12.11.2019:14:47" author="Damian Borowiecki">
+    <changeSet id="insuranceclaims-12.11.2019:14:02" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="location_attribute_type" />
             <sqlCheck expectedResult="0">
@@ -423,7 +423,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="insuranceclaims-12.11.2019:14:37" author="Damian Borowiecki">
+    <changeSet id="insuranceclaims-12.11.2019:14:03" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="patient_identifier_type" />
             <sqlCheck expectedResult="0">
@@ -493,14 +493,14 @@
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="concept_reference_source" />
             <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM concept_source_id WHERE uuid ="e730f72a-2789-4d82-8e71-d7707babc0e6";
+                SELECT COUNT(*) FROM concept_reference_source WHERE uuid ="e730f72a-2789-4d82-8e71-d7707babc0e6";
             </sqlCheck>
         </preConditions>
         <comment>
             Item/Service price
         </comment>
         <insert tableName="concept_reference_source">
-            <column name="name">External Code</column>
+            <column name="name">ExternalCode</column>
             <column name="description">Code used by external server</column>
             <column name="creator">1</column>
             <column name="date_created">2019-11-17</column>

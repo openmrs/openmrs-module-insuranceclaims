@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -21,12 +24,13 @@ import java.util.Date;
  */
 @Entity(name = "iclm.Bill")
 @Table(name = "iclm_bill")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Bill extends AbstractBaseOpenmrsData {
 
     private static final long serialVersionUID = 7220927103234164526L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "iclm_bill_id")
     private Integer id;
 
