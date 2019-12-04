@@ -1,0 +1,97 @@
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="org.openmrs.module.insuranceclaims"/>
+
+    <!-- Wraps InsuranceClaimService methods in DB transactions and OpenMRS interceptors,
+         which set audit info like dateCreated, changedBy, etc.-->
+
+    <bean id="insuranceclaims.InsuranceClaimService"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimServiceImpl">
+                <property name="dao" ref="insuranceclaims.InsuranceClaimDao"/>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
+    <bean id="insuranceclaims.BillService"
+          class="org.openmrs.module.insuranceclaims.api.service.impl.BillServiceImpl">
+        <property name="dao" ref="insuranceclaims.BillDao"/>
+        <property name="billDao" ref="insuranceclaims.BillDao"/>
+        <property name="dateUtil" ref="insuranceclaims.DateUtil" />
+        <property name="providedItemService" ref="insuranceclaims.ProvidedItemService" />
+    </bean>
+
+    <bean id="insuranceclaims.InsuranceClaimItemService"
+          class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimItemServiceImpl">
+        <property name="dao" ref="insuranceclaims.InsuranceClaimItemDao"/>
+    </bean>
+
+    <bean id="insuranceclaims.InsuranceClaimDiagnosisService"
+          class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimDiagnosisServiceImpl">
+        <property name="dao" ref="insuranceclaims.InsuranceClaimDiagnosisDao"/>
+    </bean>
+
+    <bean id="insuranceclaims.ProvidedItemService"
+          class="org.openmrs.module.insuranceclaims.api.service.impl.ProvidedItemServiceImpl">
+        <property name="dao" ref="insuranceclaims.ProvidedItemDao"/>
+        <property name="providedItemDao" ref="insuranceclaims.ProvidedItemDao" />
+    </bean>
+
+    <bean id="insuranceclaims.InsurancePolicyService"
+          class="org.openmrs.module.insuranceclaims.api.service.impl.InsurancePolicyServiceImpl">
+        <property name="dao" ref="insuranceclaims.InsurancePolicyDao"/>
+    </bean>
+
+<!--    <bean id="insuranceclaims.InsuranceClaimItemService"-->
+<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--        <property name="transactionManager">-->
+<!--            <ref bean="transactionManager"/>-->
+<!--        </property>-->
+<!--        <property name="target">-->
+<!--            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimItemServiceImpl">-->
+<!--                <property name="dao" ref="insuranceclaims.InsuranceClaimItemDao"/>-->
+<!--            </bean>-->
+<!--        </property>-->
+<!--        <property name="preInterceptors">-->
+<!--            <ref bean="serviceInterceptors"/>-->
+<!--        </property>-->
+<!--        <property name="transactionAttributeSource">-->
+<!--            <ref bean="transactionAttributeSource"/>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+<!--    <bean id="insuranceclaims.InsuranceClaimDiagnosisService"-->
+<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--        <property name="transactionManager">-->
+<!--            <ref bean="transactionManager"/>-->
+<!--        </property>-->
+<!--        <property name="target">-->
+<!--            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimDiagnosisServiceImpl">-->
+<!--                <property name="dao" ref="insuranceclaims.InsuranceClaimDiagnosisDao"/>-->
+<!--            </bean>-->
+<!--        </property>-->
+<!--        <property name="preInterceptors">-->
+<!--            <ref bean="serviceInterceptors"/>-->
+<!--        </property>-->
+<!--        <property name="transactionAttributeSource">-->
+<!--            <ref bean="transactionAttributeSource"/>-->
+<!--        </property>-->
+<!--    </bean>-->
+</beans>

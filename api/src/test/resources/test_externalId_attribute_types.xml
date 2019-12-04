@@ -1,0 +1,30 @@
+<dataset>
+    <provider_attribute_type provider_attribute_type_id="1997" name="externalId" datatype="org.openmrs.customdatatype.datatype.FreeTextDatatype"
+                             min_occurs="0" creator="1" uuid="bbdf67e8-c020-40ff-8ad6-74ba34893882" date_created="2019-11-12"
+                             retired="0"/>
+
+    <location_attribute_type location_attribute_type_id="1998" name="externalId" datatype="org.openmrs.customdatatype.datatype.FreeTextDatatype"
+                             min_occurs="0" creator="1" date_created="2019-11-12" uuid="217da59b-6003-43b9-9595-b5c1349f1152"
+                             retired="0"/>
+
+    <patient_identifier_type patient_identifier_type_id="1999" name="ExternalId" date_created="2019-08-08" creator="1" required="0"
+                             retired="0" location_behavior="NOT_USED" uuid="ee8e82c4-1563-43aa-8c73-c3e4e88cb79b"/>
+
+    <location location_id="10547108" name="Rio Bravo" creator="1" date_created="2018-11-12" retired="0" uuid="6ab6fa52-614e-4a96-a9a0-6016df62f350"/>
+    <location_attribute location_attribute_id="12938" location_id="10547108" attribute_type_id="1998"
+                        value_reference="eXteRnalID" uuid="37c4cdfa-b9c5-4888-8a55-20eacd4f232c" creator="1"
+                        date_created="2018-12-12" voided="0" />
+
+    <provider provider_id="912093" name="Doctor Manhattan" creator="1" date_created="2018-01-04" retired="0" uuid="9dbe313b-5cf7-457c-9b0b-cbe50820cdc7" />
+    <provider_attribute provider_attribute_id="12938" provider_id="912093" attribute_type_id="1997"
+                        value_reference="eXteRnalID" uuid="7dfad60e-e09f-4f13-ad4e-f064aba0fb38" creator="1"
+                        date_created="2018-12-13" voided="0" />
+
+    <concept_datatype concept_datatype_id="114" name="N/A" hl7_abbreviation="ZZ"
+                      description="Not associated with a datatype (e.g., term answers, sets)"
+                      creator="1" date_created="2004-02-02 00:00:00.0" retired="false"
+                      retired_by="1" uuid="1d4a4c94-c2cc-11de-8d13-0010c6dffd0f"/>
+    <concept_class concept_class_id="114" name="Diagnosis" description="Conclusion drawn through findings"
+                   creator="1" date_created="2004-02-02 00:00:00.0" retired="false" retired_by="1"
+                   uuid="1d4918b0-c2cc-11de-8d13-0010c6dffd0f" changed_by="1"/>
+</dataset>

@@ -4,29 +4,33 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.openmrs.Patient;
 
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * Model class that represents an insurance policy
  */
 @Entity(name = "iclm.InsurancePolicy")
 @Table(name = "iclm_policy")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class InsurancePolicy extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = -4340488805384799463L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "iclm_policy_id")
 	private Integer id;
 

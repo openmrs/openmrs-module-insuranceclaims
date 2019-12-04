@@ -7,30 +7,34 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.VisitType;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Model class that represents an insurance claim.
  */
 @Entity(name = "iclm.Claim")
 @Table(name = "iclm_claim")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class InsuranceClaim extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = 1649522411236291450L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "iclm_claim_id")
 	private Integer id;
 

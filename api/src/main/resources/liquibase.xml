@@ -23,7 +23,7 @@
             Creating the iclm_bill table
         </comment>
         <createTable tableName="iclm_bill">
-            <column name="iclm_bill_id" type="int">
+            <column name="iclm_bill_id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" unique="true"/>
             </column>
             <column name="start_date" type="DATETIME">
@@ -79,7 +79,7 @@
             Creating the iclm_provided_item table
         </comment>
         <createTable tableName="iclm_provided_item">
-            <column name="iclm_provided_item_id" type="int">
+            <column name="iclm_provided_item_id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" unique="true"/>
             </column>
             <column name="price" type="decimal(10,2)">
@@ -140,8 +140,8 @@
             </not>
         </preConditions>
         <createTable tableName="iclm_claim">
-            <column name="iclm_claim_id" type="int">
-                <constraints primaryKey="true" unique="true"/>
+            <column name="iclm_claim_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" unique="true" />
             </column>
             <column name="provider" type="int"/>
             <column name="patient" type="int">
@@ -379,4 +379,133 @@
                                  referencedTableName="users" referencedColumnNames="user_id"/>
     </changeSet>
 
+    <changeSet id="insuranceclaims-12.11.2019:14:01" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="provider_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM provider_attribute_type WHERE uuid = "bbdf67e8-c020-40ff-8ad6-74ba34893882";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Provider identification for external app
+        </comment>
+        <insert tableName="provider_attribute_type">
+            <column name="name">ExternalId</column>
+            <column name="description">Attribute used for external provider identification.</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.FreeTextDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-12</column>
+            <column name="retired">0</column>
+            <column name="uuid">bbdf67e8-c020-40ff-8ad6-74ba34893882</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-12.11.2019:14:02" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="location_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM location_attribute_type WHERE uuid = "217da59b-6003-43b9-9595-b5c1349f1152";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Location identification for external app
+        </comment>
+        <insert tableName="location_attribute_type">
+            <column name="name">ExternalId</column>
+            <column name="description">Attribute used for external location identification.</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.FreeTextDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-12</column>
+            <column name="retired">0</column>
+            <column name="uuid">217da59b-6003-43b9-9595-b5c1349f1152</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-12.11.2019:14:03" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="patient_identifier_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM patient_identifier_type WHERE uuid ="ee8e82c4-1563-43aa-8c73-c3e4e88cb79b";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Added the externalId patientIdentifierType.
+        </comment>
+        <insert tableName="patient_identifier_type">
+            <column name="name">ExternalId</column>
+            <column name="description">Attribute used for external patient identification</column>
+            <column name="check_digit">0</column>
+            <column name="date_created">2019-08-08</column>
+            <column name="creator">1</column>
+            <column name="required">0</column>
+            <column name="location_behavior">NOT_USED</column>
+            <column name="uuid">ee8e82c4-1563-43aa-8c73-c3e4e88cb79b</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-18.11.2019:14:39" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="concept_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_attribute_type WHERE uuid ="925e4987-3104-4d74-989b-3ec96197b532";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Attribute defining whether the concept is item or service.
+        </comment>
+        <insert tableName="concept_attribute_type">
+            <column name="name">isService</column>
+            <column name="description">Attribute defining whether the concept is item or service</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.BooleanDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-17</column>
+            <column name="retired">0</column>
+            <column name="uuid">925e4987-3104-4d74-989b-3ec96197b532</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-18.11.2019:14:41" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="concept_attribute_type" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_attribute_type WHERE uuid ="ddc082c8-db30-4796-890e-f0d487fb9085";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Item/Service price
+        </comment>
+        <insert tableName="concept_attribute_type">
+            <column name="name">Price</column>
+            <column name="description">Item/Service price</column>
+            <column name="datatype">org.openmrs.customdatatype.datatype.FloatDatatype</column>
+            <column name="min_occurs">0</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-17</column>
+            <column name="retired">0</column>
+            <column name="uuid">ddc082c8-db30-4796-890e-f0d487fb9085</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-18.11.2019:15:12" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="concept_reference_source" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_reference_source WHERE uuid ="e730f72a-2789-4d82-8e71-d7707babc0e6";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Item/Service price
+        </comment>
+        <insert tableName="concept_reference_source">
+            <column name="name">ExternalCode</column>
+            <column name="description">Code used by external server</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-11-17</column>
+            <column name="retired">0</column>
+            <column name="uuid">e730f72a-2789-4d82-8e71-d7707babc0e6</column>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

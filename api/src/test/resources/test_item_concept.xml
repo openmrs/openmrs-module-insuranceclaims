@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <concept_datatype concept_datatype_id="201" name="N/A" hl7_abbreviation="ZZ" description="Not associated with a datatype (e.g., term answers, sets)" creator="1" date_created="2014-02-02 00:00:00.0" retired="false" retired_by="1" uuid="1d4a4c94-c2cc-11de-8d13-0010c6dffd0a"/>
+
+    <concept_class concept_class_id="201" name="Service" description="Some service provided to patient" creator="1" date_created="2014-02-02 00:00:00.0" retired="false" retired_by="1" uuid="2d4918b0-c2cc-11de-8d13-0010c6dffd0f" changed_by="1"/>
+    <concept_class concept_class_id="202" name="Item" description="Some item provided to patient" creator="1" date_created="2014-02-02 00:00:00.0" retired="false" retired_by="1" uuid="2d4918b0-c2cc-11de-8d13-0010c6dffd0g" changed_by="1"/>
+
+    <concept_map_type concept_map_type_id="222" name="Exactly" creator="1" date_created="2018-11-03 00:00:00.0" changed_by="1" is_hidden="false" retired="false" retired_by="1" uuid="16643629-7d8c-11e1-909d-c80aa9edcf4e"/>
+
+    <concept_reference_source concept_source_id="223" name="ExternalCode" description="Code used for external recognition" creator="1" date_created="2010-04-25 11:12:44.0" retired="false" retired_by="1" uuid="e730f72a-2789-4d82-8e71-d7707babc0e6" changed_by="1"/>
+
+    <concept_attribute_type concept_attribute_type_id="999" name="Price" description="Item/Service price"
+                            datatype="org.openmrs.customdatatype.datatype.FloatDatatype"  min_occurs="0" creator="1" date_created="2019-11-17"
+                            retired="0" uuid="ddc082c8-db30-4796-890e-f0d487fb9085" />
+    
+    <concept_attribute_type concept_attribute_type_id="1030" name="isService" description="Attribute defining whether the concept is item or service"
+                            datatype="org.openmrs.customdatatype.datatype.BooleanDatatype" min_occurs="0" creator="1" date_created="2019-11-17"
+                            retired="0" uuid="925e4987-3104-4d74-989b-3ec96197b532" />
+
+    <!--EXAMPLE SERVICE -->>
+    <concept concept_id="21160148" retired="false" datatype_id="201" class_id="201" is_set="false" creator="1" date_created="2011-06-08 16:46:19.0" version="" changed_by="1" date_changed="2014-10-09 15:47:48.0" retired_by="1" uuid="160148BAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+    <concept_name concept_name_id="22207966" concept_id="21160148" name="SUR Biopsy - Incisional" locale="en" locale_preferred="true" creator="1" date_created="2011-06-08 16:46:19.0" concept_name_type="FULLY_SPECIFIED" voided="false" voided_by="1" uuid="item16BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" changed_by="1"/>
+
+    <concept_attribute concept_attribute_id="211112" concept_id="21160148"
+                       attribute_type_id="999" value_reference="21000.00"
+                       creator="1" date_created="2019-11-17"
+                       voided="0" uuid="dac082c8-8888-4444-890e-f0d487fb9085" />
+
+    <concept_attribute concept_attribute_id="211113" concept_id="21160148"
+                       attribute_type_id="1030" value_reference="true"
+                       creator="1" date_created="2019-11-17"
+                       voided="0" uuid="odc082c8-8888-4444-890E-f0d487fb9011" />
+
+    <concept_reference_term concept_reference_term_id="22237055" concept_source_id="223" code="M9" creator="1" date_created="2010-12-14 00:00:00.0" changed_by="1" retired="false" retired_by="1" uuid="e730f72a-2789-4d82-8e71-d7707bab11e6"/>
+    <concept_reference_map concept_map_id="22270552" concept_reference_term_id="22237055" concept_map_type_id="222" creator="1" date_created="2013-04-25 12:05:06.0" concept_id="21160148" changed_by="1" uuid="180552ABBBBBBBBBBBBBBBBBBBBBBBBBBBBB"/>
+
+    <!-- EXAMPLE ITEM -->
+    <concept concept_id="131313" retired="false" datatype_id="201" class_id="201" is_set="false" creator="1" date_created="2011-06-08 16:46:19.0" version="" changed_by="1" date_changed="2014-10-09 15:47:48.0" retired_by="1" uuid="160148BAAAAAAAAAAAAAAAAAAAAAAAAAABBB"/>
+    <concept_name concept_name_id="1111" concept_id="131313" name="Snake venom antiserum central Africa, Typ Inj" locale="en" locale_preferred="true" creator="1" date_created="2011-06-08 16:46:19.0" concept_name_type="FULLY_SPECIFIED" voided="false" voided_by="1" uuid="item16BBBBBBBBBBBBBBBBBBBBBBBBBBBCCC" changed_by="1"/>
+
+    <concept_attribute concept_attribute_id="111111111111" concept_id="131313" attribute_type_id="999" value_reference="36230.00"
+                       creator="1" date_created="2019-11-17"
+                       voided="0" uuid="bdc082c8-8888-4444-890e-f0d487fb9086" />
+
+    <concept_attribute concept_attribute_id="11111111112" concept_id="131313" attribute_type_id="1030" value_reference="false"
+                       creator="1" date_created="2019-11-17"
+                       voided="0" uuid="adc082c8-8888-4444-890E-f0d487fb9033" />
+
+    <concept_reference_term concept_reference_term_id="1344" concept_source_id="223" code="0216" creator="1" date_created="2010-12-14 00:00:00.0" changed_by="1" retired="false" retired_by="1" uuid="4730f72a-2789-4d82-8e71-d7707babc1e6"/>
+    <concept_reference_map concept_map_id="123123" concept_reference_term_id="1344" concept_map_type_id="222" creator="1" date_created="2013-04-25 12:05:06.0" concept_id="131313" changed_by="1" uuid="480552A3BBBBBBBBBBBBBBBBBBBBBBBBBBBC"/>
+
+</dataset>

@@ -1,0 +1,33 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="org.openmrs.module.insuranceclaims"/>
+
+    <bean id="insuranceclaims.FHIRClaimDiagnosisService"
+          class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimDiagnosisServiceImpl">
+        <property name="diagnosisDbService" ref="insuranceclaims.DiagnosisDbService"/>
+    </bean>
+
+
+    <bean id="insuranceclaims.FHIRClaimItemService"
+          class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimItemServiceImpl">
+    <property name="itemDbService" ref="insuranceclaims.ItemDbService"/>
+    </bean>
+
+    <bean id="insuranceclaims.FHIRInsuranceClaimService"
+          class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRInsuranceClaimServiceImpl">
+        <property name="attributeService" ref="insuranceclaims.AttributeService"/>
+        <property name="claimItemService" ref="insuranceclaims.FHIRClaimItemService"/>
+        <property name="claimDiagnosisService" ref="insuranceclaims.FHIRClaimDiagnosisService"/>
+    </bean>
+
+    <bean id="insuranceclaims.FHIRClaimResponseService"
+          class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimResponseServiceImpl">
+    <property name="itemService" ref="insuranceclaims.FHIRClaimItemService"/>
+    </bean>
+</beans>

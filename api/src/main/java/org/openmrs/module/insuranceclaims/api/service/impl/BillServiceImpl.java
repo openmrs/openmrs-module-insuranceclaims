@@ -48,7 +48,6 @@ public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements Bil
         bill.setTotalAmount(sumProvidedItems);
 
         providedItemService.updateStatusProvidedItems(providedItems);
-
         return billDao.saveOrUpdate(bill);
     }
 }

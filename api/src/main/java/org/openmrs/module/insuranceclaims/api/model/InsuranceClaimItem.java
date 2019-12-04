@@ -3,17 +3,20 @@ package org.openmrs.module.insuranceclaims.api.model;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
-import java.math.BigDecimal;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * Model class that represents an insurance claim item.
@@ -21,12 +24,13 @@ import javax.persistence.Table;
  */
 @Entity(name = "iclm.InsuranceClaimItem ")
 @Table(name = "iclm_claim_item")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class InsuranceClaimItem extends AbstractBaseOpenmrsData {
 
 	private static final long serialVersionUID = -6769445113735423802L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "iclm_claim_item_id")
 	private Integer id;
 

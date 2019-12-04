@@ -32,6 +32,9 @@
         <require_module version="${appuiVersion}">
             org.openmrs.module.appui
         </require_module>
+        <require_module version="${fhirVersion}">
+            org.openmrs.module.fhir
+        </require_module>
     </require_modules>
 
     <!-- Extensions -->
@@ -42,6 +45,7 @@
 
     <aware_of_modules>
         <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
+        <aware_of_module>org.openmrs.module.fhir</aware_of_module>
     </aware_of_modules>
 
 
@@ -105,5 +109,52 @@
     </messages>
     <!-- /Internationalization -->
 
+    <globalProperty>
+        <property>${project.parent.artifactId}.baseInsuranceClaimUrl</property>
+        <defaultValue>localhost:8000</defaultValue>
+        <description>The URL of third party base server that use to retrieve claims
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.eligibilityRequestResource</property>
+        <defaultValue>EligibilityRequest</defaultValue>
+        <description>Third party server resource path for eligibility request </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.claimResource</property>
+        <defaultValue>Claim</defaultValue>
+        <description>Third party server resource path for claim
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.claimResponseResource</property>
+        <defaultValue>ClaimResponse</defaultValue>
+        <description>Third party server resource path for claim response
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.diagnosisPrimaryCode</property>
+        <defaultValue>ExternalDiagnosisPrimaryCode</defaultValue>
+        <description>Establish primary mapping in Claim.DiagnosiComponent
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.externalApiLogin</property>
+        <defaultValue>admin</defaultValue>
+        <description>Login used for external claim service authorization
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.externalApiPassword</property>
+        <defaultValue>Admin123</defaultValue>
+        <description>Password used for external claim service authorization
+        </description>
+    </globalProperty>
 </module>
 

@@ -13,30 +13,13 @@
     <context:component-scan base-package="org.openmrs.module.insuranceclaims"/>
 
     <bean id="insuranceclaims.DateUtil" class="org.openmrs.module.insuranceclaims.util.DateUtil" />
-    <bean id="insuranceclaims.BillDao" class="org.openmrs.module.insuranceclaims.api.dao.impl.BillDaoImpl" />
-    <bean id="insuranceclaims.ProvidedItemDao" class="org.openmrs.module.insuranceclaims.api.dao.impl.ProvidedItemDaoImpl" >
-        <property name="sessionFactory" ref="dbSessionFactory" />
-    </bean>
 
-    <!-- Wraps InsuranceClaimService methods in DB transactions and OpenMRS interceptors,
-    which set audit info like dateCreated, changedBy, etc.-->
-    <bean id="insuranceclaims.InsuranceClaimService"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimServiceImpl">
-                <property name="dao" ref="insuranceclaims.InsuranceClaimDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
-    </bean>
+    <import resource="classpath:components/daoComponents.xml" />
+
+
+    <import resource="classpath:components/insuranceServiceComponents.xml" />
+    <import resource="classpath:components/dbComponents.xml" />
+    <import resource="classpath:components/fhirComponents.xml" />
 
     <!-- Adds module services to OpenMRS context so it can be accessed
     calling e.g. Context.getService(InsuranceClaimService.class) -->
@@ -49,13 +32,31 @@
         </property>
     </bean>
 
-    <bean id="insuranceclaims.ProvidedItemService" class="org.openmrs.module.insuranceclaims.api.service.impl.ProvidedItemServiceImpl">
-        <property name="providedItemDao" ref="insuranceclaims.ProvidedItemDao" />
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.insuranceclaims.api.service.BillService</value>
+                <ref bean="insuranceclaims.BillService"/>
+            </list>
+        </property>
     </bean>
 
-    <bean id="insuranceclaims.BillService" class="org.openmrs.module.insuranceclaims.api.service.impl.BillServiceImpl">
-        <property name="billDao" ref="insuranceclaims.BillDao" />
-        <property name="dateUtil" ref="insuranceclaims.DateUtil" />
-        <property name="providedItemService" ref="insuranceclaims.ProvidedItemService" />
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService</value>
+                <ref bean="insuranceclaims.InsuranceClaimItemService"/>
+            </list>
+        </property>
     </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.insuranceclaims.api.service.InsuranceClaimDiagnosisService</value>
+                <ref bean="insuranceclaims.InsuranceClaimDiagnosisService"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>
