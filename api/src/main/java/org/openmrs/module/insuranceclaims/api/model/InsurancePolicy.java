@@ -42,6 +42,10 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 	@Column(name = "expiry_date")
 	private Date expiryDate;
 
+	@Basic
+	@Column(name = "policy_number")
+	private String policyNumber;
+
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "patient", nullable = false)
@@ -64,12 +68,13 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 	 * @param status - the policy status
 	 */
 	public InsurancePolicy(Date startDate, Date expiryDate, Patient patient,
-			InsurancePolicyStatus status) {
+			InsurancePolicyStatus status, String policyNumber) {
 		super();
 		this.startDate = startDate == null ? null : (Date) startDate.clone();
 		this.expiryDate = expiryDate == null ? null : (Date) expiryDate.clone();
 		this.patient = patient;
 		this.status = status;
+		this.policyNumber = policyNumber;
 	}
 
 	@Override
@@ -96,6 +101,14 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate == null ? null : (Date) expiryDate.clone();
+	}
+
+	public String getPolicyNumber() {
+		return policyNumber;
+	}
+
+	public void setPolicyNumber(String policyNumber) {
+		this.policyNumber = policyNumber;
 	}
 
 	public Patient getPatient() {

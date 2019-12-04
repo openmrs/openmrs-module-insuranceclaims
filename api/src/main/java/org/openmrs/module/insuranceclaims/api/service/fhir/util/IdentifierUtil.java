@@ -49,6 +49,14 @@ public final class IdentifierUtil {
         return codeClaimIdentifier;
     }
 
+    public static Reference buildReference(String referenceType, String referenceValue) {
+        Reference reference = new Reference();
+        String stringReference = referenceType + "/" + referenceValue;
+        reference.setReference(stringReference);
+        return reference;
+    }
+
+
     public static String getIdentifierValueByCode(Claim claim, String code, List<String> errors) {
         return getClaimIdentifierValueBySystemCode(claim, code);
     }

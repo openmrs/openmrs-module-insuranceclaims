@@ -4,6 +4,7 @@ import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.insuranceclaims.api.model.InsurancePolicy;
 import org.openmrs.module.insuranceclaims.api.model.InsurancePolicyStatus;
+import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 
 import java.util.Date;
 
@@ -22,6 +23,7 @@ public final class InsurancePolicyMother {
 		policy.setExpiryDate(new Date());
 		policy.setPatient(PatientMother.createTestInstance(location, identifierType));
 		policy.setStatus(InsurancePolicyStatus.ACTIVE);
+		policy.setPolicyNumber(TestConstants.TEST_PATIENT_POLICY_NUMBER);
 		return policy;
 	}
 

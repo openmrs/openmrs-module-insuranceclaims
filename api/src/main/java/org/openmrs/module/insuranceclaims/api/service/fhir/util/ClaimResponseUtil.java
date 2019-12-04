@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.buildReference;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdentifierValueByCode;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CLAIM_REFERENCE;
@@ -52,16 +53,11 @@ public final class ClaimResponseUtil {
     }
 
     public static Reference buildClaimReference(InsuranceClaim omrsClaim) {
-        Reference reference = new Reference();
-        String stringReference = CLAIM_REFERENCE + "/" + omrsClaim.getClaimCode();
-        reference.setReference(stringReference);
-        return reference;
+        return buildReference(CLAIM_REFERENCE, omrsClaim.getClaimCode());
     }
 
     public static List<Reference> buildCommunicationRequestReference(InsuranceClaim omrsClaim) {
-        Reference reference = new Reference();
-        String stringReference = COMMUNICATION_REQUEST + "/" + omrsClaim.getUuid();
-        reference.setReference(stringReference);
+        Reference reference = buildReference(COMMUNICATION_REQUEST, omrsClaim.getUuid());
         return Collections.singletonList(reference);
     }
 
