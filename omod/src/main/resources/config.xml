@@ -142,5 +142,19 @@
         <description>Establish primary mapping in Claim.DiagnosiComponent
         </description>
     </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.externalApiLogin</property>
+        <defaultValue>admin</defaultValue>
+        <description>Login used for external claim service authorization
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.externalApiPassword</property>
+        <defaultValue>Admin123</defaultValue>
+        <description>Password used for external claim service authorization
+        </description>
+    </globalProperty>
 </module>
 

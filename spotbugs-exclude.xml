@@ -2,6 +2,11 @@
 <FindBugsFilter>
     <Match>
         <Class name="~.*\.*Impl" />
+        <Class name="~.*\.*Controller" />
+        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
+    </Match>
+    <Match>
+        <Class name="~.*" />
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
     </Match>
 </FindBugsFilter>
