@@ -1,12 +1,9 @@
 package org.openmrs.module.insuranceclaims.api.service.impl;
 
-import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
-import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
+import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimDiagnosisService;
 
-@Service("insuranceclaims.InsuranceClaimItemService")
-@Transactional
-public class InsuranceClaimItemServiceImpl extends BaseOpenmrsDataService<InsuranceClaimItem>
-        implements InsuranceClaimItemService {
+public class InsuranceClaimDiagnosisServiceImpl extends BaseOpenmrsDataService<InsuranceClaimDiagnosis>
+        implements InsuranceClaimDiagnosisService {
+
 }

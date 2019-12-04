@@ -1,8 +1,6 @@
 package org.openmrs.module.insuranceclaims.api.service.db.impl;
 
 import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Location;
 import org.openmrs.LocationAttribute;
@@ -10,10 +8,10 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
-import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.api.db.hibernate.DbSession;
+import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.attribute.BaseAttribute;
 import org.openmrs.module.insuranceclaims.api.service.db.AttributeService;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,12 +20,9 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PATIENT_EXTERNAL_ID_IDENTIFIER_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PROVIDER_EXTERNAL_ID_ATTRIBUTE_UUID;
 
+public class AttributeServiceImpl implements AttributeService {
 
-@Repository("insuranceclaims.AttributeServiceDao")
-public class AttributeServiceImpl extends BaseOpenmrsService
-        implements AttributeService {
-
-    private SessionFactory sessionFactory;
+    private DbSessionFactory dbSessionFactory;
 
     @Override
     public List<Provider> getProviderByExternalIdAttribute(String externalId) {
@@ -60,12 +55,12 @@ public class AttributeServiceImpl extends BaseOpenmrsService
                 .collect(Collectors.toList());
     }
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public void setDbSessionFactory(DbSessionFactory dbSessionFactory) {
+        this.dbSessionFactory = dbSessionFactory;
     }
 
-    private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+    private DbSession getCurrentSession() {
+        return dbSessionFactory.getCurrentSession();
     }
 
     private List getOmrsObjectAttributesByAttributeTypeValue(
