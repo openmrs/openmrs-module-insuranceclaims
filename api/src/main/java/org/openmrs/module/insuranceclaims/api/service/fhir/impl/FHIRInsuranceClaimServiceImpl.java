@@ -10,6 +10,8 @@ import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
+import org.openmrs.VisitType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.BaseOpenMRSDataUtil;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.service.db.AttributeService;
@@ -36,7 +38,6 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimExplanation;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimGuaranteeId;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimUuid;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil.getClaimVisitType;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.LocationUtil.buildLocationReference;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.PatientUtil.buildPatientReference;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.PractitionerUtil.buildPractitionerReference;
@@ -99,12 +100,12 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
 
         //Set type
         claim.setType(createClaimVisitType(omrsClaim));
-
         //Set items
         claim.setItem(claimItemService.generateClaimItemComponent(omrsClaim));
 
         //Set diagnosis
         claim.setDiagnosis(claimDiagnosisService.generateClaimDiagnosisComponent(omrsClaim));
+
         return claim;
     }
 
@@ -115,11 +116,8 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         BaseOpenMRSDataUtil.readBaseExtensionFields(omrsClaim, claim);
         BaseOpenMRSDataUtil.setBaseExtensionFields(claim, omrsClaim);
 
-        try {
-            omrsClaim.setUuid(getClaimUuid(claim, errors));
-        } catch (NullPointerException e) {
-            errors.add("No uuid found");
-        }
+        omrsClaim.setUuid(getClaimUuid(claim, errors));
+
         //Set provider
         omrsClaim.setProvider(getClaimProviderByExternalId(claim));
 
@@ -151,7 +149,7 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         omrsClaim.setGuaranteeId(getClaimGuaranteeId(claim, errors));
 
         //Set type
-        omrsClaim.setVisitType(getClaimVisitType(claim, errors));
+        omrsClaim.setVisitType(getClaimVisitType(claim));
 
         return omrsClaim;
     }
@@ -163,6 +161,7 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
     public void setClaimItemService(FHIRClaimItemService claimItemService) {
         this.claimItemService = claimItemService;
     }
+
     public void setClaimDiagnosisService(FHIRClaimDiagnosisService claimDiagnosisService) {
         this.claimDiagnosisService = claimDiagnosisService;
     }
@@ -184,5 +183,16 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         List<Patient> patientsWithExternalId = attributeService.getPatientByExternalIdIdentifier(patientExternalId);
         return getUnambiguousElement(patientsWithExternalId);
     }
+
+    private  static VisitType getClaimVisitType(Claim claim) {
+        String visitTypeName = claim.getType().getText();
+        List<VisitType> visitType = getVisitTypeByName(visitTypeName);
+        return getUnambiguousElement(visitType);
+    }
+
+    private static List<VisitType> getVisitTypeByName(String visitTypeName) {
+        return Context.getVisitService().getVisitTypes(visitTypeName);
+    }
+
 }
 

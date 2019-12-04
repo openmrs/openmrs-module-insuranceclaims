@@ -1,20 +1,24 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Money;
 import org.hl7.fhir.dstu3.model.PositiveIntType;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimItemDao;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
+import org.openmrs.module.insuranceclaims.api.service.db.ItemDbService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,12 +42,17 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialCo
 
 public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
 
-    private InsuranceClaimItemDao insuranceClaimItemDao;
+    private ItemDbService itemDbService;
 
     @Override
     public List<Claim.ItemComponent> generateClaimItemComponent(InsuranceClaim claim) {
+        List<InsuranceClaimItem> insuranceClaimItems = itemDbService.findInsuranceClaimItems(claim.getId());
+        return generateClaimItemComponent(insuranceClaimItems);
+    }
+
+    @Override
+    public List<Claim.ItemComponent> generateClaimItemComponent(List<InsuranceClaimItem> insuranceClaimItems) {
         List<Claim.ItemComponent> newItemComponent = new ArrayList<>();
-        List<InsuranceClaimItem> insuranceClaimItems = insuranceClaimItemDao.findInsuranceClaimItems(claim.getId());
         for (InsuranceClaimItem item: insuranceClaimItems) {
             Claim.ItemComponent next = new Claim.ItemComponent();
 
@@ -51,7 +60,6 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
             next.setQuantity(getItemQuantity(item));
             next.setUnitPrice(getItemUnitPrice(item));
             next.setService(createFhirItemService(item));
-
             newItemComponent.add(next);
         }
         return newItemComponent;
@@ -80,7 +88,7 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
     @Override
     public List<ClaimResponse.ItemComponent> generateClaimResponseItemComponent(InsuranceClaim claim) {
         List<ClaimResponse.ItemComponent> items = new ArrayList<>();
-        List<InsuranceClaimItem> insuranceClaimItems = insuranceClaimItemDao.findInsuranceClaimItems(claim.getId());
+        List<InsuranceClaimItem> insuranceClaimItems = itemDbService.findInsuranceClaimItems(claim.getId());
 
         int sequence = SEQUENCE_FIRST;
         for (InsuranceClaimItem insuranceClaimItem: insuranceClaimItems) {
@@ -100,26 +108,32 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
     }
 
     @Override
-    public List<InsuranceClaimItem> generateOmrsClaimResponseItems(ClaimResponse claim, List<String> error) throws FHIRException {
+    public List<InsuranceClaimItem> generateOmrsClaimResponseItems(ClaimResponse claim, List<String> error) {
         List<InsuranceClaimItem> omrsItems = new ArrayList<>();
         for (ClaimResponse.ItemComponent item: claim.getItem()) {
             InsuranceClaimItem nextItem = new InsuranceClaimItem();
-            List<String> itemCodes = getItemCodeBySequence(claim, item.getSequenceLinkId());
-
-            //Item
-            nextItem.setItem(generateProvidedItem(itemCodes));
-
+            try {
+                //Item
+                List<String> itemCodes = getItemCodeBySequence(claim, item.getSequenceLinkId());
+                nextItem.setItem(generateProvidedItem(itemCodes));
+            } catch (FHIRException exception) {
+                error.add(exception.getMessage());
+            }
             //Adjudication
             for (ClaimResponse.AdjudicationComponent adjudicationComponent: item.getAdjudication()) {
                 CodeableConcept adjudicationCategoryCoding = adjudicationComponent.getCategory();
                 String adjudicationCode = adjudicationCategoryCoding.getText();
                 if (adjudicationCode.equals(ITEM_ADJUDICATION_GENERAL_CATEGORY)) {
-                    nextItem.setQuantityApproved(adjudicationComponent.getValue().intValue());
-                    nextItem.setPriceApproved(adjudicationComponent.getAmount().getValue());
+                    nextItem.setQuantityApproved(getAdjudicationQuantityApproved(adjudicationComponent));
+                    nextItem.setPriceApproved(getAdjudicationPriceApproved(adjudicationComponent));
                     nextItem.setStatus(getAdjudicationStatus(adjudicationComponent));
-                }
-                if (adjudicationCode.equals(ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY)) {
-                    nextItem.setRejectionReason(getAdjudicationRejectionReason(adjudicationComponent));
+                } else {
+                    if (adjudicationCode.equals(ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY)) {
+                        String reason = getAdjudicationRejectionReason(adjudicationComponent);
+                        nextItem.setRejectionReason(StringUtils.isNotEmpty(reason) ? reason : "None");
+                    } else {
+                        error.add("Cound not found strategy for adjudication code " + adjudicationCode);
+                    }
                 }
             }
             //Justification
@@ -134,7 +148,7 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
     @Override
     public List<ClaimResponse.NoteComponent> generateClaimResponseNotes(InsuranceClaim claim)  {
         List<ClaimResponse.NoteComponent> claimNotes = new ArrayList<>();
-        List<InsuranceClaimItem> items = insuranceClaimItemDao.findInsuranceClaimItems(claim.getId());
+        List<InsuranceClaimItem> items = itemDbService.findInsuranceClaimItems(claim.getId());
         int noteNumber = SEQUENCE_FIRST;
         for (InsuranceClaimItem item: items) {
             ClaimResponse.NoteComponent nextNote = new ClaimResponse.NoteComponent();
@@ -147,8 +161,8 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
         return claimNotes;
     }
 
-    public void setInsuranceClaimItemDao(InsuranceClaimItemDao insuranceClaimItemDao) {
-        this.insuranceClaimItemDao = insuranceClaimItemDao;
+    public void setItemDbService(ItemDbService insuranceClaimItemDao) {
+        this.itemDbService = insuranceClaimItemDao;
     }
 
     private ProvidedItem generateProvidedItem(List<String> itemCodes) {
@@ -164,19 +178,16 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
         return getUnambiguousElement(conceptList);
     }
 
-    private InsuranceClaimItem generateOmrsClaimItem(Claim.ItemComponent item) {
+    private InsuranceClaimItem generateOmrsClaimItem(Claim.ItemComponent item) throws FHIRException {
         InsuranceClaimItem omrsItem = new InsuranceClaimItem();
-        omrsItem.setQuantityProvided(getItemQuantity(item));
-        ProvidedItem providedItem = new ProvidedItem();
-        providedItem.setItem(findItemConcept(item));
-        omrsItem.setItem(providedItem);
-
-        return omrsItem;
-    }
-
-    private Concept findItemConcept(Claim.ItemComponent item) {
         String itemCode = item.getService().getText();
-        return Context.getConceptService().getConceptByMapping(itemCode, EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME);
+        ProvidedItem providedItem = generateProvidedItem(Collections.singletonList(itemCode));
+        omrsItem.setQuantityProvided(getItemQuantity(item));
+        omrsItem.setItem(providedItem);
+        if (providedItem.getItem() == null) {
+            throw new FHIRException("Could not find object related to code" + itemCode);
+        }
+        return omrsItem;
     }
 
     private String getLinkedInformation(Claim claim, Integer informationSequenceId) throws FHIRException {
@@ -191,5 +202,15 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
     private Integer getFirstItemNoteNumber(ClaimResponse.ItemComponent item) {
         PositiveIntType note = getUnambiguousElement(item.getNoteNumber());
         return note != null ? note.getValue() : null;
+    }
+
+    private Integer getAdjudicationQuantityApproved(ClaimResponse.AdjudicationComponent component) {
+        BigDecimal approved = component.getValue();
+        return approved != null ? approved.intValue() : null;
+    }
+
+    private BigDecimal getAdjudicationPriceApproved(ClaimResponse.AdjudicationComponent component) {
+        Money approved = component.getAmount();
+        return approved != null ? approved.getValue() : null;
     }
 }

@@ -9,8 +9,9 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import java.util.List;
 
 public interface FHIRClaimItemService {
-
     List<Claim.ItemComponent> generateClaimItemComponent(InsuranceClaim claim);
+
+    List<Claim.ItemComponent> generateClaimItemComponent(List<InsuranceClaimItem> claim);
 
     List<InsuranceClaimItem> generateOmrsClaimItems(Claim claim, List<String> error);
 

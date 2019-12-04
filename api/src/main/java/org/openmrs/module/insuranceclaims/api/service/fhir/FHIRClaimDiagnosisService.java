@@ -8,7 +8,6 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import java.util.List;
 
 public interface FHIRClaimDiagnosisService {
-
     Claim.DiagnosisComponent generateClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis);
 
     List<Claim.DiagnosisComponent> generateClaimDiagnosisComponent(List<InsuranceClaimDiagnosis> omrsClaimDiagnosis);

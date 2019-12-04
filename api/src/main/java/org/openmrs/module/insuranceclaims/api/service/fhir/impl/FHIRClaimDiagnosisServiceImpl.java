@@ -11,9 +11,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.BaseOpenMRSDataUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
-import org.openmrs.module.insuranceclaims.api.dao.InsuranceClaimDiagnosisDao;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
+import org.openmrs.module.insuranceclaims.api.service.db.DiagnosisDbService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants;
 
@@ -26,7 +26,7 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Identifie
 
 public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService {
 
-    private InsuranceClaimDiagnosisDao diagnosisDao;
+    private DiagnosisDbService diagnosisDbService;
 
     @Override
     public Claim.DiagnosisComponent generateClaimDiagnosisComponent(InsuranceClaimDiagnosis omrsClaimDiagnosis) {
@@ -56,7 +56,8 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
     @Override
     public List<Claim.DiagnosisComponent> generateClaimDiagnosisComponent(InsuranceClaim omrsInsuranceClaim)
     throws FHIRException {
-        List<InsuranceClaimDiagnosis> claimDiagnoses = diagnosisDao.findInsuranceClaimDiagnosis(omrsInsuranceClaim.getId());
+        List<InsuranceClaimDiagnosis> claimDiagnoses =
+                diagnosisDbService.findInsuranceClaimDiagnosis(omrsInsuranceClaim.getId());
         List<Claim.DiagnosisComponent> fhirDiagnosisComponent = generateClaimDiagnosisComponent(claimDiagnoses);
         addCodingToDiagnosis(fhirDiagnosisComponent);
         return fhirDiagnosisComponent;
@@ -65,9 +66,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
     @Override
     public InsuranceClaimDiagnosis createOmrsClaimDiagnosis(
             Claim.DiagnosisComponent claimDiagnosis, List<String> errors) {
-
         InsuranceClaimDiagnosis diagnosis = new InsuranceClaimDiagnosis();
-
         BaseOpenMRSDataUtil.readBaseExtensionFields(diagnosis, claimDiagnosis);
 
         if (claimDiagnosis.getId() != null) {
@@ -83,8 +82,8 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
         return diagnosis;
     }
 
-    public void setDiagnosisDao(InsuranceClaimDiagnosisDao diagnosisDao) {
-        this.diagnosisDao = diagnosisDao;
+    public void setDiagnosisDbService(DiagnosisDbService diagnosisDao) {
+        this.diagnosisDbService = diagnosisDao;
     }
 
     private void addCodingToDiagnosis(List<Claim.DiagnosisComponent>  diagnosisComponents) throws FHIRException {
@@ -101,8 +100,8 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
 
     private void setDiagnosisPrimaryCoding(Claim.DiagnosisComponent diagnosis) throws FHIRException {
         String primaryCoding = InsuranceClaimConstants.PRIMARY_DIAGNOSIS_MAPPING;
-
         List<Coding> diagnosisCoding = diagnosis.getDiagnosisCodeableConcept().getCoding();
+
         for (Coding c : diagnosisCoding) {
             if (c.getSystem().equals(primaryCoding)) {
                 Collections.swap(diagnosisCoding, 0, diagnosisCoding.indexOf(c));

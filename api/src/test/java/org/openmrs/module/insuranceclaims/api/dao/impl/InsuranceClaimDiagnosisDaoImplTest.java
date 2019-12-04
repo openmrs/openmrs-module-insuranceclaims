@@ -18,9 +18,6 @@ import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 
@@ -51,22 +48,6 @@ public class InsuranceClaimDiagnosisDaoImplTest extends BaseModuleContextSensiti
 		Assert.assertThat(savedDiagnosis, hasProperty("concept", is(diagnosis.getConcept())));
 		Assert.assertThat(savedDiagnosis, hasProperty("claim", is(diagnosis.getClaim())));
 
-	}
-
-	@Test
-	public void findInsuranceDiagnosis_shouldReturnAllDiagnosisRelatedToClaim() {
-		InsuranceClaimDiagnosis diagnosis = createTestDiagnosis();
-
-		dao.saveOrUpdate(diagnosis);
-
-		Context.flushSession();
-		Context.clearSession();
-
-		InsuranceClaim insuranceClaim = diagnosis.getClaim();
-		InsuranceClaimDiagnosis savedDiagnosis = dao.getByUuid(diagnosis.getUuid());
-
-		List<InsuranceClaimDiagnosis> received = dao.findInsuranceClaimDiagnosis(insuranceClaim.getId());
-		Assert.assertThat(received, hasItem(savedDiagnosis));
 	}
 
 	private InsuranceClaimDiagnosis createTestDiagnosis() {

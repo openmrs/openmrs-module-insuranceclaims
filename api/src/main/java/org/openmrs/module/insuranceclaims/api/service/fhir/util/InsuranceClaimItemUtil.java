@@ -1,5 +1,6 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CATEGORY_ITEM;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CATEGORY_SERVICE;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONCEPT_PRICE_ATTRIBUTE_UUID;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_UUID;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.IS_SERVICE_CONCEPT_ATTRIBUTE_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_GENERAL_CATEGORY;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY;
@@ -64,8 +65,10 @@ public final class InsuranceClaimItemUtil {
     }
 
     public static InsuranceClaimItemStatus getAdjudicationStatus(ClaimResponse.AdjudicationComponent adjudicationComponent) {
-        Coding reasonCoding = adjudicationComponent.getReason().getCodingFirstRep();
-        return InsuranceClaimItemStatus.valueOf(reasonCoding.getSystem());
+        CodeableConcept reasonConcept = adjudicationComponent.getReason();
+        String adjustedReason = getAdjustedReason(reasonConcept);
+        adjustedReason = StringUtils.upperCase(adjustedReason);
+        return InsuranceClaimItemStatus.valueOf(adjustedReason);
     }
 
     public static String getAdjudicationRejectionReason(ClaimResponse.AdjudicationComponent adjudicationComponent) {
@@ -98,6 +101,7 @@ public final class InsuranceClaimItemUtil {
         reasonCoding.setCode(String.valueOf(status.ordinal()));
         reasonCoding.setSystem(status.toString());
         reason.addCoding(reasonCoding);
+        reason.setText(status.name());
         return reason;
     }
 
@@ -143,6 +147,10 @@ public final class InsuranceClaimItemUtil {
                 .collect(Collectors.toList());
     }
 
+    private static String getAdjustedReason(CodeableConcept concept) {
+        return StringUtils.upperCase(concept.getText());
+    }
+
     private static boolean isValueInSequence(List<PositiveIntType> sequence, int sequenceLinkId) {
         return sequence.stream().map(PrimitiveType::getValue)
                 .anyMatch(value -> value.equals(sequenceLinkId));
@@ -153,13 +161,13 @@ public final class InsuranceClaimItemUtil {
         return mappings
                 .stream()
                 .filter(c -> isExternalSystemReferenceSource(c))
-                .map(c -> c.getConceptReferenceTerm().toString())
+                .map(c -> c.getConceptReferenceTerm().getCode())
                 .findFirst()
                 .orElse(null);
     }
 
     private static String getConceptCategory(Concept concept) {
-        boolean isService = (Boolean) getConceptAttributeValueByTypeUuid(concept, IS_SERVICE_CONCEPT_ATTRIBUTE_UUID);
+        Boolean isService = (Boolean) getConceptAttributeValueByTypeUuid(concept, IS_SERVICE_CONCEPT_ATTRIBUTE_UUID);
         return isService ? CATEGORY_SERVICE : CATEGORY_ITEM;
     }
 
@@ -171,8 +179,8 @@ public final class InsuranceClaimItemUtil {
         return  conceptMap
                 .getConceptReferenceTerm()
                 .getConceptSource()
-                .getUuid()
-                .equals(EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_UUID);
+                .getName()
+                .equals(EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME);
     }
 
     private static Object getConceptAttributeValueByTypeUuid(Concept concept, String attributeTypeUuid) {

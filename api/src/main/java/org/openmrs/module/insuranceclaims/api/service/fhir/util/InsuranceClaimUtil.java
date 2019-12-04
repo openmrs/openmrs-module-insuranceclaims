@@ -5,8 +5,6 @@ import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Period;
 import org.hl7.fhir.exceptions.FHIRException;
-import org.openmrs.VisitType;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 
 import java.util.ArrayList;
@@ -17,10 +15,12 @@ import java.util.Map;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.createIdentifier;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getIdentifierValueByCode;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil.getUnambiguousElement;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXPLANATION_CATEGORY;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.GUARANTEE_ID_CATEGORY;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.HL7_VALUESET_SYSTEM;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MEDICAL_RECORD_NUMBER;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MISSING_DATE_CREATED;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MISSING_DATE_FROM;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.MISSING_DATE_TO;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PERIOD_FROM;
@@ -35,12 +35,6 @@ public final class InsuranceClaimUtil {
         CodeableConcept visitType = new CodeableConcept();
         visitType.setText(omrsVisitType);
         return visitType;
-    }
-
-    public static VisitType getClaimVisitType(Claim claim, List<String> errors) {
-        String visitTypeName = claim.getType().getText();
-        List<VisitType> visitType = getVisitTypeByName(visitTypeName);
-        return getUnambiguousElement(visitType);
     }
 
     public static List<Identifier> createClaimIdentifier(InsuranceClaim omrsClaim) {
@@ -70,7 +64,7 @@ public final class InsuranceClaimUtil {
 
     public static String getClaimExplanation(Claim claim, List<String> errors) {
         try {
-            return getSpecialConditionComponentFromCategory(claim, "explanation");
+            return getSpecialConditionComponentFromCategory(claim, EXPLANATION_CATEGORY);
         } catch (FHIRException e) {
             errors.add(e.getMessage());
             return null;
@@ -79,7 +73,7 @@ public final class InsuranceClaimUtil {
 
     public static String getClaimGuaranteeId(Claim claim, List<String> errors) {
         try {
-            return getSpecialConditionComponentFromCategory(claim, "guarantee_id");
+            return getSpecialConditionComponentFromCategory(claim, GUARANTEE_ID_CATEGORY);
         } catch (FHIRException e) {
             errors.add(e.getMessage());
             return null;
@@ -97,18 +91,18 @@ public final class InsuranceClaimUtil {
     public static Date getClaimDateCreated(Claim claim, List<String> errors) {
         Date created = claim.getCreated();
         if (created == null) {
-            errors.add("Date 'created' is missing");
+            errors.add(MISSING_DATE_CREATED);
             return null;
         }
         return created;
     }
 
     public static Claim.SpecialConditionComponent createClaimExplanationInformation(InsuranceClaim omrsClaim) {
-        return createSpecialComponent(omrsClaim.getExplanation(), "explanation");
+        return createSpecialComponent(omrsClaim.getExplanation(), EXPLANATION_CATEGORY);
     }
 
     public static Claim.SpecialConditionComponent createClaimGuaranteeIdInformation(InsuranceClaim omrsClaim) {
-        return createSpecialComponent(omrsClaim.getGuaranteeId(), "guarantee_id");
+        return createSpecialComponent(omrsClaim.getGuaranteeId(), GUARANTEE_ID_CATEGORY);
     }
 
     private static Identifier createClaimCodeIdentifier(InsuranceClaim omrsClaim) {
@@ -117,10 +111,6 @@ public final class InsuranceClaimUtil {
 
     private static Identifier createUuidIdentifier(InsuranceClaim omrsClaim) {
         return createIdentifier(omrsClaim.getUuid(), ACCESSION_ID, HL7_VALUESET_SYSTEM);
-    }
-
-    private static List<VisitType> getVisitTypeByName(String visitTypeName) {
-        return Context.getVisitService().getVisitTypes(visitTypeName);
     }
 
     private InsuranceClaimUtil() {}
