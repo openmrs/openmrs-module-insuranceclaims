@@ -9,6 +9,9 @@
 
     <context:component-scan base-package="org.openmrs.module.insuranceclaims"/>
 
+    <!-- Wraps InsuranceClaimService methods in DB transactions and OpenMRS interceptors,
+         which set audit info like dateCreated, changedBy, etc.-->
+
     <bean id="insuranceclaims.InsuranceClaimService"
           class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
         <property name="transactionManager">
@@ -28,21 +31,11 @@
     </bean>
 
     <bean id="insuranceclaims.BillService"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.BillServiceImpl">
-                <property name="dao" ref="insuranceclaims.BillDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
+          class="org.openmrs.module.insuranceclaims.api.service.impl.BillServiceImpl">
+        <property name="dao" ref="insuranceclaims.BillDao"/>
+        <property name="billDao" ref="insuranceclaims.BillDao"/>
+        <property name="dateUtil" ref="insuranceclaims.DateUtil" />
+        <property name="providedItemService" ref="insuranceclaims.ProvidedItemService" />
     </bean>
 
     <bean id="insuranceclaims.InsuranceClaimItemService"
@@ -57,7 +50,8 @@
 
     <bean id="insuranceclaims.ProvidedItemService"
           class="org.openmrs.module.insuranceclaims.api.service.impl.ProvidedItemServiceImpl">
-        <property name="dao" ref="insuranceclaims.ProvidedItem"/>
+        <property name="dao" ref="insuranceclaims.ProvidedItemDao"/>
+        <property name="providedItemDao" ref="insuranceclaims.ProvidedItemDao" />
     </bean>
 
     <bean id="insuranceclaims.InsurancePolicyService"

@@ -1,5 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.openmrs.Concept;
@@ -120,5 +122,23 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
 
     public void setBill(Bill bill) {
         this.bill = bill;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        return EqualsBuilder.reflectionEquals(this, o, "id", "uuid");
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this, "id", "uuid");
     }
 }

@@ -33,7 +33,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="total_amount" type="decimal(10,2)"/>
-            <column name="payment_status" type="varchar(50)">
+            <column name="payment_status" type="varchar(50)" defaultValue="ENTERED">
                 <constraints nullable="false"/>
             </column>
             <column name="payment_type" type="varchar(50)"/>

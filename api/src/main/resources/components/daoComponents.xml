@@ -9,8 +9,10 @@
     <bean id="insuranceclaims.InsuranceClaimItemDao"
           class="org.openmrs.module.insuranceclaims.api.dao.impl.InsuranceClaimItemDaoImpl" />
 
-    <bean id="insuranceclaims.ProvidedItem"
-          class="org.openmrs.module.insuranceclaims.api.dao.impl.ProvidedItemDaoImpl" />
+    <bean id="insuranceclaims.ProvidedItemDao"
+          class="org.openmrs.module.insuranceclaims.api.dao.impl.ProvidedItemDaoImpl" >
+        <property name="sessionFactory" ref="dbSessionFactory" />
+    </bean>
 
     <bean id="insuranceclaims.InsurancePolicyDao"
           class="org.openmrs.module.insuranceclaims.api.dao.impl.InsurancePolicyDaoImpl" />
