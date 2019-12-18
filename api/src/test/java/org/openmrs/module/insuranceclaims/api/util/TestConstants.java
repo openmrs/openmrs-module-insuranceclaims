@@ -24,11 +24,13 @@ public final class TestConstants {
 
 	public static final String TEST_PATIENT_POLICY_NUMBER = "1234567890";
 
-	public static final String TEST_DATE = "2010-10-10";
+	public static final String TEST_DATE = "2010-10-10 00:00:00";
 
 	public static final double[] TEST_ENTERED_PRICES = {30, 150, 0, 20, 500, 100};
 
 	public static final double[] TEST_PROCESSED_PRICES = {100, 500, 50, 0};
+
+	public static final String TEST_URL = "http://example.com/that";
 
 	private TestConstants() {
 	}

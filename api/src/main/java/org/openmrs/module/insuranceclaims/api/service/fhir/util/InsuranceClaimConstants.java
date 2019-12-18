@@ -1,5 +1,9 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public final class InsuranceClaimConstants {
     public static final String CATEGORY_SERVICE = "service";
     public static final String CATEGORY_ITEM = "item";
@@ -41,6 +45,8 @@ public final class InsuranceClaimConstants {
     public static final String CONTRACT = "Contract";
     public static final int CONTRACT_POLICY_ID_ORDINAL = 1;
     public static final int CONTRACT_EXPIRE_DATE_ORDINAL = 2;
+    public static final List<String> CONTRACT_DATE_PATTERN = Collections.unmodifiableList(
+            Arrays.asList("yyyy-mm-dd hh:mm:ss", "yyyy-mm-dd"));
 
     private InsuranceClaimConstants() {}
 }

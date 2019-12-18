@@ -1,7 +1,7 @@
-package org.openmrs.module.insuranceclaims.api.service.fhir;
+package org.openmrs.module.insuranceclaims.api.service;
 
+import ca.uhn.fhir.util.DateUtils;
 import org.hamcrest.Matchers;
-import org.hl7.fhir.dstu3.model.EligibilityRequest;
 import org.hl7.fhir.dstu3.model.EligibilityResponse;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.junit.Assert;
@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.insuranceclaims.api.model.InsurancePolicy;
 import org.openmrs.module.insuranceclaims.api.mother.InsurancePolicyMother;
 import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants;
@@ -17,29 +16,22 @@ import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
+
 import static org.openmrs.module.insuranceclaims.api.util.TestConstants.TEST_PATIENT_POLICY_NUMBER;
 
-public class FHIREligibilityServiceImpl extends BaseModuleContextSensitiveTest {
+public class InsurancePolicyServiceTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
-    private FHIREligibilityService fhirEligibilityService;
+    InsurancePolicyService insurancePolicyService;
 
     @Test
-    public void generateEligibilityRequest_shouldMapPatientToEligibilityRequest() {
-        EligibilityRequest test = fhirEligibilityService.generateEligibilityRequest(TEST_PATIENT_POLICY_NUMBER);
-
-        Reference generatedPatientReference = test.getPatient();
-        Reference expectedReference = getExpectedReference();
-
-        Assert.assertThat(generatedPatientReference, Matchers.samePropertyValuesAs(expectedReference));
-    }
-
-    @Test
-    public void generateEligibilityRequest_shouldMapEligibilityResponseToPolicy() {
-        EligibilityResponse test = createTestEligibilityResponse();
+    public void generateInsurancePolicy_shouldMapEligibilityResponseToPolicy() {
+        EligibilityResponse eligibilityResponse = createTestEligibilityResponse();
 
         InsurancePolicy expected = createTestPolicyInstance();
-        InsurancePolicy actual = fhirEligibilityService.generateInsurancePolicy(test);
+        expected.setExpiryDate(DateUtils.parseDate(TestConstants.TEST_DATE, new String[]{"yyy-mm-dd hh:mm:ss"}));
+        InsurancePolicy actual = insurancePolicyService.generateInsurancePolicy(eligibilityResponse);
 
         Assert.assertThat(actual.getExpiryDate(), Matchers.equalTo(expected.getExpiryDate()));
         Assert.assertThat(actual.getPolicyNumber(), Matchers.equalTo(expected.getPolicyNumber()));
@@ -47,10 +39,10 @@ public class FHIREligibilityServiceImpl extends BaseModuleContextSensitiveTest {
 
     @Test
     public void getPolicyIdFromContractReference_shouldReturnProperId() {
-        EligibilityResponse test = createTestEligibilityResponse();
+        EligibilityResponse eligibilityResponse = createTestEligibilityResponse();
 
-        String actual = fhirEligibilityService.getPolicyIdFromContractReference(
-                test.getInsuranceFirstRep().getContract()
+        String actual = insurancePolicyService.getPolicyIdFromContractReference(
+                eligibilityResponse.getInsuranceFirstRep().getContract()
         );
 
         Assert.assertThat(TEST_PATIENT_POLICY_NUMBER, Matchers.equalTo(actual));
@@ -67,7 +59,7 @@ public class FHIREligibilityServiceImpl extends BaseModuleContextSensitiveTest {
         EligibilityResponse response = new EligibilityResponse();
         EligibilityResponse.InsuranceComponent insuranceComponent = new EligibilityResponse.InsuranceComponent();
         insuranceComponent.setContract(createTestContract());
-
+        response.setInsurance(Collections.singletonList(insuranceComponent));
         return response;
     }
 
@@ -77,11 +69,5 @@ public class FHIREligibilityServiceImpl extends BaseModuleContextSensitiveTest {
                 + TestConstants.TEST_DATE;
 
         return new Reference(referenceString);
-    }
-    private Reference getExpectedReference() {
-        Reference expected = new Reference();
-
-        expected.setReference(FHIRConstants.PATIENT + "/" + TEST_PATIENT_POLICY_NUMBER);
-        return expected;
     }
 }
