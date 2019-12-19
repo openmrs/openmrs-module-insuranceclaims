@@ -342,6 +342,7 @@
             </column>
             <column name="start_date" type="DATETIME"/>
             <column name="expiry_date" type="DATETIME"/>
+            <column name="policy_number" type="varchar(255)"/>
             <column name="patient" type="int">
                 <constraints nullable="false"/>
             </column>

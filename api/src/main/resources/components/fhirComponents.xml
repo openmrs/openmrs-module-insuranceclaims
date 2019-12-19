@@ -28,6 +28,10 @@
 
     <bean id="insuranceclaims.FHIRClaimResponseService"
           class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIRClaimResponseServiceImpl">
-    <property name="itemService" ref="insuranceclaims.FHIRClaimItemService"/>
+        <property name="itemService" ref="insuranceclaims.FHIRClaimItemService"/>
     </bean>
+
+    <bean id="insuranceclaims.FHIREligibilityService"
+          class="org.openmrs.module.insuranceclaims.api.service.fhir.impl.FHIREligibilityServiceImpl" />
+
 </beans>
