@@ -15,11 +15,17 @@
     <bean id="insuranceclaims.DateUtil" class="org.openmrs.module.insuranceclaims.util.DateUtil" />
 
     <import resource="classpath:components/daoComponents.xml" />
-
-
     <import resource="classpath:components/insuranceServiceComponents.xml" />
     <import resource="classpath:components/dbComponents.xml" />
     <import resource="classpath:components/fhirComponents.xml" />
+    <import resource="classpath:components/clientComponents.xml" />
+
+<!--    <bean id="insuranceclaims.ClaimHttpRequest"-->
+<!--          class="org.openmrs.module.insuranceclaims.api.client.impl.ClaimHttpRequestImpl">-->
+<!--        <property name="fhirInsuranceClaimService" ref="insuranceclaims.FHIRInsuranceClaimService"/>-->
+<!--        <property name="fhirClaimDiagnosisService" ref="insuranceclaims.FHIRClaimDiagnosisService"/>-->
+<!--        <property name="fhirRequestClient" value="org.openmrs.module.insuranceclaims.api.client.impl.FhirRequestClient" />-->
+<!--    </bean>-->
 
     <!-- Adds module services to OpenMRS context so it can be accessed
     calling e.g. Context.getService(InsuranceClaimService.class) -->
