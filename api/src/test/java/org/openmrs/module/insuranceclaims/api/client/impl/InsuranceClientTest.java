@@ -55,17 +55,17 @@ public class InsuranceClientTest extends BaseModuleContextSensitiveTest {
         Assert.assertThat(expected, Matchers.equalTo(actual));
     }
 
-    public <T> void setupGetRequestMock(Class<T> returnedObjectClass, T objectToReturn, String url)
+    private <T> void setupGetRequestMock(Class<T> returnedObjectClass, T objectToReturn, String url)
     throws URISyntaxException {
         createRequestMock(url, HttpMethod.GET, returnedObjectClass, objectToReturn);
     }
 
-    public <T> void setupPostRequestMock(Class<T> returnedObjectClass, T objectToReturn,  String url)
+    private <T> void setupPostRequestMock(Class<T> returnedObjectClass, T objectToReturn,  String url)
     throws URISyntaxException {
         createRequestMock(url, HttpMethod.POST, returnedObjectClass, objectToReturn);
     }
 
-    public <T> void createRequestMock(String url, HttpMethod method, Class<T> requestedObjectClass, T objectToReturn)
+    private  <T> void createRequestMock(String url, HttpMethod method, Class<T> requestedObjectClass, T objectToReturn)
     throws URISyntaxException {
         given(restTemplate.exchange(
                 eq(new URI(url)),
