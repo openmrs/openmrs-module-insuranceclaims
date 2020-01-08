@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class ClaimHttpRequestImpl implements ClaimHttpRequest {
 
     private FHIRClient fhirRequestClient;
@@ -30,8 +29,35 @@ public class ClaimHttpRequestImpl implements ClaimHttpRequest {
 
     private FHIRClaimItemService fhirClaimItemService;
 
-
     private List<String> errors;
+
+    @Override
+    public ClaimRequestWrapper getClaimRequest(String resourceUrl, String claimCode)
+            throws URISyntaxException {
+        String url = resourceUrl + "/" + claimCode;
+        Claim receivedClaim = fhirRequestClient.getObject(url, Claim.class);
+        return wrapResponse(receivedClaim);
+    }
+
+    @Override
+    public ClaimResponse sendClaimRequest(String resourceUrl, InsuranceClaim insuranceClaim)
+            throws URISyntaxException, HttpServerErrorException, FHIRException {
+        String url = resourceUrl + "/";
+        Claim claimToSend = fhirInsuranceClaimService.generateClaim(insuranceClaim);
+
+        return fhirRequestClient.postObject(url, claimToSend, ClaimResponse.class);
+    }
+
+    @Override
+    public ClaimResponse getClaimResponse(String baseUrl, String claimCode) throws URISyntaxException {
+        String url = baseUrl + "/" + claimCode;
+        return fhirRequestClient.getObject(url, ClaimResponse.class);
+    }
+
+    @Override
+    public List<String> getErrors() {
+        return errors != null ? errors : Collections.emptyList();
+    }
 
     public void setFhirInsuranceClaimService(FHIRInsuranceClaimService fhirInsuranceClaimService) {
         this.fhirInsuranceClaimService = fhirInsuranceClaimService;
@@ -49,33 +75,6 @@ public class ClaimHttpRequestImpl implements ClaimHttpRequest {
         this.fhirRequestClient = fhirRequestClient;
     }
 
-    @Override
-    public ClaimRequestWrapper getClaimRequest(String resourceUrl, String claimCode)
-            throws URISyntaxException {
-        String url = resourceUrl + "/" + claimCode;
-        Claim receivedClaim = fhirRequestClient.getObject(url, Claim.class);
-        return wrapResponse(receivedClaim);
-    }
-
-    @Override
-    public ClaimResponse sendClaimRequest(String resourceUrl, InsuranceClaim insuranceClaim)
-            throws URISyntaxException, HttpServerErrorException, FHIRException {
-        String url = resourceUrl + "/";
-        Claim claimToSend = fhirInsuranceClaimService.generateClaim(insuranceClaim);
-        return fhirRequestClient.postObject(url, claimToSend, ClaimResponse.class);
-    }
-
-    @Override
-    public ClaimResponse getClaimResponse(String baseUrl, String claimCode) throws URISyntaxException {
-        String url = baseUrl + "/" + claimCode;
-        return fhirRequestClient.getObject(url, ClaimResponse.class);
-    }
-
-    @Override
-    public List<String> getErrors() {
-        return errors != null ? errors : Collections.emptyList();
-    }
-
     private ClaimRequestWrapper wrapResponse(Claim claim) {
         this.errors = new ArrayList<>();
 
@@ -87,4 +86,5 @@ public class ClaimHttpRequestImpl implements ClaimHttpRequest {
 
         return new ClaimRequestWrapper(receivedClaim, receivedDiagnosis, items);
     }
+
 }

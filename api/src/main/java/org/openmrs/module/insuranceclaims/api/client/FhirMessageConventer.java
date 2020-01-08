@@ -2,6 +2,7 @@ package org.openmrs.module.insuranceclaims.api.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import com.mchange.v1.io.InputStreamUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -10,13 +11,8 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -28,7 +24,6 @@ public class FhirMessageConventer extends AbstractHttpMessageConverter<IBaseReso
     private static final String CHARSET = "UTF-8";
     private static final String TYPE = "application";
     private static final String SUBTYPE_1 = "json";
-    private static final int BUFFER_SIZE = 1024;
 
     private IParser parser = FhirContext.forDstu3().newJsonParser();
 
@@ -66,25 +61,6 @@ public class FhirMessageConventer extends AbstractHttpMessageConverter<IBaseReso
     }
 
     private String convertStreamToString(InputStream is) throws IOException {
-        if (is != null) {
-            Writer writer = new StringWriter();
-
-            char[] buffer = new char[BUFFER_SIZE];
-            try {
-                Reader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                int n;
-                while ((n = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, n);
-                }
-
-                reader.close();
-            }
-            finally {
-                is.close();
-            }
-            return writer.toString();
-        } else {
-            return "";
-        }
+        return InputStreamUtils.getContentsAsString(is);
     }
 }

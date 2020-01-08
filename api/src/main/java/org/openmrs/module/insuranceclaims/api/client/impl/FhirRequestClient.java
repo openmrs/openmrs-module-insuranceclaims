@@ -73,8 +73,7 @@ public class FhirRequestClient implements FHIRClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
     }
 
-    private <L>ClientHttpEntity createPostClientHttpEntity(String url, L object)
-    throws URISyntaxException {
+    private <L> ClientHttpEntity createPostClientHttpEntity(String url, L object) throws URISyntaxException {
         ClientHttpEntity clientHttpEntity = fhirClientHelper.createRequest(url, object);
         clientHttpEntity.setMethod(HttpMethod.POST);
         clientHttpEntity.setUrl(new URI(url));

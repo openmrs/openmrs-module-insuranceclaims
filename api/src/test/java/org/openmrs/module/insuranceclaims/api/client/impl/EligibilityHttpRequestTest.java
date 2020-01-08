@@ -42,6 +42,8 @@ public class EligibilityHttpRequestTest extends BaseModuleContextSensitiveTest {
         EligibilityResponse response = new EligibilityResponse();
 
         setupPostRequestMock(eligibilityRequest.getClass(), response, expectedUrlCall);
+        when(client.postObject(eq(expectedUrlCall), eq(eligibilityRequest), eq(response.getClass())))
+                .thenAnswer(i -> response);
         EligibilityResponse result = request.sendEligibilityRequest(BASE_URL, eligibilityRequest);
         Assert.assertThat(result, Matchers.samePropertyValuesAs(response));
     }

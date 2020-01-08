@@ -7,10 +7,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -24,14 +25,14 @@ import static org.mockito.Matchers.eq;
 import static org.openmrs.module.insuranceclaims.api.util.TestConstants.TEST_URL;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 
-@RunWith(MockitoJUnitRunner.class)
-public class InsuranceClientTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+public class InsuranceClientTest extends BaseModuleContextSensitiveTest {
 
     @Mock
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @InjectMocks
-    FhirRequestClient client = new FhirRequestClient();
+    private FhirRequestClient client = new FhirRequestClient();
 
     @Test
     public void getClient_shouldReturnNotNullService() {
@@ -40,7 +41,7 @@ public class InsuranceClientTest {
 
     @Test
     public void shouldSendGetRequestForClaimObject_shouldReturnClaim() throws URISyntaxException {
-        Claim expected = createTestClaim();
+        Claim expected = new Claim();
         setupGetRequestMock(Claim.class,  expected, TEST_URL);
         Claim actual = client.getObject(TEST_URL, Claim.class);
         Assert.assertThat(expected, Matchers.equalTo(actual));
@@ -48,14 +49,10 @@ public class InsuranceClientTest {
 
     @Test
     public void shouldSendPostRequestWithClaimObject_shouldReturnClaim() throws URISyntaxException {
-        Claim expected = createTestClaim();
+        Claim expected = new Claim();
         setupPostRequestMock(Claim.class,  expected, TEST_URL);
         Claim actual = client.postObject(TEST_URL, expected, Claim.class);
         Assert.assertThat(expected, Matchers.equalTo(actual));
-    }
-
-    private Claim createTestClaim() {
-        return new Claim();
     }
 
     public <T> void setupGetRequestMock(Class<T> returnedObjectClass, T objectToReturn, String url)
