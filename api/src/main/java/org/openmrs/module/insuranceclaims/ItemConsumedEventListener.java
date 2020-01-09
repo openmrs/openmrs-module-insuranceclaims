@@ -55,9 +55,7 @@ public class ItemConsumedEventListener implements EventListener {
                 }
             }
         } catch (Exception e) {
-            LOG.error("INSURNACE CLAIM: Exception during objectifying: " + e);
-        } finally {
-            Context.closeSession();
+            LOG.error("Insurance claim: Exception during objectifying: " + e);
         }
     }
 
