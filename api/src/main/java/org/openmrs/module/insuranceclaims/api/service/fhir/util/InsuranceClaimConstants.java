@@ -37,7 +37,7 @@ public final class InsuranceClaimConstants {
     public static final String IS_SERVICE_CONCEPT_ATTRIBUTE_UUID = "925e4987-3104-4d74-989b-3ec96197b532";
     public static final String CONCEPT_PRICE_ATTRIBUTE_UUID = "ddc082c8-db30-4796-890e-f0d487fb9085";
     public static final String EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME = "ExternalCode";
-    public static final String PRIMARY_DIAGNOSIS_MAPPING = "icd_0"; //TODO: Get from global value
+    public static final String PRIMARY_DIAGNOSIS_MAPPING = "insuranceclaims.diagnosisPrimaryCode"; //TODO: Get from global value
 
     public static final String GUARANTEE_ID_CATEGORY = "guarantee_id";
     public static final String EXPLANATION_CATEGORY = "explanation";
@@ -47,6 +47,13 @@ public final class InsuranceClaimConstants {
     public static final int CONTRACT_EXPIRE_DATE_ORDINAL = 2;
     public static final List<String> CONTRACT_DATE_PATTERN = Collections.unmodifiableList(
             Arrays.asList("yyyy-mm-dd hh:mm:ss", "yyyy-mm-dd"));
+
+    public static final String CONSUMED_ITEMS_CONCEPT_NAME = "Items consumed";
+    public static final String CONSUMED_ITEMS_CONCEPT_UUID = "907519e6-4b90-473e-b1db-5167352ddcd0";
+
+    public static final String CONSUMED_ITEMS_FORM_NAME = "Consumed Items";
+    public static final String CONSUMED_ITEMS_FORM_DESCRIPTION = "Used to add information about services and items consumed by the patient.";
+    public static final String CONSUMED_ITEMS_FORM_UUID = "2da13321-5829-41d3-b11c-68520b5e4da4";
 
     private InsuranceClaimConstants() {}
 }

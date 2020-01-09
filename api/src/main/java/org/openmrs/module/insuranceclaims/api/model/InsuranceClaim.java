@@ -91,6 +91,10 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 	@Column(name = "guarantee_id", length = 255)
 	private String guaranteeId;
 
+	@Basic
+	@Column(name = "external_id", length = 255)
+	private String externalId;
+
 	@ManyToOne
 	@JoinColumn(name = "visit_type")
 	private VisitType visitType;
@@ -215,8 +219,17 @@ public class InsuranceClaim extends AbstractBaseOpenmrsData {
 		return guaranteeId;
 	}
 
+
 	public void setGuaranteeId(String guaranteeId) {
 		this.guaranteeId = guaranteeId;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 
 	public VisitType getVisitType() {
