@@ -1,0 +1,68 @@
+<htmlform formUuid="2da13321-5829-41d3-b11c-68520b5e4da4" formName="Consumed items" formEncounterType="d7151f82-c1f3-4152-a605-2f9ea7414a79" formVersion="0.1">
+
+    <style type="text/css">
+        #who-when-where {
+            margin-bottom: 6px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #who-when-where p {
+            display: inline-block;
+            padding-right: 20px;
+        }
+
+        #where > input[type=text] {
+            display: inline-block;
+        }
+
+        .field-error {
+            color: #ff6666;
+            font-size: 1.1em;
+            display: block;
+        }
+
+        <ifMode mode="VIEW" include="false">
+            #data-collection {
+                display: inline-block;
+                width: 58%;
+                vertical-align: top;
+            }
+
+            #encounter-diagnoses-target {
+                display: inline-block;
+                width: 40%;
+                vertical-align: top;
+            }
+
+            #encounter-diagnoses-app {
+                margin-bottom: 20px;
+            }
+        </ifMode>
+    </style>
+
+    <section id="admission">
+        <p>
+            <label><uimessage code="referenceapplication.simpleAdmission.admissionDate"/></label>
+            <encounterDate id="encounterDate" showTime="false" default="now"/>
+        </p>
+
+        <p>
+            <label><uimessage code="referenceapplication.simpleAdmission.admittingClinician"/></label>
+            <encounterProviderAndRole default="currentUser" encounterRole="1" required="true"/>
+        </p>
+<fieldset >
+  <legend>Consumed</legend>
+  <h3>Items consumed by patient</h3>
+  <p>
+    <obs id="item-consumed" conceptId="907519e6-4b90-473e-b1db-5167352ddcd0" answerClasses="Consumable items" style="autocomplete" size="10"/>
+  </p>
+</fieldset>
+
+    </section>
+        <div id="buttons">
+            <submit submitClass="confirm right" submitCode="general.save"/>
+            <button type="button" class="cancel"><uimessage code="general.cancel"/></button>
+        </div>
+
+
+</htmlform>
