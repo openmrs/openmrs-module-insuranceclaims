@@ -57,39 +57,12 @@
         <property name="dao" ref="insuranceclaims.InsurancePolicyDao"/>
     </bean>
 
-<!--    <bean id="insuranceclaims.InsuranceClaimItemService"-->
-<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--        <property name="transactionManager">-->
-<!--            <ref bean="transactionManager"/>-->
-<!--        </property>-->
-<!--        <property name="target">-->
-<!--            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimItemServiceImpl">-->
-<!--                <property name="dao" ref="insuranceclaims.InsuranceClaimItemDao"/>-->
-<!--            </bean>-->
-<!--        </property>-->
-<!--        <property name="preInterceptors">-->
-<!--            <ref bean="serviceInterceptors"/>-->
-<!--        </property>-->
-<!--        <property name="transactionAttributeSource">-->
-<!--            <ref bean="transactionAttributeSource"/>-->
-<!--        </property>-->
-<!--    </bean>-->
-
-<!--    <bean id="insuranceclaims.InsuranceClaimDiagnosisService"-->
-<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--        <property name="transactionManager">-->
-<!--            <ref bean="transactionManager"/>-->
-<!--        </property>-->
-<!--        <property name="target">-->
-<!--            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimDiagnosisServiceImpl">-->
-<!--                <property name="dao" ref="insuranceclaims.InsuranceClaimDiagnosisDao"/>-->
-<!--            </bean>-->
-<!--        </property>-->
-<!--        <property name="preInterceptors">-->
-<!--            <ref bean="serviceInterceptors"/>-->
-<!--        </property>-->
-<!--        <property name="transactionAttributeSource">-->
-<!--            <ref bean="transactionAttributeSource"/>-->
-<!--        </property>-->
-<!--    </bean>-->
+    <bean id="insuranceclaims.InsuranceClaimFormService"
+          class="org.openmrs.module.insuranceclaims.api.service.forms.impl.ClaimFormServiceImpl">
+        <property name="billService" ref="insuranceclaims.BillService"/>
+        <property name="providedItemService" ref="insuranceclaims.ProvidedItemService"/>
+        <property name="insuranceClaimService" ref="insuranceclaims.InsuranceClaimService"/>
+        <property name="insuranceClaimItemService" ref="insuranceclaims.InsuranceClaimItemService"/>
+        <property name="insuranceClaimDiagnosisService" ref="insuranceclaims.InsuranceClaimDiagnosisService"/>
+    </bean>
 </beans>
