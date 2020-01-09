@@ -164,6 +164,7 @@
             <column name="explanation" type="TEXT"/>
             <column name="rejection_reason" type="varchar(255)"/>
             <column name="guarantee_id" type="varchar(255)"/>
+            <column name="external_id" type="varchar(255)"/>
             <column name="visit_type" type="int"/>
             <column name="status" type="varchar(50)">
                 <constraints nullable="false"/>
@@ -487,6 +488,25 @@
             <column name="date_created">2019-11-17</column>
             <column name="retired">0</column>
             <column name="uuid">ddc082c8-db30-4796-890e-f0d487fb9085</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insuranceclaims-27.12.2019:11:15" author="Damian Borowiecki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="concept_class" />
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_class WHERE uuid ="1946c03b-6fbd-4e11-8c76-36d07b39e47c";
+            </sqlCheck>
+        </preConditions>
+        <comment>
+            Class for consumed item/service observation
+        </comment>
+        <insert tableName="concept_class">
+            <column name="name">Consumable items</column>
+            <column name="creator">1</column>
+            <column name="date_created">2019-12-27</column>
+            <column name="retired">0</column>
+            <column name="uuid">1946c03b-6fbd-4e11-8c76-36d07b39e47c</column>
         </insert>
     </changeSet>
 

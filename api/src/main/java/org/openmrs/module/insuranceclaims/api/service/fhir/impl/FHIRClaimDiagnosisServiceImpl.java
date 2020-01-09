@@ -99,7 +99,7 @@ public class FHIRClaimDiagnosisServiceImpl implements FHIRClaimDiagnosisService 
     }
 
     private void setDiagnosisPrimaryCoding(Claim.DiagnosisComponent diagnosis) throws FHIRException {
-        String primaryCoding = InsuranceClaimConstants.PRIMARY_DIAGNOSIS_MAPPING;
+        String primaryCoding = Context.getAdministrationService().getGlobalProperty(InsuranceClaimConstants.PRIMARY_DIAGNOSIS_MAPPING);
         List<Coding> diagnosisCoding = diagnosis.getDiagnosisCodeableConcept().getCoding();
 
         for (Coding c : diagnosisCoding) {

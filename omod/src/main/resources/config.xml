@@ -35,6 +35,16 @@
         <require_module version="${fhirVersion}">
             org.openmrs.module.fhir
         </require_module>
+        <require_module version="${htmlformentryModuleVersion}">
+            org.openmrs.module.htmlformentry
+        </require_module>
+        <require_module version="${htmlformentryuiVersion}">
+            org.openmrs.module.htmlformentryui
+        </require_module>
+
+        <require_module version="${metadatamappingVersion}">
+            org.openmrs.module.metadatamapping
+        </require_module>
     </require_modules>
 
     <!-- Extensions -->
@@ -138,7 +148,7 @@
 
     <globalProperty>
         <property>${project.parent.artifactId}.diagnosisPrimaryCode</property>
-        <defaultValue>ExternalDiagnosisPrimaryCode</defaultValue>
+        <defaultValue>icd_0</defaultValue>
         <description>Establish primary mapping in Claim.DiagnosiComponent
         </description>
     </globalProperty>
