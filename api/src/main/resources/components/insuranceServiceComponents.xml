@@ -56,40 +56,4 @@
           class="org.openmrs.module.insuranceclaims.api.service.impl.InsurancePolicyServiceImpl">
         <property name="dao" ref="insuranceclaims.InsurancePolicyDao"/>
     </bean>
-
-<!--    <bean id="insuranceclaims.InsuranceClaimItemService"-->
-<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--        <property name="transactionManager">-->
-<!--            <ref bean="transactionManager"/>-->
-<!--        </property>-->
-<!--        <property name="target">-->
-<!--            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimItemServiceImpl">-->
-<!--                <property name="dao" ref="insuranceclaims.InsuranceClaimItemDao"/>-->
-<!--            </bean>-->
-<!--        </property>-->
-<!--        <property name="preInterceptors">-->
-<!--            <ref bean="serviceInterceptors"/>-->
-<!--        </property>-->
-<!--        <property name="transactionAttributeSource">-->
-<!--            <ref bean="transactionAttributeSource"/>-->
-<!--        </property>-->
-<!--    </bean>-->
-
-<!--    <bean id="insuranceclaims.InsuranceClaimDiagnosisService"-->
-<!--          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--        <property name="transactionManager">-->
-<!--            <ref bean="transactionManager"/>-->
-<!--        </property>-->
-<!--        <property name="target">-->
-<!--            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimDiagnosisServiceImpl">-->
-<!--                <property name="dao" ref="insuranceclaims.InsuranceClaimDiagnosisDao"/>-->
-<!--            </bean>-->
-<!--        </property>-->
-<!--        <property name="preInterceptors">-->
-<!--            <ref bean="serviceInterceptors"/>-->
-<!--        </property>-->
-<!--        <property name="transactionAttributeSource">-->
-<!--            <ref bean="transactionAttributeSource"/>-->
-<!--        </property>-->
-<!--    </bean>-->
 </beans>
