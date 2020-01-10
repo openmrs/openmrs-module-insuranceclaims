@@ -27,12 +27,12 @@ import java.util.Set;
 
 public class ClaimUtilsTest extends BaseModuleWebContextSensitiveTest {
 
-    private static String IS_SERVICE_ATTR_UUID = "925e4987-3104-4d74-989b-3ec96197b532";
-    private static String PRICE_ATTR_UUID = "ddc082c8-db30-4796-890e-f0d487fb9085";
-    private static String TEST_CONCEPT_NAME = "Test concept";
-    private static String TEST_CLAIM_ITEM_UUID = "TestUuid";
-    private static Float PRICE_ATTR_VALUE = 20.00f;
-    private static Boolean IS_SERVICE_ATTR_VALUE = false;
+    private static final String IS_SERVICE_ATTR_UUID = "925e4987-3104-4d74-989b-3ec96197b532";
+    private static final String PRICE_ATTR_UUID = "ddc082c8-db30-4796-890e-f0d487fb9085";
+    private static final String TEST_CONCEPT_NAME = "Test concept";
+    private static final String TEST_CLAIM_ITEM_UUID = "TestUuid";
+    private static final Float PRICE_ATTR_VALUE = 20.00f;
+    private static final Boolean IS_SERVICE_ATTR_VALUE = false;
 
     private ConceptAttributeType priceAttributeType;
     private ConceptAttributeType isServiceAttributeType;
