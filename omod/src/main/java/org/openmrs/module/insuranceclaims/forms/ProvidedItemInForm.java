@@ -1,4 +1,4 @@
-package org.openmrs.module.insuranceclaims.api.model;
+package org.openmrs.module.insuranceclaims.forms;
 
 import java.util.List;
 

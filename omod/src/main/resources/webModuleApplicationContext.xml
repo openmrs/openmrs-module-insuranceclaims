@@ -12,4 +12,13 @@
     <bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
         <property name="moduleId" value="${project.parent.artifactId}"/>
     </bean>
+
+    <bean id="insuranceclaims.InsuranceClaimFormService"
+          class="org.openmrs.module.insuranceclaims.forms.impl.ClaimFormServiceImpl">
+        <property name="billService" ref="insuranceclaims.BillService"/>
+        <property name="providedItemService" ref="insuranceclaims.ProvidedItemService"/>
+        <property name="insuranceClaimService" ref="insuranceclaims.InsuranceClaimService"/>
+        <property name="insuranceClaimItemService" ref="insuranceclaims.InsuranceClaimItemService"/>
+        <property name="insuranceClaimDiagnosisService" ref="insuranceclaims.InsuranceClaimDiagnosisService"/>
+    </bean>
 </beans>

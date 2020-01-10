@@ -4,56 +4,53 @@ import org.openmrs.Concept;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class ClaimUtils {
 
-    public static Map<String, InsuranceClaimItem> getInsuranceClaimItemsAsMap(List<InsuranceClaimItem> items) {
-        Map<String, InsuranceClaimItem> itemMapping = new HashMap<>();
-        items.forEach(
-                i -> {
-                    String name = i.getItem() != null ? getConceptName(i.getItem().getItem()) : null;
-                    if (name != null) {
-                        String attributes =  i.getItem().getItem().getActiveAttributes().stream().map(
-                                attr -> attr.getValue().toString() + ", "
-                        ).collect(Collectors.joining());
-                        name += "(" + attributes + ")";
-                    } else {
-                        name = "Unknown item " + i.hashCode();
-                    }
-                    itemMapping.put(name, i);
-                }
-        );
+    public static Map<String, List<InsuranceClaimItem>> getInsuranceClaimItemsAsMap(List<InsuranceClaimItem> items) {
+        HashMap<String, List<InsuranceClaimItem>> itemMapping = new HashMap<>();
+        for (InsuranceClaimItem item: items) {
+            String name = buildItemName(item.getItem());
+            itemMapping.computeIfAbsent(name, k -> new ArrayList<>());
+            itemMapping.get(name).add(item);
+        }
         return itemMapping;
     }
 
     public static Map<String, List<ProvidedItem>> getProvidedItemsAsMap(List<ProvidedItem> items) {
         Map<String, List<ProvidedItem>> itemMapping = new HashMap<>();
-        items.forEach(
-                i -> {
-                    String name = i.getItem() != null ? getConceptName(i.getItem()) : null;
-                    if (name != null) {
-                        String attributes =  i.getItem().getActiveAttributes().stream().map(
-                                attr -> attr.getValue().toString() + ", "
-                        ).collect(Collectors.joining());
-                        name += "(" + attributes + ")";
-                    } else {
-                        name = "Unknown item " + i.hashCode();
-                    }
-                    if (itemMapping.get(name) == null) {
-                        List<ProvidedItem> newList = new LinkedList<>();
-                        newList.add(i);
-                        itemMapping.put(name, newList);
-                    } else {
-                        itemMapping.get(name).add(i);
-                    }
-                }
-        );
+        for (ProvidedItem item: items) {
+            String name = buildItemName(item);
+            itemMapping.computeIfAbsent(name, k -> new ArrayList<>());
+            itemMapping.get(name).add(item);
+        }
         return itemMapping;
+    }
+
+    private static String buildItemName(ProvidedItem item) {
+        String name = item.getItem() != null ? getConceptName(item.getItem()) : null;
+        if (name != null) {
+            name = buildKnownProvidedItemName(item);
+        } else {
+            name = "Unknown item " + item.hashCode();
+        }
+        return name;
+    }
+
+    private static String buildKnownProvidedItemName(ProvidedItem item) {
+        String name = getConceptName(item.getItem());
+        String attributes =  concatProvidedItemAttributes(item);
+        return name + "(" + attributes + ")";
+    }
+
+    private static String concatProvidedItemAttributes(ProvidedItem item) {
+        return item.getItem().getActiveAttributes().stream().map(
+                attr -> attr.getValue().toString()).collect(Collectors.joining(", "));
     }
 
     private static String getConceptName(Concept concept) {
@@ -62,7 +59,5 @@ public final class ClaimUtils {
                 : null;
     }
 
-
     private ClaimUtils() {}
-
 }

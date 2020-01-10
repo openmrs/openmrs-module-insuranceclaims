@@ -1,8 +1,7 @@
-package org.openmrs.module.insuranceclaims.api.service.forms.impl;
+package org.openmrs.module.insuranceclaims.forms.impl;
 
 
 import ca.uhn.fhir.util.DateUtils;
-import org.hibernate.PropertyValueException;
 import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -13,15 +12,15 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
-import org.openmrs.module.insuranceclaims.api.model.NewClaimForm;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
-import org.openmrs.module.insuranceclaims.api.model.ProvidedItemInForm;
 import org.openmrs.module.insuranceclaims.api.service.BillService;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
 import org.openmrs.module.insuranceclaims.api.service.ProvidedItemService;
-import org.openmrs.module.insuranceclaims.api.service.forms.ClaimFormService;
+import org.openmrs.module.insuranceclaims.forms.ClaimFormService;
+import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
+import org.openmrs.module.insuranceclaims.forms.ProvidedItemInForm;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -51,7 +50,7 @@ public class ClaimFormServiceImpl implements ClaimFormService {
     private static final String INVALID_LOCATION_ERROR = "You must select valid location";
 
     @Override
-    @Transactional(rollbackOn = PropertyValueException.class)
+    @Transactional
     public InsuranceClaim createClaim(NewClaimForm form) {
         InsuranceClaim nextClaim = new InsuranceClaim();
 
@@ -67,27 +66,16 @@ public class ClaimFormServiceImpl implements ClaimFormService {
         nextClaim.setGuaranteeId(form.getGuaranteeId());
         nextClaim.setClaimCode(form.getClaimCode());
         nextClaim.setStatus(InsuranceClaimStatus.ENTERED);
+        nextClaim.setLocation(getClaimLocation(form));
 
-        try {
-            Location location = Context.getLocationService().getLocation(Integer.parseInt(form.getLocation()));
-            nextClaim.setLocation(location);
-        } catch (NumberFormatException exception) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, INVALID_LOCATION_ERROR);
-        }
-        Date startDate = DateUtils.parseDate(form.getStartDate(), FORM_DATE_FORMAT);
-        Date endDate = DateUtils.parseDate(form.getEndDate(), FORM_DATE_FORMAT);
-        nextClaim.setDateFrom(startDate);
-        nextClaim.setDateTo(endDate);
-        nextClaim.setProvider(Context.getProviderService().getProviderByUuid(form.getProvider()));
+        assignDatesFromFormToClaim(nextClaim, form);
 
         List<InsuranceClaimItem> items = generateClaimItems(form.getProvidedItems());
         List<ProvidedItem> claimProvidedItems = items.stream()
                 .map(item -> item.getItem())
                 .collect(Collectors.toList());
 
-        Bill bill = billService.generateBill(claimProvidedItems);
-        nextClaim.setBill(bill);
-        nextClaim.setClaimedTotal(nextClaim.getBill().getTotalAmount());
+        createClaimBill(nextClaim, claimProvidedItems);
         insuranceClaimService.saveOrUpdate(nextClaim);
 
         List<InsuranceClaimDiagnosis> diagnoses = generateClaimDiagnoses(form.getDiagnoses(), nextClaim);
@@ -158,5 +146,27 @@ public class ClaimFormServiceImpl implements ClaimFormService {
             diagnoses.add(nextDiagnosis);
         }
         return diagnoses;
+    }
+
+    private void assignDatesFromFormToClaim(InsuranceClaim claim, NewClaimForm form) {
+        Date startDate = DateUtils.parseDate(form.getStartDate(), FORM_DATE_FORMAT);
+        Date endDate = DateUtils.parseDate(form.getEndDate(), FORM_DATE_FORMAT);
+        claim.setDateFrom(startDate);
+        claim.setDateTo(endDate);
+        claim.setProvider(Context.getProviderService().getProviderByUuid(form.getProvider()));
+    }
+
+    private void createClaimBill(InsuranceClaim claim, List<ProvidedItem> claimProvidedItems) {
+        Bill bill = billService.generateBill(claimProvidedItems);
+        claim.setBill(bill);
+        claim.setClaimedTotal(claim.getBill().getTotalAmount());
+    }
+
+    private Location getClaimLocation(NewClaimForm form) throws HttpServerErrorException {
+        try {
+            return Context.getLocationService().getLocation(Integer.parseInt(form.getLocation()));
+        } catch (NumberFormatException exception) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, INVALID_LOCATION_ERROR);
+        }
     }
 }

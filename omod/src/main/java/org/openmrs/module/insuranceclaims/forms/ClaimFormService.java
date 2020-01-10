@@ -1,7 +1,6 @@
-package org.openmrs.module.insuranceclaims.api.service.forms;
+package org.openmrs.module.insuranceclaims.forms;
 
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
-import org.openmrs.module.insuranceclaims.api.model.NewClaimForm;
 
 public interface ClaimFormService {
 

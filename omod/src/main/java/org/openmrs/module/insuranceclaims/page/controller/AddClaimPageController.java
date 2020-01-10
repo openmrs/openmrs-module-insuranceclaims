@@ -8,7 +8,7 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.insuranceclaims.api.model.NewClaimForm;
+import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 import org.openmrs.module.insuranceclaims.api.service.ProvidedItemService;
 import org.openmrs.module.webservices.rest.web.RestUtil;
@@ -66,7 +66,6 @@ public class AddClaimPageController {
 	public Object post(PageModel model,
 					   @RequestBody(required = true) NewClaimForm form,
 					   HttpServletRequest request, HttpServletResponse response) {
-		//TODO: This should recieve form and create claim
 		model.addAttribute("result", form != null ? form : "Not found");
 		return RestUtil.created(response, form);
 	}

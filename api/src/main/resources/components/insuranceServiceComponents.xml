@@ -56,13 +56,4 @@
           class="org.openmrs.module.insuranceclaims.api.service.impl.InsurancePolicyServiceImpl">
         <property name="dao" ref="insuranceclaims.InsurancePolicyDao"/>
     </bean>
-
-    <bean id="insuranceclaims.InsuranceClaimFormService"
-          class="org.openmrs.module.insuranceclaims.api.service.forms.impl.ClaimFormServiceImpl">
-        <property name="billService" ref="insuranceclaims.BillService"/>
-        <property name="providedItemService" ref="insuranceclaims.ProvidedItemService"/>
-        <property name="insuranceClaimService" ref="insuranceclaims.InsuranceClaimService"/>
-        <property name="insuranceClaimItemService" ref="insuranceclaims.InsuranceClaimItemService"/>
-        <property name="insuranceClaimDiagnosisService" ref="insuranceclaims.InsuranceClaimDiagnosisService"/>
-    </bean>
 </beans>
