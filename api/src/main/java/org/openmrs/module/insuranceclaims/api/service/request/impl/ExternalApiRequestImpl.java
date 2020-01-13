@@ -97,9 +97,6 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
 
         this.claimResponseUrl = baseUrl + "/" + claimResponseUri;
         this.claimUrl = baseUrl + "/" + claimUri;
-        System.out.println("Claim urls: ");
-        System.out.println("Claim Response url: " + claimResponseUrl);
-        System.out.println("Claim Url: " + claimUrl);
     }
 
     private ClaimRequestWrapper wrapResponse(Claim claim) {

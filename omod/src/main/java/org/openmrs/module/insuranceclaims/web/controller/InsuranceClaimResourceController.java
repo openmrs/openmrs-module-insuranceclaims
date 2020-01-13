@@ -9,6 +9,8 @@ import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest
 import org.openmrs.module.insuranceclaims.forms.ClaimFormService;
 import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,11 @@ import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CL
 @RestController
 @RequestMapping(value = "insuranceclaims/rest/v1/claims")
 public class InsuranceClaimResourceController {
+
+    /**
+     * Logger for this class and subclasses
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(InsuranceClaimsController.class);
 
     @Autowired
     private ClaimFormService claimFormService;
@@ -81,7 +88,7 @@ public class InsuranceClaimResourceController {
             responseEntity = new ResponseEntity<>(claim, HttpStatus.EXPECTATION_FAILED);
 
             if (!externalApiRequest.getErrors().isEmpty()) {
-                System.out.println("Insurance claim: Errors during processing: " + externalApiRequest.getErrors().toString());
+                LOG.info("Insurance claim: Errors during processing: " + externalApiRequest.getErrors().toString());
             }
         } catch (URISyntaxException | FHIRException requestException) {
             String exceptionMessage = "Exception occured during processing request: "
@@ -91,7 +98,6 @@ public class InsuranceClaimResourceController {
             String exceptionMessage = "Exception occured during processing request: "
                     + "Message:" + e.getMessage()
                     + "Reason: " + e.getResponseBodyAsString();
-            System.out.println(exceptionMessage);
             responseEntity = new ResponseEntity<>(exceptionMessage, HttpStatus.EXPECTATION_FAILED);
         }
         return responseEntity;
