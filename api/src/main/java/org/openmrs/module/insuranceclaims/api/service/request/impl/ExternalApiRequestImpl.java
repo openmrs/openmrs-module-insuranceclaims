@@ -1,6 +1,5 @@
 package org.openmrs.module.insuranceclaims.api.service.request.impl;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.exceptions.FHIRException;
@@ -10,15 +9,18 @@ import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
+import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
+import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil;
+import org.openmrs.module.insuranceclaims.api.service.request.ClaimRequestException;
 import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +43,7 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
 
     private FHIRClaimDiagnosisService fhirClaimDiagnosisService;
 
-    @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-    private List<String> errors;
+    private InsuranceClaimService insuranceClaimService;
 
     @Override
     public ClaimRequestWrapper getClaimFromExternalApi(String claimCode) throws URISyntaxException {
@@ -59,15 +60,26 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
     }
 
     @Override
-    public ClaimResponse sendClaimToExternalApi(InsuranceClaim claim) throws URISyntaxException,
-            FHIRException {
-        setUrls();
-        return claimHttpRequest.sendClaimRequest(claimUrl, claim);
-    }
+    public ClaimResponse sendClaimToExternalApi(InsuranceClaim claim) throws ClaimRequestException {
+        try {
+            setUrls();
+            ClaimResponse claimResponse = claimHttpRequest.sendClaimRequest(claimUrl, claim);
+            String externalCode = InsuranceClaimUtil.getClaimResponseId(claimResponse);
+            claim.setExternalId(externalCode);
+            insuranceClaimService.saveOrUpdate(claim);
+            return claimResponse;
+        } catch (URISyntaxException | FHIRException requestException) {
+            String exceptionMessage = "Exception occured during processing request: "
+                    + "Message:" + requestException.getMessage();
 
-    @Override
-    public List<String> getErrors() {
-        return errors != null ? errors : Collections.emptyList();
+            throw new ClaimRequestException(exceptionMessage, requestException);
+        } catch (HttpServerErrorException e) {
+            String exceptionMessage = "Exception occured during processing request: "
+                    + "Message:" + e.getMessage()
+                    + "Reason: " + e.getResponseBodyAsString();
+
+            throw new ClaimRequestException(exceptionMessage, e);
+        }
     }
 
     public void setClaimHttpRequest(ClaimHttpRequest claimHttpRequest) {
@@ -100,7 +112,7 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
     }
 
     private ClaimRequestWrapper wrapResponse(Claim claim) {
-        this.errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         InsuranceClaim receivedClaim = fhirInsuranceClaimService.generateOmrsClaim(claim, errors);
         List<InsuranceClaimDiagnosis> receivedDiagnosis = claim.getDiagnosis().stream()
                 .map(diagnosis -> fhirClaimDiagnosisService.createOmrsClaimDiagnosis(diagnosis, errors))
@@ -111,7 +123,7 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
     }
 
     private ClaimRequestWrapper wrapResponse(ClaimResponse claim) throws FHIRException {
-        this.errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         InsuranceClaim receivedClaim = fhirClaimResponseService.generateOmrsClaim(claim, errors);
         List<InsuranceClaimItem> items = fhirClaimItemService.generateOmrsClaimResponseItems(claim, errors);
 
