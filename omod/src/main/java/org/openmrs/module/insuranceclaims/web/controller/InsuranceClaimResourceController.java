@@ -1,6 +1,5 @@
 package org.openmrs.module.insuranceclaims.web.controller;
 
-import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
@@ -24,13 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URISyntaxException;
 
 import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CLAIM_ALREADY_SENT_MESSAGE;
-import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CLAIM_NOT_SENT_MESSAGE;
 
 @RestController
 @RequestMapping(value = "insuranceclaims/rest/v1/claims")
 public class InsuranceClaimResourceController {
-
-    // private static final Logger LOG = LoggerFactory.getLogger(InsuranceClaimsController.class);
 
     @Autowired
     private ClaimFormService claimFormService;
@@ -61,7 +57,10 @@ public class InsuranceClaimResourceController {
     }
 
     /**
-     * This method will check if claim is present in external id, if external id don't have information about this
+     * @param claimUuid uuid of claim that will be send to external server
+     * @return InsuranceClaim with updated values or error message that occured during processing request
+     *
+     * This method will check if claim is present in external id, if external id does not have information about this
      * claim it will send it to external system, if claim was already submitted it will get update object based on external
      * information.
      */
@@ -99,32 +98,4 @@ public class InsuranceClaimResourceController {
         return requestResponse;
     }
 
-    /**
-     * @param claimUuid uuid claim which have to be updated witch external server values
-     * @return InsuranceClaim with updated values
-     *
-     * It uses insurance claim external api to receive ClaimResponse information from external source and then use it to
-     * to update this proper values related to this insurance claim (I.e. check if was claim was valuated, check which claim
-     * items were approved).
-     */
-    @RequestMapping(value = "/updateClaim", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public ResponseEntity updateClaim(@RequestParam(value = "claimUuid") String claimUuid,
-                                                 HttpServletRequest request, HttpServletResponse response) {
-        InsuranceClaim claim = insuranceClaimService.getByUuid(claimUuid);
-
-        if (claim.getExternalId() != null) {
-            return ResponseEntity.badRequest().body(CLAIM_NOT_SENT_MESSAGE);
-        }
-
-        ResponseEntity requestResponse;
-        try {
-            ClaimRequestWrapper wrapper = externalApiRequest.getClaimResponseFromExternalApi(claimUuid);
-            requestResponse = new ResponseEntity<>(wrapper, HttpStatus.ACCEPTED);
-        } catch (URISyntaxException | FHIRException fhirRequestException) {
-            requestResponse = new ResponseEntity<>(fhirRequestException.getMessage(), HttpStatus.EXPECTATION_FAILED);
-        }
-
-        return requestResponse;
-    }
 }

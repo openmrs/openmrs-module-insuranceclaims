@@ -123,7 +123,7 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
                 .collect(Collectors.toList());
         List<InsuranceClaimItem> items = fhirClaimItemService.generateOmrsClaimItems(claim, errors);
 
-        return new ClaimRequestWrapper(receivedClaim, receivedDiagnosis, items);
+        return new ClaimRequestWrapper(receivedClaim, receivedDiagnosis, items, errors);
     }
 
     private ClaimRequestWrapper wrapResponse(ClaimResponse claim) throws FHIRException {
@@ -131,6 +131,6 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         InsuranceClaim receivedClaim = fhirClaimResponseService.generateOmrsClaim(claim, errors);
         List<InsuranceClaimItem> items = fhirClaimItemService.generateOmrsClaimResponseItems(claim, errors);
 
-        return new ClaimRequestWrapper(receivedClaim, null, items);
+        return new ClaimRequestWrapper(receivedClaim, null, items, errors);
     }
 }
