@@ -5,6 +5,7 @@ import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
+import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil;
 import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
 import org.openmrs.module.insuranceclaims.forms.ClaimFormService;
 import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
@@ -84,12 +85,15 @@ public class InsuranceClaimResourceController {
         ResponseEntity responseEntity;
         try {
             ClaimResponse claimResponse = externalApiRequest.sendClaimToExternalApi(claim);
-            claim.setExternalId(claimResponse.getId());
-            responseEntity = new ResponseEntity<>(claim, HttpStatus.EXPECTATION_FAILED);
+            String externalCode = InsuranceClaimUtil.getClaimResponseId(claimResponse);
+            claim.setExternalId(externalCode);
+            insuranceClaimService.saveOrUpdate(claim);
 
             if (!externalApiRequest.getErrors().isEmpty()) {
                 LOG.info("Insurance claim: Errors during processing: " + externalApiRequest.getErrors().toString());
             }
+            responseEntity = new ResponseEntity<>(claim, HttpStatus.EXPECTATION_FAILED);
+
         } catch (URISyntaxException | FHIRException requestException) {
             String exceptionMessage = "Exception occured during processing request: "
                     + "Message:" + requestException.getMessage();

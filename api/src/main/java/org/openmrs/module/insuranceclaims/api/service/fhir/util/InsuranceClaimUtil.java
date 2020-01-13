@@ -1,6 +1,7 @@
 package org.openmrs.module.insuranceclaims.api.service.fhir.util;
 
 import org.hl7.fhir.dstu3.model.Claim;
+import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Period;
@@ -86,6 +87,11 @@ public final class InsuranceClaimUtil {
 
     public static String getClaimUuid(Claim claim, List<String> errors) {
         return getIdentifierValueByCode(claim, ACCESSION_ID, errors);
+    }
+
+    public static String getClaimResponseId(ClaimResponse claimResponse) {
+        //Claim ID should be in format "ClaimResponse/claimId";
+        return claimResponse.getId().split("/")[1];
     }
 
     public static Date getClaimDateCreated(Claim claim, List<String> errors) {
