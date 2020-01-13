@@ -96,12 +96,12 @@
                 def details = "Details"
                 def itemDetailsId = item.key + details %>
 
-                <tr> <div id="${item.key}" style="cursor: pointer;"> ConceptName : ${item.key} </div> </tr>
+                <tr> <div id="${item.key}" style="cursor: pointer;"> ${index + 1}. ${item.key} </div> </tr>
                 <div id="${itemDetailsId}" style="display: none;">
-                    <%item.value.each { providedItem -> %>
+                    <%item.value.eachWithIndex { providedItem, itemIndex -> %>
                         <tr>
                             <div class="consumedItemsOfType" id="${providedItem.uuid}" style="border: 2px solid black;">
-                                ${index}. ${providedItem.dateOfServed} 
+                                ${itemIndex + 1}. ${providedItem.dateOfServed} 
                             </div>
                             <script>
                                 providedItems['${item.key}'] = {};
@@ -144,7 +144,7 @@
                         }
                     };
                 </script>
-                -----------<br/>
+                <br/>
             <% } %>
         </tr>
         <br />
@@ -246,14 +246,14 @@
         url: "../ws/insuranceclaims/rest/v1/claims",
         success: function(){alert("It worked!")},
         error: function (request, status, error) {
-            document.getElementById("formData").innerHTML = JSON.stringify(request) + JSON.stringify(status) + JSON.stringify(error);
+            document.getElementById("formData").innerHTML = request;
         },
         dataType: "json",
         contentType : "application/json"
         }).done(function(data) {
                 // log data to the console so we can see
                 console.log(data); 
-                document.getElementById("formData").innerHTML = JSON.stringify(data);
+                document.getElementById("formData").innerHTML = data;
                 // here we will handle errors and validation messages
             });
     }

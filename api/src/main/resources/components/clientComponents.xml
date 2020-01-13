@@ -13,8 +13,15 @@
     <bean id="insuranceclaims.ClaimHttpRequest"
           class="org.openmrs.module.insuranceclaims.api.client.impl.ClaimHttpRequestImpl">
         <property name="fhirInsuranceClaimService" ref="insuranceclaims.FHIRInsuranceClaimService"/>
+        <property name="fhirRequestClient"         ref="insuranceclaims.FhirRequest" />
+    </bean>
+
+    <bean id="insuranceclaims.ExternalApiRequest"
+          class="org.openmrs.module.insuranceclaims.api.service.request.impl.ExternalApiRequestImpl">
+        <property name="claimHttpRequest" ref="insuranceclaims.ClaimHttpRequest" />
+        <property name="fhirInsuranceClaimService" ref="insuranceclaims.FHIRInsuranceClaimService"/>
+        <property name="fhirClaimResponseService"  ref="insuranceclaims.FHIRClaimResponseService"/>
         <property name="fhirClaimDiagnosisService" ref="insuranceclaims.FHIRClaimDiagnosisService"/>
         <property name="fhirClaimItemService"      ref="insuranceclaims.FHIRClaimItemService"/>
-        <property name="fhirRequestClient"         ref="insuranceclaims.FhirRequest" />
     </bean>
 </beans>
