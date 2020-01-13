@@ -102,6 +102,10 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         this.fhirClaimDiagnosisService = fhirClaimDiagnosisService;
     }
 
+    public void setInsuranceClaimService(InsuranceClaimService insuranceClaimService) {
+        this.insuranceClaimService = insuranceClaimService;
+    }
+
     private void setUrls() {
         String baseUrl = Context.getAdministrationService().getGlobalProperty(BASE_URL_PROPERTY);
         String claimUri =  Context.getAdministrationService().getGlobalProperty(CLAIM_SOURCE_URI);
