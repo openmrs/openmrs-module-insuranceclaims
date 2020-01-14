@@ -11,12 +11,21 @@ public class ClaimRequestWrapper {
     private InsuranceClaim insuranceClaim;
     private List<InsuranceClaimDiagnosis> diagnosis;
     private List<InsuranceClaimItem> items;
+    private List<String> errors;
 
     public ClaimRequestWrapper(InsuranceClaim claim, List<InsuranceClaimDiagnosis> diagnosis,
     List<InsuranceClaimItem> items) {
         this.insuranceClaim = claim;
         this.diagnosis = diagnosis;
         this.items = items;
+    }
+
+    public ClaimRequestWrapper(InsuranceClaim claim, List<InsuranceClaimDiagnosis> diagnosis,
+    List<InsuranceClaimItem> items, List<String> errors) {
+        this.insuranceClaim = claim;
+        this.diagnosis = diagnosis;
+        this.items = items;
+        this.errors = errors;
     }
 
     public InsuranceClaim getInsuranceClaim() {
@@ -49,5 +58,13 @@ public class ClaimRequestWrapper {
 
     public void addItem(InsuranceClaimItem item) {
         this.items.add(item);
+    }
+
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
+
+    public List<String> getErrors() {
+        return errors;
     }
 }

@@ -1,7 +1,10 @@
 package org.openmrs.module.insuranceclaims.web.controller;
 
+import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
+import org.openmrs.module.insuranceclaims.api.service.request.ClaimRequestException;
+import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
 import org.openmrs.module.insuranceclaims.forms.ClaimFormService;
 import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
@@ -17,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URISyntaxException;
+
+import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CLAIM_ALREADY_SENT_MESSAGE;
 
 @RestController
 @RequestMapping(value = "insuranceclaims/rest/v1/claims")
@@ -27,6 +33,9 @@ public class InsuranceClaimResourceController {
 
     @Autowired
     private InsuranceClaimService insuranceClaimService;
+
+    @Autowired
+    private ExternalApiRequest externalApiRequest;
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
@@ -40,12 +49,51 @@ public class InsuranceClaimResourceController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<InsuranceClaim> get(
-            @RequestParam(value = "claimId", required = true) String claimUuid,
-            HttpServletRequest request,
-            HttpServletResponse response) throws ResponseException {
+    public ResponseEntity get(@RequestParam(value = "claimUuid") String claimUuid,
+                              HttpServletRequest request, HttpServletResponse response) throws ResponseException {
         InsuranceClaim claim = insuranceClaimService.getByUuid(claimUuid);
         ResponseEntity<InsuranceClaim> requestResponse = new ResponseEntity<>(claim, HttpStatus.ACCEPTED);
+        return requestResponse;
+    }
+
+    /**
+     * Checks if claim is present in external id, if external id does not have information about this
+     * claim it will send it to external system, if claim was already submitted it will get update object based on external
+     * information.
+     * @param claimUuid uuid of claim that will be send to external server
+     * @return InsuranceClaim with updated values or error message that occured during processing request
+     */
+    @RequestMapping(value = "/sendToExternal", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity sendClaimToExternalId(
+            @RequestParam(value = "claimUuid", required = true) String claimUuid,
+            HttpServletRequest request, HttpServletResponse response) {
+        InsuranceClaim claim = insuranceClaimService.getByUuid(claimUuid);
+
+        if (claim.getExternalId() != null) {
+            return ResponseEntity.badRequest().body(CLAIM_ALREADY_SENT_MESSAGE);
+        }
+
+        try {
+            externalApiRequest.sendClaimToExternalApi(claim);
+            return new ResponseEntity<>(claim, HttpStatus.ACCEPTED);
+        } catch (ClaimRequestException requestException) {
+            return new ResponseEntity<>(requestException.getMessage(), HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @RequestMapping(value = "/getFromExternal", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity getClaimFromExternalId(@RequestParam(value = "claimExternalCode") String claimExternalCode,
+                                                 HttpServletRequest request, HttpServletResponse response) {
+        ResponseEntity requestResponse;
+        try {
+             ClaimRequestWrapper wrapper = externalApiRequest.getClaimFromExternalApi(claimExternalCode);
+             requestResponse = new ResponseEntity<>(wrapper, HttpStatus.ACCEPTED);
+        } catch (URISyntaxException wrongUrl) {
+             requestResponse = new ResponseEntity<>(wrongUrl.getMessage(), HttpStatus.EXPECTATION_FAILED);
+        }
+
         return requestResponse;
     }
 }
