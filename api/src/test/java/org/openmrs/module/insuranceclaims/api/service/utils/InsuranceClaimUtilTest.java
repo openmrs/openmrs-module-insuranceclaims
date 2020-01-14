@@ -42,16 +42,10 @@ public class InsuranceClaimUtilTest extends BaseModuleContextSensitiveTest {
     private static final String TEST_UUID = "T3STUU1D";
 
     @Autowired
-    InsuranceClaimService insuranceClaimService;
+    private InsuranceClaimService insuranceClaimService;
 
     @Autowired
-    FHIRInsuranceClaimService fhirInsuranceClaimService;
-
-    @Test
-    public void createClaimVisitType_shouldCreateValidCodeableConcept() {
-        CodeableConcept visitConcept = InsuranceClaimUtil.createClaimVisitType(testClaim);
-        Assert.assertThat(visitConcept.getText(), Matchers.equalTo(testClaim.getVisitType().getName()));
-    }
+    private FHIRInsuranceClaimService fhirInsuranceClaimService;
 
     @Before
     public void setUp() throws Exception {
@@ -60,6 +54,13 @@ public class InsuranceClaimUtilTest extends BaseModuleContextSensitiveTest {
         insuranceClaimService.saveOrUpdate(testClaim);
         mappedClaim = fhirInsuranceClaimService.generateClaim(testClaim);
     }
+
+    @Test
+    public void createClaimVisitType_shouldCreateValidCodeableConcept() {
+        CodeableConcept visitConcept = InsuranceClaimUtil.createClaimVisitType(testClaim);
+        Assert.assertThat(visitConcept.getText(), Matchers.equalTo(testClaim.getVisitType().getName()));
+    }
+
 
     @Test
     public void getClaimBillablePeriod_shouldReturnValidFromToDates() {

@@ -6,6 +6,8 @@ public class ClaimRequestException extends Exception {
         super(message);
     }
 
-    public ClaimRequestException(String message, Throwable cause) { super(message, cause); }
+    public ClaimRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

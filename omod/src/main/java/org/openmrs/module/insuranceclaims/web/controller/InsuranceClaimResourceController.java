@@ -57,12 +57,11 @@ public class InsuranceClaimResourceController {
     }
 
     /**
-     * @param claimUuid uuid of claim that will be send to external server
-     * @return InsuranceClaim with updated values or error message that occured during processing request
-     *
-     * This method will check if claim is present in external id, if external id does not have information about this
+     * Checks if claim is present in external id, if external id does not have information about this
      * claim it will send it to external system, if claim was already submitted it will get update object based on external
      * information.
+     * @param claimUuid uuid of claim that will be send to external server
+     * @return InsuranceClaim with updated values or error message that occured during processing request
      */
     @RequestMapping(value = "/sendToExternal", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
@@ -97,5 +96,4 @@ public class InsuranceClaimResourceController {
 
         return requestResponse;
     }
-
 }
