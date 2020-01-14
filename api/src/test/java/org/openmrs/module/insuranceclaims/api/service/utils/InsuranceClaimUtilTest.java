@@ -61,7 +61,6 @@ public class InsuranceClaimUtilTest extends BaseModuleContextSensitiveTest {
         Assert.assertThat(visitConcept.getText(), Matchers.equalTo(testClaim.getVisitType().getName()));
     }
 
-
     @Test
     public void getClaimBillablePeriod_shouldReturnValidFromToDates() {
         List<String> errors = new ArrayList<>();
