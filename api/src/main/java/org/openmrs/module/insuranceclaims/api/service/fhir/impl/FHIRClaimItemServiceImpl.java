@@ -7,6 +7,7 @@ import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Money;
 import org.hl7.fhir.dstu3.model.PositiveIntType;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
@@ -27,6 +28,7 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Identifie
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.EXTERNAL_SYSTEM_CODE_SOURCE_MAPPING_NAME;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_GENERAL_CATEGORY;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_ADJUDICATION_REJECTION_REASON_CATEGORY;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ITEM_EXPLANATION_CATEGORY;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.NEXT_SEQUENCE;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.SEQUENCE_FIRST;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil.createFhirItemService;
@@ -43,6 +45,26 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.SpecialCo
 public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
 
     private ItemDbService itemDbService;
+
+    @Override
+    public Claim assignItemsWithInformationToClaim(Claim fhirClaim, InsuranceClaim claim) {
+        List<InsuranceClaimItem> insuranceClaimItems = itemDbService.findInsuranceClaimItems(claim.getId());
+        List<Claim.ItemComponent> fhirItems = generateClaimItemComponent(insuranceClaimItems);
+
+        fhirClaim.setItem(fhirItems);
+        int initialNumberOnClaimInformation = fhirClaim.getInformation().size();
+        for (int itemIndex = 0; itemIndex < insuranceClaimItems.size(); itemIndex++) {
+            InsuranceClaimItem nextMrsItem = insuranceClaimItems.get(itemIndex);
+            Claim.ItemComponent correspondingFhirItem = fhirItems.get(itemIndex);
+            Claim.SpecialConditionComponent itemInformation = createItemExplanationInformation(nextMrsItem);
+
+            itemInformation.setSequence(++initialNumberOnClaimInformation);
+            fhirClaim.addInformation(itemInformation);
+            correspondingFhirItem.setInformationLinkId(Collections.singletonList(itemInformation.getSequenceElement()));
+        }
+
+        return fhirClaim;
+    }
 
     @Override
     public List<Claim.ItemComponent> generateClaimItemComponent(InsuranceClaim claim) {
@@ -212,5 +234,14 @@ public class FHIRClaimItemServiceImpl implements FHIRClaimItemService {
     private BigDecimal getAdjudicationPriceApproved(ClaimResponse.AdjudicationComponent component) {
         Money approved = component.getAmount();
         return approved != null ? approved.getValue() : null;
+    }
+
+    private Claim.SpecialConditionComponent createItemExplanationInformation(InsuranceClaimItem item) {
+        Claim.SpecialConditionComponent itemInformation = new Claim.SpecialConditionComponent();
+
+        itemInformation.setCategory(new CodeableConcept().setText(ITEM_EXPLANATION_CATEGORY));
+        itemInformation.setValue(new StringType(item.getExplanation()));
+
+        return itemInformation;
     }
 }

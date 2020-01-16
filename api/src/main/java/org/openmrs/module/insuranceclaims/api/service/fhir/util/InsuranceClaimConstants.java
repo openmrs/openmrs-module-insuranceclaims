@@ -41,6 +41,7 @@ public final class InsuranceClaimConstants {
 
     public static final String GUARANTEE_ID_CATEGORY = "guarantee_id";
     public static final String EXPLANATION_CATEGORY = "explanation";
+    public static final String ITEM_EXPLANATION_CATEGORY = "item_explanation";
 
     public static final String CONTRACT = "Contract";
     public static final int CONTRACT_POLICY_ID_ORDINAL = 1;
