@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 public class InsuranceClaimServiceImpl extends BaseOpenmrsDataService<InsuranceClaim> implements InsuranceClaimService {
 
     @Transactional
+    @Override
     public InsuranceClaim updateClaim(InsuranceClaim claimToUpdate, InsuranceClaim updatedClaim) {
         claimToUpdate.setAdjustment(updatedClaim.getAdjustment());
         updateQuantityApproved(claimToUpdate, updatedClaim);
