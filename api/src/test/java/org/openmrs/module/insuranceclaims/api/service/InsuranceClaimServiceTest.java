@@ -1,6 +1,5 @@
 package org.openmrs.module.insuranceclaims.api.service;
 
-import javassist.NotFoundException;
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -19,6 +18,7 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimDiagnosisMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimItemMother;
 import org.openmrs.module.insuranceclaims.api.mother.InsuranceClaimMother;
+import org.openmrs.module.insuranceclaims.api.service.exceptions.ItemMatchingFailedException;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,7 +165,7 @@ public class InsuranceClaimServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(updatedItem.getRejectionReason(), Matchers.equalTo(itemWithUpdates.getRejectionReason()));
 	}
 
-	@Test(expected = NotFoundException.class)
+	@Test(expected = ItemMatchingFailedException.class)
 	public void updateInsuranceClaimItems_invalidUpdateItemsShouldThrowException() throws Exception {
 		InsuranceClaimItem toBeUpdated = createTestClaimItem();
 		InsuranceClaimItem itemWithUpdates = createClaimItemWithUpdates();

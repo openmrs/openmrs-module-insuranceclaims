@@ -1,13 +1,14 @@
 package org.openmrs.module.insuranceclaims.api.service.impl;
 
-import javassist.NotFoundException;
 import org.hl7.fhir.dstu3.model.Money;
 import org.openmrs.Concept;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItemStatus;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService;
+import org.openmrs.module.insuranceclaims.api.service.exceptions.ItemMatchingFailedException;
 import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimItemUtil;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class InsuranceClaimItemServiceImpl extends BaseOpenmrsDataService<Insura
         implements InsuranceClaimItemService {
 
     @Override
+    @Transactional
     public InsuranceClaimItem updateInsuranceClaimItem(InsuranceClaimItem itemToUpdate, InsuranceClaimItem itemUpdated) {
         itemToUpdate.setStatus(itemUpdated.getStatus());
         itemToUpdate.setRejectionReason(itemUpdated.getRejectionReason());
@@ -29,8 +31,9 @@ public class InsuranceClaimItemServiceImpl extends BaseOpenmrsDataService<Insura
     }
 
     @Override
+    @Transactional
     public List<InsuranceClaimItem> updateInsuranceClaimItems(List<InsuranceClaimItem> itemsToUpdate,
-                                                        List<InsuranceClaimItem> itemsWithUpdates) throws NotFoundException {
+                                                        List<InsuranceClaimItem> itemsWithUpdates) throws ItemMatchingFailedException {
         List<InsuranceClaimItem> itemsUpdatedCopy = new ArrayList<>(itemsWithUpdates);
         for (InsuranceClaimItem item: itemsToUpdate) {
             String itemCode = getClaimItemCode(item);
@@ -43,7 +46,7 @@ public class InsuranceClaimItemServiceImpl extends BaseOpenmrsDataService<Insura
 
         if (!itemsUpdatedCopy.isEmpty()) {
             String unusedUpdatedItemCodes = itemsUpdatedCopy.stream().map(item -> getClaimItemCode(item)).collect(Collectors.joining());
-            throw new NotFoundException("Could not update items, failed to match updated item with codes: " + unusedUpdatedItemCodes);
+            throw new ItemMatchingFailedException("Could not update items, failed to match updated item with codes: " + unusedUpdatedItemCodes);
         }
 
         itemsToUpdate.forEach(this::saveOrUpdate);
@@ -76,12 +79,12 @@ public class InsuranceClaimItemServiceImpl extends BaseOpenmrsDataService<Insura
         }
     }
 
-    private InsuranceClaimItem findFirstMatchingItem(String itemExternalCode, int quantityProvided, Money unitPrice, List<InsuranceClaimItem> items) throws NotFoundException {
+    private InsuranceClaimItem findFirstMatchingItem(String itemExternalCode, int quantityProvided, Money unitPrice, List<InsuranceClaimItem> items) throws ItemMatchingFailedException {
         return items.stream()
                 .filter(item -> getClaimItemCode(item).equals(itemExternalCode))
                 .filter(item -> item.getQuantityProvided() == quantityProvided)
                 .filter(item -> InsuranceClaimItemUtil.getItemUnitPrice(item).equalsDeep(unitPrice))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Could not find match for item with code " + itemExternalCode));
+                .orElseThrow(() -> new ItemMatchingFailedException("Could not find match for item with code " + itemExternalCode));
     }
 }

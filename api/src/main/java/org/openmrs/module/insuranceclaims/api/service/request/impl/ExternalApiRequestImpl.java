@@ -1,6 +1,5 @@
 package org.openmrs.module.insuranceclaims.api.service.request.impl;
 
-import javassist.NotFoundException;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.exceptions.FHIRException;
@@ -13,12 +12,13 @@ import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
 import org.openmrs.module.insuranceclaims.api.service.db.ItemDbService;
+import org.openmrs.module.insuranceclaims.api.service.exceptions.ClaimRequestException;
+import org.openmrs.module.insuranceclaims.api.service.exceptions.ItemMatchingFailedException;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil;
-import org.openmrs.module.insuranceclaims.api.service.request.ClaimRequestException;
 import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -102,7 +102,7 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
             insuranceClaimItemService.updateInsuranceClaimItems(omrsItems, wrappedResponse.getItems());
 
             return claim;
-        } catch (URISyntaxException | FHIRException | NotFoundException requestException) {
+        } catch (URISyntaxException | FHIRException | ItemMatchingFailedException requestException) {
             String exceptionMessage = "Exception occured during processing request: "
                     + "Message:" + requestException.getMessage();
             throw new ClaimRequestException(exceptionMessage, requestException);

@@ -3,7 +3,7 @@ package org.openmrs.module.insuranceclaims.web.controller;
 import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
-import org.openmrs.module.insuranceclaims.api.service.request.ClaimRequestException;
+import org.openmrs.module.insuranceclaims.api.service.exceptions.ClaimRequestException;
 import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
 import org.openmrs.module.insuranceclaims.forms.ClaimFormService;
 import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
