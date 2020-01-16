@@ -99,12 +99,11 @@ public class InsuranceClaimResourceController {
     }
 
     /**
-     * @param claimUuid uuid claim which have to be updated witch external server values
-     * @return InsuranceClaim with updated values
-     *
-     * It uses insurance claim external api to receive ClaimResponse information from external source and then use it to
+     * Uses insurance claim external api to receive ClaimResponse information and then use it to
      * to update this proper values related to this insurance claim (I.e. check if was claim was valuated, check which claim
      * items were approved).
+     * @param claimUuid uuid claim which have to be updated witch external server values
+     * @return InsuranceClaim with updated values
      */
     @RequestMapping(value = "updateC/updateClaim", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
