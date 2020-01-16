@@ -101,7 +101,7 @@ public class FHIRInsuranceClaimServiceImpl implements FHIRInsuranceClaimService 
         //Set type
         claim.setType(createClaimVisitType(omrsClaim));
         //Set items
-        claim.setItem(claimItemService.generateClaimItemComponent(omrsClaim));
+        claimItemService.assignItemsWithInformationToClaim(claim, omrsClaim);
 
         //Set diagnosis
         claim.setDiagnosis(claimDiagnosisService.generateClaimDiagnosisComponent(omrsClaim));

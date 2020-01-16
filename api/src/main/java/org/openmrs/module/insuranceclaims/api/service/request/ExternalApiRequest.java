@@ -13,4 +13,6 @@ public interface ExternalApiRequest {
     ClaimRequestWrapper getClaimResponseFromExternalApi(String claimCode) throws URISyntaxException, FHIRException;
 
     ClaimResponse sendClaimToExternalApi(InsuranceClaim claim) throws ClaimRequestException;
+
+    InsuranceClaim updateClaim(InsuranceClaim claim) throws ClaimRequestException;
 }

@@ -24,5 +24,7 @@
         <property name="fhirClaimDiagnosisService" ref="insuranceclaims.FHIRClaimDiagnosisService"/>
         <property name="fhirClaimItemService"      ref="insuranceclaims.FHIRClaimItemService"/>
         <property name="insuranceClaimService"     ref="insuranceclaims.InsuranceClaimService"/>
+        <property name="insuranceClaimItemService" ref="insuranceclaims.InsuranceClaimItemService"/>
+        <property name="itemDbService"             ref="insuranceclaims.ItemDbService"/>
     </bean>
 </beans>

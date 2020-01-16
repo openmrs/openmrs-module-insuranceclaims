@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URISyntaxException;
 
 import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CLAIM_ALREADY_SENT_MESSAGE;
+import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CLAIM_NOT_SENT_MESSAGE;
 
 @RestController
 @RequestMapping(value = "insuranceclaims/rest/v1/claims")
@@ -92,6 +93,35 @@ public class InsuranceClaimResourceController {
              requestResponse = new ResponseEntity<>(wrapper, HttpStatus.ACCEPTED);
         } catch (URISyntaxException wrongUrl) {
              requestResponse = new ResponseEntity<>(wrongUrl.getMessage(), HttpStatus.EXPECTATION_FAILED);
+        }
+
+        return requestResponse;
+    }
+
+    /**
+     * @param claimUuid uuid claim which have to be updated witch external server values
+     * @return InsuranceClaim with updated values
+     *
+     * It uses insurance claim external api to receive ClaimResponse information from external source and then use it to
+     * to update this proper values related to this insurance claim (I.e. check if was claim was valuated, check which claim
+     * items were approved).
+     */
+    @RequestMapping(value = "updateC/updateClaim", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity updateClaim(@RequestParam(value = "claimUuid") String claimUuid,
+                                      HttpServletRequest request, HttpServletResponse response) {
+        InsuranceClaim claim = insuranceClaimService.getByUuid(claimUuid);
+
+        if (claim.getExternalId() == null) {
+            return ResponseEntity.badRequest().body(CLAIM_NOT_SENT_MESSAGE);
+        }
+
+        ResponseEntity requestResponse;
+        try {
+            InsuranceClaim wrapper = externalApiRequest.updateClaim(claim);
+            requestResponse =  new ResponseEntity<>(wrapper, HttpStatus.ACCEPTED);
+        } catch (ClaimRequestException e) {
+            requestResponse =  new ResponseEntity<>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
 
         return requestResponse;
