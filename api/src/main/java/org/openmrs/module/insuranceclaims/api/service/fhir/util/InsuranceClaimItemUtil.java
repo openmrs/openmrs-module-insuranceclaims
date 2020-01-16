@@ -147,16 +147,7 @@ public final class InsuranceClaimItemUtil {
                 .collect(Collectors.toList());
     }
 
-    private static String getAdjustedReason(CodeableConcept concept) {
-        return StringUtils.upperCase(concept.getText());
-    }
-
-    private static boolean isValueInSequence(List<PositiveIntType> sequence, int sequenceLinkId) {
-        return sequence.stream().map(PrimitiveType::getValue)
-                .anyMatch(value -> value.equals(sequenceLinkId));
-    }
-
-    private static String getExternalCode(Concept concept) {
+    public static String getExternalCode(Concept concept) {
         Collection<ConceptMap> mappings = concept.getConceptMappings();
         return mappings
                 .stream()
@@ -164,6 +155,15 @@ public final class InsuranceClaimItemUtil {
                 .map(c -> c.getConceptReferenceTerm().getCode())
                 .findFirst()
                 .orElse(null);
+    }
+
+    private static String getAdjustedReason(CodeableConcept concept) {
+        return StringUtils.upperCase(concept.getText());
+    }
+
+    private static boolean isValueInSequence(List<PositiveIntType> sequence, int sequenceLinkId) {
+        return sequence.stream().map(PrimitiveType::getValue)
+                .anyMatch(value -> value.equals(sequenceLinkId));
     }
 
     private static String getConceptCategory(Concept concept) {

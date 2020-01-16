@@ -13,7 +13,7 @@ public final class PatientUtil {
 
     public static Reference buildPatientReference(InsuranceClaim claim) {
         Patient patient = claim.getPatient();
-        Reference patientReference = FHIRUtils.buildPractitionerReference(claim.getProvider());
+        Reference patientReference = FHIRUtils.buildPatientOrPersonResourceReference(claim.getPatient());
 
         String patientId = patient.getActiveIdentifiers()
                 .stream()
