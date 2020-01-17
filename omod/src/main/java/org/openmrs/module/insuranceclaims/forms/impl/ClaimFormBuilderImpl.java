@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 
 public class ClaimFormBuilderImpl implements ClaimFormBuilder {
 
-    InsuranceClaimService insuranceClaimService;
+    private InsuranceClaimService insuranceClaimService;
 
-    ItemDbService itemDbService;
+    private ItemDbService itemDbService;
 
-    DiagnosisDbService diagnosisDbService;
+    private DiagnosisDbService diagnosisDbService;
 
     @Override
     public ValuatedClaimForm generateClaimForm(String claimUuid) {
