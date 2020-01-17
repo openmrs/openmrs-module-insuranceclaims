@@ -21,4 +21,11 @@
         <property name="insuranceClaimItemService" ref="insuranceclaims.InsuranceClaimItemService"/>
         <property name="insuranceClaimDiagnosisService" ref="insuranceclaims.InsuranceClaimDiagnosisService"/>
     </bean>
+
+    <bean id="insuranceclaims.ClaimFormBuilder"
+          class="org.openmrs.module.insuranceclaims.forms.impl.ClaimFormBuilderImpl">
+        <property name="insuranceClaimService" ref="insuranceclaims.InsuranceClaimService"/>
+        <property name="itemDbService" ref="insuranceclaims.ItemDbService"/>
+        <property name="diagnosisDbService" ref="insuranceclaims.DiagnosisDbService"/>
+    </bean>
 </beans>

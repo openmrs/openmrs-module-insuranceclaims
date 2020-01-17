@@ -32,7 +32,7 @@ public final class ClaimUtils {
         return itemMapping;
     }
 
-    private static String buildItemName(ProvidedItem item) {
+    public static String buildItemName(ProvidedItem item) {
         String name = item.getItem() != null ? getConceptName(item.getItem()) : null;
         if (name != null) {
             name = buildKnownProvidedItemName(item);
