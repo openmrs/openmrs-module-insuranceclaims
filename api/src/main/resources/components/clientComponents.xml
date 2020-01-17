@@ -10,6 +10,11 @@
           class="org.openmrs.module.insuranceclaims.api.client.impl.FhirRequestClient" >
     </bean>
 
+    <bean id="insuranceclaims.EligibilityHttpRequest"
+          class="org.openmrs.module.insuranceclaims.api.client.impl.EligibilityHttpRequestImpl" >
+        <property name="client" ref="insuranceclaims.FhirRequest" />
+    </bean>
+
     <bean id="insuranceclaims.ClaimHttpRequest"
           class="org.openmrs.module.insuranceclaims.api.client.impl.ClaimHttpRequestImpl">
         <property name="fhirInsuranceClaimService" ref="insuranceclaims.FHIRInsuranceClaimService"/>
@@ -26,5 +31,8 @@
         <property name="insuranceClaimService"     ref="insuranceclaims.InsuranceClaimService"/>
         <property name="insuranceClaimItemService" ref="insuranceclaims.InsuranceClaimItemService"/>
         <property name="itemDbService"             ref="insuranceclaims.ItemDbService"/>
+        <property name="eligibilityHttpRequest"    ref="insuranceclaims.EligibilityHttpRequest" />
+        <property name="fhirEligibilityService"    ref="insuranceclaims.FHIREligibilityService" />
+        <property name="insurancePolicyService"    ref="insuranceclaims.InsurancePolicyService" />
     </bean>
 </beans>
