@@ -1,5 +1,6 @@
 package org.openmrs.module.insuranceclaims.page.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -7,10 +8,11 @@ import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
 import org.openmrs.module.insuranceclaims.api.service.ProvidedItemService;
+import org.openmrs.module.insuranceclaims.forms.ClaimFormBuilder;
+import org.openmrs.module.insuranceclaims.forms.NewClaimForm;
+import org.openmrs.module.insuranceclaims.forms.ValuatedClaimForm;
 import org.openmrs.module.webservices.rest.web.RestUtil;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -31,32 +33,34 @@ import static org.openmrs.module.insuranceclaims.ClaimUtils.getProvidedItemsAsMa
 
 @Controller
 @OpenmrsProfile(modules = { "uicommons:*.*" })
-public class AddClaimPageController {
+public class SingleClaimViewPageController {
 
-	private static final String VIEW = "addClaim";
+	private static final String VIEW = "singleClaimView";
 
 	private static final String VISIT_DIAGNOSES_UUID = "1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	private static final String DIAGNOSIS_CLASS_UUID = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
 
 	public String get(PageModel model,
-					@SpringBean("insuranceclaims.ProvidedItemService") ProvidedItemService providedItemService,
-					@SpringBean UiSessionContext uiSessionContext,
-					@RequestParam(value = "patientId", required = true) int patientId) {
+					  @SpringBean UiSessionContext uiSessionContext,
+					  @SpringBean ClaimFormBuilder claimFormBuilder,
+					  @RequestParam(value = "patientId") int patientId,
+					  @RequestParam(value = "claimUuid", required = false) String claimUuid) {
 		Patient patient = Context.getPatientService().getPatient(patientId);
-		List<Concept> patientDiagnoses = getPatientDiagnoses(patient);
-		List<ProvidedItem> patientEnteredProvidedItems = providedItemService.getProvidedEnteredItems(patient.getPatientId());
-		Map<String, List<ProvidedItem>> providedItems = getProvidedItemsAsMap(patientEnteredProvidedItems);
-		model.addAttribute("patientName",patient.getPersonName().toString());
-		model.addAttribute("patientUuid", patient.getUuid());
-		model.addAttribute("patientDiagnoses", patientDiagnoses);
-		model.addAttribute("providedItems", providedItems);
-		model.addAttribute("test", FHIRConstants.PATIENT);
-		model.addAttribute("providerUuid", uiSessionContext.getCurrentProvider().getUuid());
-		model.addAttribute("visitTypes", Context.getVisitService().getAllVisitTypes());
 
-		if (model.getAttribute("result") == null) {
-			model.addAttribute("result", null);
+		addEmptyAttributesToModel(model);
+
+		if (!StringUtils.isEmpty(claimUuid)) {
+			ValuatedClaimForm claim = claimFormBuilder.generateClaimForm(claimUuid);
+			model.addAttribute("valuatedClaim", claim);
+		} else {
+			List<Concept> patientDiagnoses = getPatientDiagnoses(patient);
+			model.addAttribute("patientDiagnoses", patientDiagnoses);
+			model.addAttribute("providedItems", getPatientProvidedItems(patientId));
+			model.addAttribute("visitTypes", Context.getVisitService().getAllVisitTypes());
 		}
+
+		addPatientAttributesToModel(model, patient);
+		model.addAttribute("provider", uiSessionContext.getCurrentProvider());
 
 		return VIEW;
 	}
@@ -78,6 +82,28 @@ public class AddClaimPageController {
 				.map(obs -> obs.getValueCoded())
 				.filter(answers -> answers.getConceptClass().getUuid().equals(DIAGNOSIS_CLASS_UUID))
 				.collect(Collectors.toList());
+	}
+
+	private void addPatientAttributesToModel(PageModel model, Patient patient) {
+		model.addAttribute("patientName",patient.getPersonName().toString());
+		model.addAttribute("patientUuid", patient.getUuid());
+	}
+
+	private Map<String, List<ProvidedItem>> getPatientProvidedItems(int patientId) {
+		ProvidedItemService providedItemService = Context.getService(ProvidedItemService.class);
+		List<ProvidedItem> patientEnteredProvidedItems = providedItemService.getProvidedEnteredItems(patientId);
+		return getProvidedItemsAsMap(patientEnteredProvidedItems);
+	}
+
+	private void addEmptyAttributesToModel(PageModel model) {
+		model.addAttribute("valuatedClaim", null);
+		model.addAttribute("patientDiagnoses", null);
+		model.addAttribute("providedItems", null);
+		model.addAttribute("valuatedClaim", null);
+		model.addAttribute("patientDiagnoses", null);
+		model.addAttribute("providedItems", null);
+		model.addAttribute("provider",null);
+		model.addAttribute("visitTypes",null);
 	}
 
 }

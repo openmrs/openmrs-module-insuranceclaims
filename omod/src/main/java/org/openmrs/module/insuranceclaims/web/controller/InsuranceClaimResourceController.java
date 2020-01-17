@@ -105,7 +105,7 @@ public class InsuranceClaimResourceController {
      * @param claimUuid uuid claim which have to be updated witch external server values
      * @return InsuranceClaim with updated values
      */
-    @RequestMapping(value = "updateC/updateClaim", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/updateClaim", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity updateClaim(@RequestParam(value = "claimUuid") String claimUuid,
                                       HttpServletRequest request, HttpServletResponse response) {

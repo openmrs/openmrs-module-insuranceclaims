@@ -22,7 +22,6 @@
     .unselectedProvidedItem {background-color: gray;}
 </style>
 
-
 <script>
     var providedItems = {};
     
@@ -80,15 +79,48 @@
     }
 </script>
 
+<div> Patient: ${patientName} </div> 
 
-<% if(result) {%>
- <div> Post result: ${result} </div>
-<% } %>
+<% if(valuatedClaim) {%>
+    <div> Status: ${valuatedClaim.claim.status} </div>
+    <% if(!valuatedClaim.claim.status.name().equalsIgnoreCase("ENTERED")) { %>
+        <div> Provider: ${provider.name} </div>
+        <div> Date created: ${valuatedClaim.claim.dateCreated} </div>
+        <div> Approved total: ${valuatedClaim.claim.approvedTotal} </div>
+        <div> Claim explanation: ${valuatedClaim.claimExplanation ?: '-'} </div>
+        <div> Claim justification: ${valuatedClaim.claim.adjustment ?: '-'} </div>
+        <div> Rejection reason: ${valuatedClaim.claim.rejectionReason ?: '-'} </div>
+        <div> Visit type: ${valuatedClaim.visitType ?: '-'} </div>
+    <% } %>
+    <div> Items: </div>
+        <% valuatedClaim.claimItems.eachWithIndex { claimItem, itemIndex -> %>
+            <div class="consumedItemsOfType" id="${claimItem.item.uuid}" style="border: 2px solid black;">
+                    ${itemIndex + 1}. ${claimItem.itemName} :
+                    <div>Date of served: ${claimItem.dateServed} </div>
+                    <div>Quantity provided: ${claimItem.item.quantityProvided} </div>
+                    <% if(!valuatedClaim.claim.status.name().equalsIgnoreCase("ENTERED")) { %>
+                        Status:  ${claimItem.item.status}
+                        <% if (claimItem.item.status == "PASSED") { %>
+                        <div> Quantity aproved: ${claimItem.item.quantityApproved} </div>
+                        <div> Price approved: ${claimItem.item.priceApproved} </div>
+                        <% } %>
+                        <% if (claimItem.item.status == "REJECTED") { %>
+                            <div> Item rejected, reason: ${claimItem.item.rejectionReason} </div>
+                        <% } %>
 
+                    <% } %>
+                    <div>Explanation: ${claimItem.explanation?: '-' } </div>
+                    <div>Justification: ${claimItem.item.justification ?: '-' }</div>
+            </div>
+        <% }%>
 
+    <div> Diagnoses: </div>
+        <% valuatedClaim.claimDiagnoses.eachWithIndex { claimDiagnosis, diagnosisIndex -> %>
+            <div  id="${claimDiagnosis.diagnosisUuid}" style="border: 2px solid black;"> ${diagnosisIndex + 1}. ${claimDiagnosis.diagnosisName} </div>
+        <% } %>       
+<%} else {%>
 <div id="new-insurance-claim-app" ng-controller="InsuranceClaimsCtrl" ng-init='init()'>
 <form id="newInsuranceClaim" method="post" autocomplete="off">
-    <fieldset>
     <% if(providedItems) {%>
         <br/>
         <tr>
@@ -113,8 +145,8 @@
                         </tr>
                     <% } %>
                     <br>
-                    <tr> Item explanation   : <input type="text" id="${item.key}Explanation" value="">   </tr> <br>
-                    <tr> Item justification : <input type="text" id="${item.key}Justification" value=""> </tr> <br>
+                    <input type="hidden" id="${item.key}Justification" value="">
+                    <tr> Item justification : <input type="text" id="${item.key}Explanation" value=""> </tr> <br>
                     <script>
                         jQuery("[id= '${item.key}Explanation']").change( function() {
                                 providedItems['${item.key}']['explanation'] = jQuery(this).val();
@@ -145,12 +177,18 @@
                     };
                 </script>
                 <br/>
-            <% } %>
+            <% }} %>
         </tr>
         <br />
-        Claim explanation   : <input type="text" id="claimExplanation" value="">   </tr> <br>
-        Claim justification : <input type="text" id="claimJustification" value=""> </tr> <br>
-    <% } %>
+
+        <span id="claimExplanationSpan">
+            Claim explanation   : <input type="text" id="claimExplanation" value="">   </tr> 
+        </span>
+        
+        <span id="claimJustificationSpan">
+            <input type="hidden" id="claimJustification" value=""> </tr> <br>
+        </span>
+
     ${ ui.includeFragment("uicommons", "field/datetimepicker", [ id: 'startDate', label: 'Treatment start',
         formFieldName: 'startDate', useTime: '', ]) }
     ${ ui.includeFragment("uicommons", "field/datetimepicker", [ id: 'endDate', label: 'Treatment end: ',
@@ -185,6 +223,7 @@
             });
         </script>
     <% } %>
+
     <br>
     <div id="paymentOption"> 
         Paid in facility: <input id="paidInFacility" type="checkbox" ><br>
@@ -200,17 +239,17 @@
         </select>
         </p>
     <% } %>
-    <button id="awesomeButton" type="button" onclick="showProvided()">Whats in provided items!</button> 
     <button id="addClaimButton" type="button" onclick="submitNewClaim()" > Send claim </button>
-    </fieldset>
 
     <input type="hidden" name="redirectUrl" value="patientClaims" />
     <input type="hidden" name="providedItems" value=JSON.stringify(providedItems); />
     <input type="hidden" name="selectedDiagnosis" value=JSON.stringify(diagnosees); />
-    <input type="hidden" id="provider" value="${providerUuid}" />
+    <input type="hidden" id="provider" value="${provider.uuid}" />
     <input type="hidden" id="storagePatientUuid" name="patientUuid" value="${patientUuid}" /> 
 </form>
 <div id="formData"></div>
+<% } %>
+
 
 <script>
  
@@ -223,7 +262,7 @@
             "providedItems": providedItems,
             "diagnoses": diagnoses,
             "claimExplanation": document.getElementById("claimExplanation").value,
-            "claimJustification": document.getElementById("claimJustification").value,
+            "claimJustification": "",
             "startDate": document.getElementById("startDate-field").value,
             "endDate": document.getElementById("endDate-field").value,
             "location": document.getElementById("location-field").value,
