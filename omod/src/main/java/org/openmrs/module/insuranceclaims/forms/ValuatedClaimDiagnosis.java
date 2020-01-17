@@ -27,5 +27,4 @@ public class ValuatedClaimDiagnosis {
     public void setDiagnosisUuid(String diagnosisUuid) {
         this.diagnosisUuid = diagnosisUuid;
     }
-
 }

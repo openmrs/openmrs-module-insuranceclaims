@@ -50,5 +50,4 @@ public class ValuatedClaimForm extends NewClaimForm {
     public void setClaim(InsuranceClaim claim) {
         this.claim = claim;
     }
-
 }

@@ -58,5 +58,4 @@ public class ValuatedClaimItem {
     public String getExplanation() {
         return this.explanation;
     }
-
 }
