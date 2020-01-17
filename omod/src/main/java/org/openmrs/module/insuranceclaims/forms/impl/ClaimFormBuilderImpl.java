@@ -11,22 +11,16 @@ import org.openmrs.module.insuranceclaims.forms.ClaimFormBuilder;
 import org.openmrs.module.insuranceclaims.forms.ValuatedClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.forms.ValuatedClaimForm;
 import org.openmrs.module.insuranceclaims.forms.ValuatedClaimItem;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 public class ClaimFormBuilderImpl implements ClaimFormBuilder {
 
-    @Autowired
     InsuranceClaimService insuranceClaimService;
 
-    @Autowired
     ItemDbService itemDbService;
 
-    @Autowired
     DiagnosisDbService diagnosisDbService;
 
     @Override
@@ -39,6 +33,18 @@ public class ClaimFormBuilderImpl implements ClaimFormBuilder {
         form.setClaimDiagnoses(buildDiagnosisComponent(diagnoses));
 
         return form;
+    }
+
+    public void setInsuranceClaimService(InsuranceClaimService insuranceClaimService) {
+        this.insuranceClaimService = insuranceClaimService;
+    }
+
+    public void setItemDbService(ItemDbService itemDbService) {
+        this.itemDbService = itemDbService;
+    }
+
+    public void setDiagnosisDbService(DiagnosisDbService diagnosisDbService) {
+        this.diagnosisDbService = diagnosisDbService;
     }
 
     private List<ValuatedClaimItem> buildClaimItems(List<InsuranceClaimItem> claimItems) {
