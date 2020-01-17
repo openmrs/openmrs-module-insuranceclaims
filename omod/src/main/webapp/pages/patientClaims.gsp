@@ -19,11 +19,11 @@
 
 <span>
 <b><font size="16">${ patientName }</font></b>
-<% def link="addClaim.page?patientId=" + patientId %>
+<% def link="singleClaimView.page?patientId=" + patientId %>
 <button style="float: right;" onclick="location.href='${link}'" type="button">Create claim</button>
 </span>
 
-<br><br><br><br>
+<br><br>
 
 <table>
   <tr>
@@ -47,7 +47,7 @@
             <% } %>
         </td>
         <td align="center">
-            <% def linkDetails="location.href=singleClaimView.page?patientId=" + patientId + "&claimUuid=" + it.uuid %>
+            <% def linkDetails="singleClaimView.page?patientId=" + patientId + "&claimUuid=" + it.uuid %>
             <button style="width:95px;" onclick="location.href='${linkDetails}'" type="button">Details</button>
         </td>
       </tr>
