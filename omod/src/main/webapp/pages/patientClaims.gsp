@@ -18,21 +18,20 @@
 
 
 <span>
-<b>${ patientName }</b>
+<b><font size="16">${ patientName }</font></b>
 <% def link="addClaim.page?patientId=" + patientId %>
 <button style="float: right;" onclick="location.href='${link}'" type="button">Create claim</button>
 </span>
 
-<br><br>
-<span>List of Claims</span>
-<br>
+<br><br><br><br>
 
 <table>
   <tr>
    <th>Claim code</th>
    <th>Expire</th>
    <th>Status</th>
-   <th>Option</th>
+   <th width="145px">Action</th>
+   <th width="95px">Details</th>
   </tr>
   <% if (patientClaims) { %>
      <% patientClaims.each { %>
@@ -46,6 +45,10 @@
             <% } else { %>
                 <button style="width:145px;" type="button" onclick="sendClaim('${it.uuid}')">Send claim</button>
             <% } %>
+        </td>
+        <td align="center">
+            <% def linkDetails="location.href=singleClaimView.page?patientId=" + patientId + "&claimUuid=" + it.uuid %>
+            <button style="width:95px;" onclick="location.href='${linkDetails}'" type="button">Details</button>
         </td>
       </tr>
     <% } %>
@@ -63,17 +66,11 @@
         url: "../ws/insuranceclaims/rest/v1/claims/sendToExternal?claimUuid=" + uuid,
         success: function(){
             console.log('Success');
-            setTimeout(function(){
-                window.location.reload();
-                console.log('Reloaded');
-            }, 3000);
+            reloadPage();
         },
         error: function (request, status, error) {
             console.log(JSON.stringify(request) + JSON.stringify(status) + JSON.stringify(error));
-            setTimeout(function(){
-                window.location.reload();
-                console.log('Reloaded');
-            }, 3000);
+            reloadPage();
         },
         dataType: "json",
         contentType : "application/json"
@@ -86,12 +83,21 @@
         url: "../ws/insuranceclaims/rest/v1/claims/updateClaim?claimUuid=" + uuid,
         success: function(){
             console.log('Success');
+            reloadPage();
         },
         error: function (request, status, error) {
             console.log(JSON.stringify(request) + JSON.stringify(status) + JSON.stringify(error));
+            reloadPage();
         },
         dataType: "json",
         contentType : "application/json"
         });
+    }
+
+    function reloadPage(){
+        setTimeout(function(){
+            window.location.reload();
+            console.log('Reloaded');
+        }, 2000);
     }
 </script>
