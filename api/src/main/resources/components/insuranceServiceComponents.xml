@@ -11,21 +11,9 @@
          which set audit info like dateCreated, changedBy, etc.-->
 
     <bean id="insuranceclaims.InsuranceClaimService"
-          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager"/>
-        </property>
-        <property name="target">
-            <bean class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimServiceImpl">
-                <property name="dao" ref="insuranceclaims.InsuranceClaimDao"/>
-            </bean>
-        </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors"/>
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource"/>
-        </property>
+          class="org.openmrs.module.insuranceclaims.api.service.impl.InsuranceClaimServiceImpl">
+        <property name="dao" ref="insuranceclaims.InsuranceClaimDao"/>
+        <property name="insuranceClaimDao" ref="insuranceclaims.InsuranceClaimDao"/>
     </bean>
 
     <bean id="insuranceclaims.BillService"
