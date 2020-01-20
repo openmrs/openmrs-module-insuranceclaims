@@ -37,7 +37,7 @@ public class InsurancePolicyServiceTest extends BaseModuleContextSensitiveTest {
         EligibilityResponse eligibilityResponse = createTestEligibilityResponse();
 
         InsurancePolicy expected = createTestPolicyInstance();
-        expected.setExpiryDate(DateUtils.parseDate(TestConstants.TEST_DATE, new String[]{"yyy-mm-dd hh:mm:ss"}));
+        expected.setExpiryDate(DateUtils.parseDate(TestConstants.TEST_DATE, new String[]{"yyy-MM-dd hh:mm:ss"}));
         InsurancePolicy actual = insurancePolicyService.generateInsurancePolicy(eligibilityResponse);
 
         Assert.assertThat(actual.getExpiryDate(), Matchers.equalTo(expected.getExpiryDate()));
