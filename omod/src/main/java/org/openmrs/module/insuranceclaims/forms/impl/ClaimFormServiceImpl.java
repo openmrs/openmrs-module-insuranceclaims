@@ -7,12 +7,13 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.insuranceclaims.api.model.Bill;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimStatus;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
+import org.openmrs.module.insuranceclaims.api.model.PaymentType;
+import org.openmrs.module.insuranceclaims.api.model.Bill;
 import org.openmrs.module.insuranceclaims.api.service.BillService;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService;
@@ -76,6 +77,7 @@ public class ClaimFormServiceImpl implements ClaimFormService {
                 .collect(Collectors.toList());
 
         createClaimBill(nextClaim, claimProvidedItems);
+        nextClaim.getBill().setPaymentType(PaymentType.INSURANCE_CLAIM);
         insuranceClaimService.saveOrUpdate(nextClaim);
 
         List<InsuranceClaimDiagnosis> diagnoses = generateClaimDiagnoses(form.getDiagnoses(), nextClaim);
@@ -87,6 +89,21 @@ public class ClaimFormServiceImpl implements ClaimFormService {
         });
 
         return nextClaim;
+    }
+
+    @Override
+    @Transactional
+    public Bill createBill(NewClaimForm form) {
+        List<InsuranceClaimItem> items = generateClaimItems(form.getProvidedItems());
+        List<ProvidedItem> claimProvidedItems = items.stream()
+                .map(item -> item.getItem())
+                .collect(Collectors.toList());
+
+        Bill bill = billService.generateBill(claimProvidedItems);
+        bill.setPaymentType(PaymentType.CASH);
+        billService.saveOrUpdate(bill);
+
+        return bill;
     }
 
     public void setBillService(BillService billService) {

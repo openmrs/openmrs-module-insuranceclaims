@@ -1,5 +1,6 @@
 package org.openmrs.module.insuranceclaims.api.service.impl;
 
+import org.openmrs.api.APIException;
 import org.openmrs.module.insuranceclaims.api.dao.BillDao;
 import org.openmrs.module.insuranceclaims.api.model.Bill;
 import org.openmrs.module.insuranceclaims.api.model.ProvidedItem;
@@ -49,5 +50,10 @@ public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements Bil
 
         providedItemService.updateStatusProvidedItems(providedItems);
         return billDao.saveOrUpdate(bill);
+    }
+
+    @Override
+    public List<Bill> getAllBills(Integer patientId) throws APIException {
+        return this.billDao.getAllBills(patientId);
     }
 }
