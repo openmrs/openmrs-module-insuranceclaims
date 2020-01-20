@@ -141,7 +141,7 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
                 throw new EligibilityRequestException("Insurance not found");
             }
             return insurancePolicyService.generateInsurancePolicy(response);
-        } catch (URISyntaxException requestException) {
+        } catch (URISyntaxException | FHIRException requestException) {
             String exceptionMessage = "Exception occured during processing request: "
                     + "Message:" + requestException.getMessage();
             throw new EligibilityRequestException(exceptionMessage);
