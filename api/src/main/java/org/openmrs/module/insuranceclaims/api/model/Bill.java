@@ -2,8 +2,11 @@ package org.openmrs.module.insuranceclaims.api.model;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ColumnDefault;
 import org.openmrs.Concept;
+import org.openmrs.Patient;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -64,6 +67,11 @@ public class Bill extends AbstractBaseOpenmrsData {
     @JoinColumn(name = "diagnosis")
     private Concept diagnosis;
 
+    @ManyToOne
+    @Cascade(CascadeType.SAVE_UPDATE)
+    @JoinColumn(name = "patient", nullable = false)
+    private Patient patient;
+
     @Override
     public Integer getId() {
         return id;
@@ -120,6 +128,14 @@ public class Bill extends AbstractBaseOpenmrsData {
 
     public void setDiagnosis(Concept diagnosis) {
         this.diagnosis = diagnosis;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
     @Override

@@ -2,7 +2,7 @@
     ui.includeJavascript("uicommons", "angular.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("Add new insurance claim") ])
+    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("Insurance claims") ])
 %>
 
 <openmrs:htmlInclude file="/moduleResources/htmlformentry/htmlForm.js" />

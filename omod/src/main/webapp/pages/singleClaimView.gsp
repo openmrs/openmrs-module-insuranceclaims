@@ -2,7 +2,7 @@
     ui.includeJavascript("uicommons", "angular.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("Add new insurance claim") ])
+    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("Insurance claim") ])
     ui.includeJavascript("uicommons", "directives/select-concept-from-list.js")
 %>
 
@@ -79,7 +79,9 @@
     }
 </script>
 
-<div> Patient: ${patientName} </div> 
+<span>
+    <b><font size="16">${ patientName }</font></b>
+</span>
 
 <% if(valuatedClaim) {%>
     <div> Status: ${valuatedClaim.claim.status} </div>
@@ -144,7 +146,9 @@
                             </script>
                         </tr>
                     <% } %>
+
                     <br>
+
                     <input type="hidden" id="${item.key}Justification" value="">
                     <tr> Item justification : <input type="text" id="${item.key}Explanation" value=""> </tr> <br>
                     <script>
@@ -179,7 +183,12 @@
                 <br/>
             <% }} %>
         </tr>
-        <br />
+
+        <br>
+        <div id="paymentOption">
+            <b>Paid in facility </b>  <input id="paidInFacility" type="checkbox" ><br>
+        </div>
+        <br>
 
         <span id="claimExplanationSpan">
             Claim explanation   : <input type="text" id="claimExplanation" value="">   </tr> 
@@ -225,9 +234,6 @@
     <% } %>
 
     <br>
-    <div id="paymentOption"> 
-        Paid in facility: <input id="paidInFacility" type="checkbox" ><br>
-    </div>
 
     <% if(visitTypes) { %>
         <p>
@@ -239,7 +245,7 @@
         </select>
         </p>
     <% } %>
-    <button id="addClaimButton" type="button" onclick="submitNewClaim()" > Send claim </button>
+    <button id="addClaimButton" type="button" onclick="submitNewClaim()" > Create </button>
 
     <input type="hidden" name="redirectUrl" value="patientClaims" />
     <input type="hidden" name="providedItems" value=JSON.stringify(providedItems); />
@@ -252,7 +258,13 @@
 
 
 <script>
- 
+    function getUrl(formData){
+        if(formData.paidInFacility){
+            return "../ws/insuranceclaims/rest/v1/bills"
+        }
+        return "../ws/insuranceclaims/rest/v1/claims"
+    }
+
     function showProvided() {
         document.getElementById("formData").innerHTML = JSON.stringify(getFormData());
     }
@@ -282,19 +294,14 @@
         jQuery.ajax({
         type: "POST",
         data: formData,
-        url: "../ws/insuranceclaims/rest/v1/claims",
+        url: getUrl(getFormData()),
         success: function(){alert("It worked!")},
         error: function (request, status, error) {
             document.getElementById("formData").innerHTML = request;
         },
         dataType: "json",
         contentType : "application/json"
-        }).done(function(data) {
-                // log data to the console so we can see
-                console.log(data); 
-                document.getElementById("formData").innerHTML = data;
-                // here we will handle errors and validation messages
-            });
+        });
     }
 </script>
 </div>

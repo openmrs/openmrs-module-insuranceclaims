@@ -1,6 +1,7 @@
 package org.openmrs.module.insuranceclaims.web.controller;
 
 import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
+import org.openmrs.module.insuranceclaims.api.model.Bill;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.ClaimRequestException;
@@ -26,7 +27,7 @@ import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CL
 import static org.openmrs.module.insuranceclaims.InsuranceClaimsOmodConstants.CLAIM_NOT_SENT_MESSAGE;
 
 @RestController
-@RequestMapping(value = "insuranceclaims/rest/v1/claims")
+@RequestMapping(value = "insuranceclaims/rest/v1")
 public class InsuranceClaimResourceController {
 
     @Autowired
@@ -38,9 +39,9 @@ public class InsuranceClaimResourceController {
     @Autowired
     private ExternalApiRequest externalApiRequest;
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/claims", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<InsuranceClaim> create(@RequestBody NewClaimForm form,
+    public ResponseEntity<InsuranceClaim> createClaim(@RequestBody NewClaimForm form,
                                                HttpServletRequest request, HttpServletResponse response) throws ResponseException {
         InsuranceClaim claim = claimFormService.createClaim(form);
 
@@ -48,7 +49,17 @@ public class InsuranceClaimResourceController {
         return requestResponse;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/bills", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Bill> createBill(@RequestBody NewClaimForm form,
+                                                 HttpServletRequest request, HttpServletResponse response) throws ResponseException {
+        Bill bill = claimFormService.createBill(form);
+
+        ResponseEntity<Bill> requestResponse = new ResponseEntity<>(bill, HttpStatus.ACCEPTED);
+        return requestResponse;
+    }
+
+    @RequestMapping(value = "/claims", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity get(@RequestParam(value = "claimUuid") String claimUuid,
                               HttpServletRequest request, HttpServletResponse response) throws ResponseException {
@@ -64,7 +75,7 @@ public class InsuranceClaimResourceController {
      * @param claimUuid uuid of claim that will be send to external server
      * @return InsuranceClaim with updated values or error message that occured during processing request
      */
-    @RequestMapping(value = "/sendToExternal", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/claims/sendToExternal", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity sendClaimToExternalId(
             @RequestParam(value = "claimUuid", required = true) String claimUuid,
@@ -83,7 +94,7 @@ public class InsuranceClaimResourceController {
         }
     }
 
-    @RequestMapping(value = "/getFromExternal", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/claims/getFromExternal", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity getClaimFromExternalId(@RequestParam(value = "claimExternalCode") String claimExternalCode,
                                                  HttpServletRequest request, HttpServletResponse response) {
@@ -105,7 +116,7 @@ public class InsuranceClaimResourceController {
      * @param claimUuid uuid claim which have to be updated witch external server values
      * @return InsuranceClaim with updated values
      */
-    @RequestMapping(value = "/updateClaim", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/claims/updateClaim", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity updateClaim(@RequestParam(value = "claimUuid") String claimUuid,
                                       HttpServletRequest request, HttpServletResponse response) {

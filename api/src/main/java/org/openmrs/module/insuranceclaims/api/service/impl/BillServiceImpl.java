@@ -14,24 +14,9 @@ import java.util.Date;
 import java.util.List;
 
 public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements BillService {
-
     private DateUtil dateUtil;
-
     private BillDao billDao;
-
     private ProvidedItemService providedItemService;
-
-    public void setBillDao(BillDao billDao) {
-        this.billDao = billDao;
-    }
-
-    public void setDateUtil(DateUtil dateUtil) {
-        this.dateUtil = dateUtil;
-    }
-
-    public void setProvidedItemService(ProvidedItemService providedItemService) {
-        this.providedItemService = providedItemService;
-    }
 
     @Override
     public Bill generateBill(List<ProvidedItem> providedItems) {
@@ -42,6 +27,7 @@ public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements Bil
         bill.setStartDate(date);
         bill.setEndDate(dateUtil.plusDays(date, ConstantValues.DEFAULT_DURATION_BILL_DAYS));
         bill.setDateCreated(date);
+        bill.setPatient(providedItems.get(0).getPatient());
 
         BigDecimal sumProvidedItems = providedItems.stream().map(ProvidedItem::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -55,5 +41,17 @@ public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements Bil
     @Override
     public List<Bill> getAllBills(Integer patientId) throws APIException {
         return this.billDao.getAllBills(patientId);
+    }
+
+    public void setBillDao(BillDao billDao) {
+        this.billDao = billDao;
+    }
+
+    public void setDateUtil(DateUtil dateUtil) {
+        this.dateUtil = dateUtil;
+    }
+
+    public void setProvidedItemService(ProvidedItemService providedItemService) {
+        this.providedItemService = providedItemService;
     }
 }
