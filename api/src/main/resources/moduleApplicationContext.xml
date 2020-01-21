@@ -19,6 +19,7 @@
     <import resource="classpath:components/dbComponents.xml" />
     <import resource="classpath:components/fhirComponents.xml" />
     <import resource="classpath:components/clientComponents.xml" />
+    <import resource="classpath:components/strategyComponents.xml" />
 
     <!-- Adds module services to OpenMRS context so it can be accessed
     calling e.g. Context.getService(InsuranceClaimService.class) -->

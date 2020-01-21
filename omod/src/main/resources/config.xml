@@ -166,5 +166,12 @@
         <description>Password used for external claim service authorization
         </description>
     </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.consumeditem.strategy</property>
+        <defaultValue>DefaultConsumedItemStrategy</defaultValue>
+        <description>Password used for external claim service authorization
+        </description>
+    </globalProperty>
 </module>
 

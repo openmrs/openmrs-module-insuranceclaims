@@ -4,6 +4,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
+import org.openmrs.ConceptNumeric;
 import org.openmrs.Obs;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
@@ -21,9 +22,15 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Locale;
 
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ABSOULUTE_HI_CONSUMED_ITEMS;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ABSOULUTE_LOW_CONSUMED_ITEMS;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMABLES_LIST_CONCEPT_NAME;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMABLES_LIST_ITEMS_CONCEPT_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMED_ITEMS_CONCEPT_NAME;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMED_ITEMS_CONCEPT_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMED_ITEMS_FORM_UUID;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.QUANTITY_CONSUMED_CONCEPT_NAME;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.QUANTITY_CONSUMED_CONCEPT_UUID;
 
 /**
  * Contains the logic that is run every time this module is either started or stopped
@@ -46,12 +53,20 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 	 */
 	@Override
 	public void started() {
-		HtmlFormEntryService service = Context.getService(HtmlFormEntryService.class);
 
-		if (Context.getConceptService().getConceptByUuid(CONSUMED_ITEMS_CONCEPT_UUID) == null) {
-			createConsumedItemsConcept();
+		if (Context.getConceptService().getConceptByUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID) == null) {
+			createConsumableItemsListConcept();
 		}
 
+		if (Context.getConceptService().getConceptByUuid(QUANTITY_CONSUMED_CONCEPT_UUID) == null) {
+			createQuantityConsumedConcept();
+		}
+
+		if (Context.getConceptService().getConceptByUuid(CONSUMED_ITEMS_CONCEPT_UUID) == null) {
+			createComplexConsumedItemConcept();
+		}
+
+		HtmlFormEntryService service = Context.getService(HtmlFormEntryService.class);
 		if (service.getHtmlFormByUuid(CONSUMED_ITEMS_FORM_UUID) == null) {
 			try {
 				setupHtmlForms();
@@ -79,25 +94,60 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 		daemonToken = token;
 	}
 
-	private void createConsumedItemsConcept() {
+	private void createConsumableItemsListConcept() {
 		Concept consumedItems = new Concept();
 		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.CODED_UUID);
 		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(ConceptClass.FINDING_UUID);
-		ConceptName name = buildConceptName();
+		ConceptName name = buildConceptName(CONSUMABLES_LIST_CONCEPT_NAME);
 
 		consumedItems.setDatatype(dataType);
 		consumedItems.setConceptClass(conceptClass);
 		consumedItems.setFullySpecifiedName(name);
-		consumedItems.setUuid(CONSUMED_ITEMS_CONCEPT_UUID);
+		consumedItems.setUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID);
 
 		Context.getConceptService().saveConcept(consumedItems);
 	}
 
-	private ConceptName buildConceptName() {
+	private void createComplexConsumedItemConcept() {
+		Concept complexConcept = new Concept();
+		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.N_A_UUID);
+		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(ConceptClass.CONVSET_UUID);
+		ConceptName name = buildConceptName(CONSUMED_ITEMS_CONCEPT_NAME);
+
+		complexConcept.setDatatype(dataType);
+		complexConcept.setConceptClass(conceptClass);
+		complexConcept.setFullySpecifiedName(name);
+		complexConcept.setUuid(CONSUMED_ITEMS_CONCEPT_UUID);
+
+		complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID));
+		complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(QUANTITY_CONSUMED_CONCEPT_UUID));
+
+		Context.getConceptService().saveConcept(complexConcept);
+	}
+
+	private void createQuantityConsumedConcept() {
+		Concept quantityConsumed = new Concept();
+		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.NUMERIC_UUID);
+		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(ConceptClass.MISC_UUID);
+		ConceptName name = buildConceptName(QUANTITY_CONSUMED_CONCEPT_NAME);
+
+		quantityConsumed.setDatatype(dataType);
+		quantityConsumed.setConceptClass(conceptClass);
+		quantityConsumed.setFullySpecifiedName(name);
+		quantityConsumed.setUuid(QUANTITY_CONSUMED_CONCEPT_UUID);
+
+		Context.getConceptService().saveConcept(quantityConsumed);
+		ConceptNumeric numericConcept = Context.getConceptService().getConceptNumeric(quantityConsumed.getConceptId());
+		numericConcept.setLowAbsolute(ABSOULUTE_LOW_CONSUMED_ITEMS);
+		numericConcept.setHiAbsolute(ABSOULUTE_HI_CONSUMED_ITEMS);
+		Context.getConceptService().saveConcept(numericConcept);
+	}
+
+	private ConceptName buildConceptName(String conceptName) {
 		ConceptName name = new ConceptName();
 
 		name.setLocale(Locale.ENGLISH);
-		name.setName(CONSUMED_ITEMS_CONCEPT_NAME);
+		name.setName(conceptName);
 		name.setLocalePreferred(true);
 		return name;
 	}
