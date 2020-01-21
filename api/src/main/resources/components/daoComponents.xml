@@ -18,11 +18,12 @@
           class="org.openmrs.module.insuranceclaims.api.dao.impl.InsuranceClaimDiagnosisDaoImpl"/>
 
     <bean id="insuranceclaims.InsuranceClaimDao"
-          class="org.openmrs.module.insuranceclaims.api.dao.impl.InsuranceClaimDaoImpl"/>
+          class="org.openmrs.module.insuranceclaims.api.dao.impl.InsuranceClaimDaoImpl">
+        <property name="sessionFactory" ref="dbSessionFactory" />
+    </bean>
 
     <bean id="insuranceclaims.BillDao"
           class="org.openmrs.module.insuranceclaims.api.dao.impl.BillDaoImpl">
         <property name="sessionFactory" ref="dbSessionFactory"/>
     </bean>
-
 </beans>
