@@ -31,6 +31,12 @@ public class InsuranceClaimServiceImpl extends BaseOpenmrsDataService<InsuranceC
         return claimToUpdate;
     }
 
+    @Transactional
+    @Override
+    public List<InsuranceClaim> getAllInsuranceClaims(Integer patientId) throws APIException {
+        return this.insuranceClaimDao.getAllInsuranceClaims(patientId);
+    }
+
     private void updateQuantityApproved(InsuranceClaim claimToUpdate, InsuranceClaim updatedClaim) {
         BigDecimal totalBenefit = updatedClaim.getApprovedTotal();
         InsuranceClaimStatus status = updatedClaim.getStatus();
@@ -39,10 +45,5 @@ public class InsuranceClaimServiceImpl extends BaseOpenmrsDataService<InsuranceC
         } else {
             claimToUpdate.setApprovedTotal(totalBenefit);
         }
-    }
-
-    @Override
-    public List<InsuranceClaim> getAllInsuranceClaims(Integer patientId) throws APIException {
-        return this.insuranceClaimDao.getAllInsuranceClaims(patientId);
     }
 }

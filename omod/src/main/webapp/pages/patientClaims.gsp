@@ -65,11 +65,9 @@
         type: "GET",
         url: "../ws/insuranceclaims/rest/v1/claims/sendToExternal?claimUuid=" + uuid,
         success: function(){
-            console.log('Success');
             reloadPage();
         },
         error: function (request, status, error) {
-            console.log(JSON.stringify(request) + JSON.stringify(status) + JSON.stringify(error));
             reloadPage();
         },
         dataType: "json",
@@ -82,11 +80,9 @@
         type: "GET",
         url: "../ws/insuranceclaims/rest/v1/claims/updateClaim?claimUuid=" + uuid,
         success: function(){
-            console.log('Success');
             reloadPage();
         },
         error: function (request, status, error) {
-            console.log(JSON.stringify(request) + JSON.stringify(status) + JSON.stringify(error));
             reloadPage();
         },
         dataType: "json",
@@ -97,7 +93,6 @@
     function reloadPage(){
         setTimeout(function(){
             window.location.reload();
-            console.log('Reloaded');
         }, 2000);
     }
 </script>
