@@ -64,30 +64,22 @@
         jQuery.ajax({
         type: "GET",
         url: "../ws/insuranceclaims/rest/v1/claims/sendToExternal?claimUuid=" + uuid,
-        success: function(){
-            reloadPage();
-        },
-        error: function (request, status, error) {
-            reloadPage();
-        },
         dataType: "json",
-        contentType : "application/json"
-        });
+        contentType : "application/json",
+        complete: function() {
+            reloadPage();
+        }});
     }
 
     function updateClaim(uuid) {
         jQuery.ajax({
         type: "GET",
         url: "../ws/insuranceclaims/rest/v1/claims/updateClaim?claimUuid=" + uuid,
-        success: function(){
-            reloadPage();
-        },
-        error: function (request, status, error) {
-            reloadPage();
-        },
         dataType: "json",
-        contentType : "application/json"
-        });
+        contentType : "application/json",
+        complete: function() {
+            reloadPage();
+        }});
     }
 
     function reloadPage(){

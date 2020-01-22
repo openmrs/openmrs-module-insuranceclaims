@@ -211,7 +211,6 @@
     <% if(patientDiagnoses) {%>
     <div id="diagnoses"> Diagnoses: <br>
         <% patientDiagnoses.eachWithIndex { diagnosis, index ->  %>
-            <script>console.log([[${diagnosis}]])</script>
             <span id="diagnosis${diagnosis.id}" class="diagnosis-span" value="${diagnosis.uuid}">
                 <input type="checkbox" class="diagnosis-checkbox">${diagnosis.name}<br>
             </span>
@@ -264,10 +263,6 @@
         }
         return "../ws/insuranceclaims/rest/v1/claims"
     }
-
-    function showProvided() {
-        document.getElementById("formData").innerHTML = JSON.stringify(getFormData());
-    }
    
     function getFormData() {
         return {
@@ -288,20 +283,17 @@
     }
 
     function submitNewClaim() {
-
         var formData = JSON.stringify(getFormData());
 
         jQuery.ajax({
         type: "POST",
         data: formData,
         url: getUrl(getFormData()),
-        success: function(){alert("It worked!")},
-        error: function (request, status, error) {
-            document.getElementById("formData").innerHTML = request;
-        },
         dataType: "json",
-        contentType : "application/json"
-        });
+        contentType : "application/json",
+        complete: function() {
+            window.location.reload();
+        }});
     }
 </script>
 </div>

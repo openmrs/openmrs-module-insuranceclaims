@@ -26,6 +26,9 @@
             <column name="iclm_bill_id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" unique="true"/>
             </column>
+            <column name="patient" type="int">
+                <constraints nullable="false"/>
+            </column>
             <column name="start_date" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
@@ -55,6 +58,9 @@
             </column>
             <column name="voided_by" type="int"/>
         </createTable>
+        <addForeignKeyConstraint constraintName="iclm_bill_patient_fk"
+                                 baseTableName="iclm_bill" baseColumnNames="patient"
+                                 referencedTableName="patient" referencedColumnNames="patient_id"/>
         <addForeignKeyConstraint constraintName="iclm_bill_diagnosis_fk"
                                  baseTableName="iclm_bill" baseColumnNames="diagnosis"
                                  referencedTableName="concept" referencedColumnNames="concept_id"/>
