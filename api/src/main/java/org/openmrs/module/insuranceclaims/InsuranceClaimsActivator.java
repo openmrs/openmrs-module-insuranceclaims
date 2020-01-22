@@ -4,7 +4,6 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
-import org.openmrs.ConceptNumeric;
 import org.openmrs.Obs;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
@@ -19,11 +18,10 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Locale;
 
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ABSOULUTE_HI_CONSUMED_ITEMS;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ABSOULUTE_LOW_CONSUMED_ITEMS;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMABLES_LIST_CONCEPT_NAME;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMABLES_LIST_ITEMS_CONCEPT_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMED_ITEMS_CONCEPT_NAME;
@@ -35,6 +33,7 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 /**
  * Contains the logic that is run every time this module is either started or stopped
  */
+@Transactional
 public class InsuranceClaimsActivator extends BaseModuleActivator implements DaemonTokenAware {
 
 	private static final Logger LOG = LoggerFactory.getLogger(InsuranceClaimsActivator.class);
@@ -53,18 +52,7 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 	 */
 	@Override
 	public void started() {
-
-		if (Context.getConceptService().getConceptByUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID) == null) {
-			createConsumableItemsListConcept();
-		}
-
-		if (Context.getConceptService().getConceptByUuid(QUANTITY_CONSUMED_CONCEPT_UUID) == null) {
-			createQuantityConsumedConcept();
-		}
-
-		if (Context.getConceptService().getConceptByUuid(CONSUMED_ITEMS_CONCEPT_UUID) == null) {
-			createComplexConsumedItemConcept();
-		}
+		addConcepts();
 
 		HtmlFormEntryService service = Context.getService(HtmlFormEntryService.class);
 		if (service.getHtmlFormByUuid(CONSUMED_ITEMS_FORM_UUID) == null) {
@@ -94,30 +82,36 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 		daemonToken = token;
 	}
 
-	private void createConsumableItemsListConcept() {
-		Concept consumedItems = new Concept();
-		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.CODED_UUID);
-		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(ConceptClass.FINDING_UUID);
-		ConceptName name = buildConceptName(CONSUMABLES_LIST_CONCEPT_NAME);
+	private void addConcepts() {
+		if (Context.getConceptService().getConceptByUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID) == null) {
+			createConsumableItemsListConcept();
+		}
 
-		consumedItems.setDatatype(dataType);
-		consumedItems.setConceptClass(conceptClass);
-		consumedItems.setFullySpecifiedName(name);
-		consumedItems.setUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID);
+		if (Context.getConceptService().getConceptByUuid(QUANTITY_CONSUMED_CONCEPT_UUID) == null) {
+			createQuantityConsumedConcept();
+		}
+
+		if (Context.getConceptService().getConceptByUuid(CONSUMED_ITEMS_CONCEPT_UUID) == null) {
+			createComplexConsumedItemConcept();
+		}
+	}
+
+	private void createConsumableItemsListConcept() {
+		Concept consumedItems = createComplexConcept(
+				ConceptDatatype.CODED_UUID,
+				ConceptClass.FINDING_UUID,
+				CONSUMABLES_LIST_CONCEPT_NAME,
+				CONSUMABLES_LIST_ITEMS_CONCEPT_UUID);
 
 		Context.getConceptService().saveConcept(consumedItems);
 	}
 
 	private void createComplexConsumedItemConcept() {
-		Concept complexConcept = new Concept();
-		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.N_A_UUID);
-		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(ConceptClass.CONVSET_UUID);
-		ConceptName name = buildConceptName(CONSUMED_ITEMS_CONCEPT_NAME);
-
-		complexConcept.setDatatype(dataType);
-		complexConcept.setConceptClass(conceptClass);
-		complexConcept.setFullySpecifiedName(name);
-		complexConcept.setUuid(CONSUMED_ITEMS_CONCEPT_UUID);
+		Concept complexConcept = createComplexConcept(
+				ConceptDatatype.N_A_UUID,
+				ConceptClass.CONVSET_UUID,
+				CONSUMED_ITEMS_CONCEPT_NAME,
+				CONSUMED_ITEMS_CONCEPT_UUID);
 
 		complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID));
 		complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(QUANTITY_CONSUMED_CONCEPT_UUID));
@@ -126,23 +120,31 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 	}
 
 	private void createQuantityConsumedConcept() {
-		Concept quantityConsumed = new Concept();
-		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.NUMERIC_UUID);
-		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(ConceptClass.MISC_UUID);
-		ConceptName name = buildConceptName(QUANTITY_CONSUMED_CONCEPT_NAME);
-
-		quantityConsumed.setDatatype(dataType);
-		quantityConsumed.setConceptClass(conceptClass);
-		quantityConsumed.setFullySpecifiedName(name);
-		quantityConsumed.setUuid(QUANTITY_CONSUMED_CONCEPT_UUID);
+		Concept quantityConsumed = createComplexConcept(
+				ConceptDatatype.NUMERIC_UUID,
+				ConceptClass.MISC_UUID,
+				QUANTITY_CONSUMED_CONCEPT_NAME,
+				QUANTITY_CONSUMED_CONCEPT_UUID);
 
 		Context.getConceptService().saveConcept(quantityConsumed);
-		ConceptNumeric numericConcept = Context.getConceptService().getConceptNumeric(quantityConsumed.getConceptId());
-		numericConcept.setLowAbsolute(ABSOULUTE_LOW_CONSUMED_ITEMS);
-		numericConcept.setHiAbsolute(ABSOULUTE_HI_CONSUMED_ITEMS);
-		Context.getConceptService().saveConcept(numericConcept);
 	}
 
+	private Concept createComplexConcept(String dataTypeUuid, String classUuid, String name, String uuid) {
+		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(dataTypeUuid);
+		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(classUuid);
+		ConceptName conceptName = buildConceptName(name);
+		return createBasicConcept(dataType, conceptClass, conceptName, uuid);
+	}
+
+	private Concept createBasicConcept(ConceptDatatype dataType, ConceptClass conceptClass, ConceptName name, String conceptUuid) {
+		Concept concept = new Concept();
+
+		concept.setDatatype(dataType);
+		concept.setConceptClass(conceptClass);
+		concept.setFullySpecifiedName(name);
+		concept.setUuid(conceptUuid);
+		return concept;
+	}
 	private ConceptName buildConceptName(String conceptName) {
 		ConceptName name = new ConceptName();
 

@@ -66,5 +66,7 @@ public final class InsuranceClaimConstants {
     public static final String CONSUMED_ITEMS_FORM_DESCRIPTION = "Used to add information about services and items consumed by the patient.";
     public static final String CONSUMED_ITEMS_FORM_UUID = "2da13321-5829-41d3-b11c-68520b5e4da4";
 
+    public static final String CONSUMED_ITEM_STRATEGY_PROPERTY = "insuranceclaims.consumeditem.strategy";
+
     private InsuranceClaimConstants() {}
 }
