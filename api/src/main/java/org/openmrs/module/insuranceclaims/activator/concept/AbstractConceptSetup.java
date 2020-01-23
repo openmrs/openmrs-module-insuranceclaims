@@ -15,7 +15,12 @@ public abstract class AbstractConceptSetup {
     private String conceptDataType;
     private String conceptClass;
 
-    public abstract void createConceptIfNotExist();
+    public void createConceptIfNotExist() {
+        if (!isContextExisting()) {
+            Concept quantityConsumedItems = buildConcept();
+            saveConcept(quantityConsumedItems);
+        }
+    }
 
     protected AbstractConceptSetup(String conceptUuid, String conceptName,
                                    String dataTypeUuid, String conceptClassUuid) {
@@ -39,6 +44,10 @@ public abstract class AbstractConceptSetup {
         return concept;
     }
 
+    protected void saveConcept(Concept concept) {
+        Context.getConceptService().saveConcept(concept);
+    }
+
     private ConceptName buildConceptName(String conceptName) {
         ConceptName name = new ConceptName();
 
@@ -47,9 +56,4 @@ public abstract class AbstractConceptSetup {
         name.setLocalePreferred(true);
         return name;
     }
-
-    protected void saveConcept(Concept concept) {
-        Context.getConceptService().saveConcept(concept);
-    }
-
 }

@@ -18,12 +18,10 @@ public class ComplexConsumedItemConceptSetup extends AbstractConceptSetup {
     }
 
     @Override
-    public void createConceptIfNotExist() {
-        if (!isContextExisting()) {
-            Concept complexConcept = buildConcept();
-            complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID));
-            complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(QUANTITY_CONSUMED_CONCEPT_UUID));
-            saveConcept(complexConcept);
-        }
+    protected Concept buildConcept() {
+        Concept complexConcept = super.buildConcept();
+        complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(CONSUMABLES_LIST_ITEMS_CONCEPT_UUID));
+        complexConcept.addSetMember(Context.getConceptService().getConceptByUuid(QUANTITY_CONSUMED_CONCEPT_UUID));
+        return complexConcept;
     }
 }

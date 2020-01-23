@@ -1,6 +1,5 @@
 package org.openmrs.module.insuranceclaims.activator.concept;
 
-import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 
@@ -14,11 +13,4 @@ public class ConsumableItemsListConceptSetup extends AbstractConceptSetup {
                 ConceptDatatype.CODED_UUID, ConceptClass.FINDING_UUID);
     }
 
-    @Override
-    public void createConceptIfNotExist() {
-        if (!isContextExisting()) {
-            Concept consumedItems = buildConcept();
-            saveConcept(consumedItems);
-        }
-    }
 }
