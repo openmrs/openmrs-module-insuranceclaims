@@ -54,7 +54,11 @@
   <legend>Consumed</legend>
   <h3>Items consumed by patient</h3>
   <p>
-    <obs id="item-consumed" conceptId="907519e6-4b90-473e-b1db-5167352ddcd0" answerClasses="Consumable items" style="autocomplete" size="10"/>
+      <obsgroup groupingConceptId="907519e6-4b90-473e-b1db-5167352ddcd0">
+          <obs conceptId="df3f4aab-0e18-43cb-89bf-03ec347faa4a" answerClasses="Consumable items" style="autocomplete" size="10"
+               labelText="Consumed item:"/>
+          <obs conceptId="dd75407b-bbb3-465b-976d-023b4d79ac54"  labelText="Quantity:"/>
+      </obsgroup>
   </p>
 </fieldset>
 

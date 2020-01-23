@@ -1,9 +1,5 @@
 package org.openmrs.module.insuranceclaims;
 
-import org.openmrs.Concept;
-import org.openmrs.ConceptClass;
-import org.openmrs.ConceptDatatype;
-import org.openmrs.ConceptName;
 import org.openmrs.Obs;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.FormService;
@@ -16,16 +12,14 @@ import org.openmrs.module.DaemonToken;
 import org.openmrs.module.DaemonTokenAware;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
+import org.openmrs.module.insuranceclaims.activator.concept.ModuleConceptSetup;
 import org.openmrs.module.insuranceclaims.util.ConstantValues;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Locale;
 
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMED_ITEMS_CONCEPT_NAME;
-import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMED_ITEMS_CONCEPT_UUID;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.CONSUMED_ITEMS_FORM_UUID;
 
 /**
@@ -49,12 +43,9 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 	 */
 	@Override
 	public void started() {
+		addConcepts();
+
 		HtmlFormEntryService service = Context.getService(HtmlFormEntryService.class);
-
-		if (Context.getConceptService().getConceptByUuid(CONSUMED_ITEMS_CONCEPT_UUID) == null) {
-			createConsumedItemsConcept();
-		}
-
 		if (service.getHtmlFormByUuid(CONSUMED_ITEMS_FORM_UUID) == null) {
 			try {
 				setupHtmlForms();
@@ -84,27 +75,8 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 		daemonToken = token;
 	}
 
-	private void createConsumedItemsConcept() {
-		Concept consumedItems = new Concept();
-		ConceptDatatype dataType = Context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.CODED_UUID);
-		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid(ConceptClass.FINDING_UUID);
-		ConceptName name = buildConceptName();
-
-		consumedItems.setDatatype(dataType);
-		consumedItems.setConceptClass(conceptClass);
-		consumedItems.setFullySpecifiedName(name);
-		consumedItems.setUuid(CONSUMED_ITEMS_CONCEPT_UUID);
-
-		Context.getConceptService().saveConcept(consumedItems);
-	}
-
-	private ConceptName buildConceptName() {
-		ConceptName name = new ConceptName();
-
-		name.setLocale(Locale.ENGLISH);
-		name.setName(CONSUMED_ITEMS_CONCEPT_NAME);
-		name.setLocalePreferred(true);
-		return name;
+	private void addConcepts() {
+		Context.getService(ModuleConceptSetup.class).createConcepts();
 	}
 
 	private EventListener getItemConsumedListener() {
