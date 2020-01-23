@@ -6,12 +6,33 @@
     ui.includeCss("insuranceclaims", "insuranceValidation.css")
 %>
 
+<script type="text/javascript">
+    jq(document).ready(function() {
+        var table = jq('#${ config.id }-validation-result');
+        var url = '/' + OPENMRS_CONTEXT_PATH + '/insuranceclaims/insuranceValidation/actualPolices.action';
+        jq.ajax({
+            url: url,
+            type: 'GET',
+            dataType: "json",
+            data: { personUuid: '${ personUuid }'},
+            success: function(data) {
+                if (data && data.results && data.results.length) {
+                    insuranceValidator.renderPolicyResults('${ config.id }', data.results);
+                    table.show();
+                }
+            },
+            error: function(xhr, status, error) {
+                table.hide();
+            }
+        });
+    });
+</script>
 
 <div class="info-section">
     <% if (widgetMode) { %>
         <div class="info-header">
             <i class="icon-user"></i>
-            <h3>${ui.message("insuranceclaims.policy.eligibility.label")}</h3>
+            <h3>${ ui.message("insuranceclaims.policy.eligibility.label") }</h3>
         </div>
     <% } %>
 
@@ -36,11 +57,29 @@
                 ${ ui.message("insuranceclaims.required") }
             </span>
             <div>
-                <button id="insurance-validation-submit" class="confirm" onClick="insuranceValidator.submit('${ config.id }'); return false;">
+                <button
+                    id="insurance-validation-submit" class="confirm"
+                    onClick="insuranceValidator.submit('${ config.id }', '${ personUuid }'); return false;" >
                     ${ ui.message("insuranceclaims.policy.eligibility.button") }
                     <i id="${ config.id }-icon" class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i>
                 </button>
-                <div id="${ config.id }-validation-result"></div>
+                <div
+                    id="${ config.id }-validation-result"
+                    class="insurance-validation-result"
+                    style="display: none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>${ ui.message("insuranceclaims.policy.number") }</th>
+                                <th>${ ui.message("insuranceclaims.policy.status") }</th>
+                                <th>${ ui.message("insuranceclaims.policy.expiryDate") }</th>
+                                <th>${ ui.message("insuranceclaims.policy.allowedMoney") }</th>
+                            </tr>
+                        </thead>
+                        <tbody id="${ config.id }-validation-result-body">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

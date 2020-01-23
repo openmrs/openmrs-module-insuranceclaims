@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+    <person_attribute_type
+            person_attribute_type_id="2145"
+            name="Insurance policy number"
+            description="Person Best contact timeContains the actual value of the policy number assign to this specific person."
+            format="FreeTextDatatype"
+            creator="1"
+            sort_weight="1"
+            searchable="0"
+            retired="false"
+            date_created="2010-11-16"
+            uuid="f3e779f0-9e77-4897-9239-e1709f8577c8"/>
+
+    <person
+            person_id="21551"
+            gender="M"
+            dead="false"
+            creator="1"
+            date_created="2010-11-16 15:57:09.0"
+            voided="false"
+            uuid="41c2283e-549e-4e0e-acdb-3540040effef"/>
+
+    <person_attribute
+            person_attribute_id="12313"
+            person_id="21551"
+            value="a963790a-3f45-4086-9712-8527640949f9"
+            person_attribute_type_id="2145"
+            creator="1"
+            date_created="2010-11-16"
+            voided="true"
+            uuid="f2f9f7c5-4b5e-41c4-95d2-424f7177d6ea"/>
+
+    <person_attribute
+            person_attribute_id="12314"
+            person_id="21551"
+            value="840b0670-d4dc-43e1-a77f-497645ff507f"
+            person_attribute_type_id="2145"
+            creator="1"
+            date_created="2010-11-16"
+            voided="true"
+            uuid="2d4058db-ac25-4ba0-928d-ea26e11334d5"/>
+
+    <person_name
+            person_name_id="21551"
+            preferred="true"
+            person_id="21551"
+            given_name="Arkadiusz"
+            middle_name=""
+            family_name="Smith"
+            creator="1"
+            date_created="2010-11-16 15:57:09.0"
+            voided="false"
+            void_reason=""
+            uuid="62493b73-9d79-4d1e-802c-e08388bfe205"/>
+
+    <patient
+            patient_id="21551"
+            creator="1"
+            date_created="2010-11-16 15:57:09.0"
+            voided="false"/>
+
+    <patient_identifier_type
+            patient_identifier_type_id="23151"
+            name="Test Identifier Type"
+            description="Test description"
+            creator="1"
+            date_created="2010-11-16 15:57:09.0"
+            required="false"
+            retired="false"
+            uuid="d6b6472b-9b5e-425e-b991-bc05f24cd179"/>
+
+    <patient_identifier
+            patient_identifier_id="231561"
+            patient_id="21551"
+            identifier="21551"
+            identifier_type="23151"
+            preferred="1"
+            location_id="1"
+            creator="1"
+            date_created="2010-11-16 15:57:09.0"
+            voided="false"
+            uuid="6a5e8a83-db2f-4810-b30a-c6adbb9cd43d"/>
+
+    <iclm_policy
+            iclm_policy_id="212331"
+            policy_number="25540bd0-8888-4e06-9cf7-215042cdb033"
+            allowed_money="21"
+            patient="21551"
+            status="ACTIVE"
+            uuid="feadd000-4168-4b30-9e2c-0e39d1588b9f"
+            date_created="2010-11-16"
+            voided="false"
+            creator="1"
+    />
+
+    <iclm_policy
+            iclm_policy_id="212332"
+            policy_number="c949ba67-454b-4b3c-8f01-01390e4f8599"
+            allowed_money="12"
+            patient="21551"
+            status="EXPIRED"
+            uuid="840b0670-d4dc-43e1-a77f-497645ff507f"
+            date_created="2010-11-16"
+            date_changed="2019-11-16"
+            voided="false"
+            creator="1"
+    />
+
+    <iclm_policy
+            iclm_policy_id="212333"
+            policy_number="a963790a-3f45-4086-9712-8527640949f9"
+            allowed_money="122241"
+            patient="21551"
+            status="EXPIRED"
+            uuid="96f3d992-ff59-4f8c-ab7d-c548663bc5d1"
+            date_created="2010-11-16"
+            date_changed="2020-02-16"
+            voided="true"
+            creator="1"
+    />
+
+    <iclm_policy
+            iclm_policy_id="212334"
+            policy_number="f1211f8a-7496-4556-bdd1-c0f555b88755"
+            allowed_money="214"
+            patient="21551"
+            status="ACTIVE"
+            uuid="d29b5828-f917-40be-86c3-2c3dd4e271f1"
+            date_created="2020-01-01"
+            voided="false"
+            creator="1"
+    />
+</dataset>

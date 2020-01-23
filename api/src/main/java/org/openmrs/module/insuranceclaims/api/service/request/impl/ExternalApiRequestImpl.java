@@ -136,7 +136,8 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         try {
             setUrls();
             EligibilityRequest eligibilityRequest = fhirEligibilityService.generateEligibilityRequest(policyNumber);
-            EligibilityResponse response =  eligibilityHttpRequest.sendEligibilityRequest(this.eligibilityUrl, eligibilityRequest);
+            EligibilityResponse response =  eligibilityHttpRequest.sendEligibilityRequest(
+                    this.eligibilityUrl, eligibilityRequest);
             if (response.getInsurance() == null) {
                 throw new EligibilityRequestException("Insurance not found");
             }
@@ -235,7 +236,8 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         return new ClaimRequestWrapper(receivedClaim, null, items, errors);
     }
 
-    private ClaimRequestWrapper getClaimResponseWithAssignedItemCodes(String claimCode) throws URISyntaxException, FHIRException {
+    private ClaimRequestWrapper getClaimResponseWithAssignedItemCodes(String claimCode) throws URISyntaxException,
+            FHIRException {
         Claim claim = claimHttpRequest.getClaimRequest(this.claimUrl, claimCode);
         ClaimResponse claimResponse = claimHttpRequest.getClaimResponse(this.claimResponseUrl, claimCode);
 
@@ -252,7 +254,8 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         return wrappedResponse;
     }
 
-    private void addDataFromClaimItemToClaimResponseItem(InsuranceClaimItem claimResponseItem, InsuranceClaimItem claimItem) {
+    private void addDataFromClaimItemToClaimResponseItem(InsuranceClaimItem claimResponseItem,
+            InsuranceClaimItem claimItem) {
         claimResponseItem.setItem(claimItem.getItem());
         claimResponseItem.setQuantityProvided(claimItem.getQuantityProvided());
     }
