@@ -10,6 +10,7 @@ import org.openmrs.module.insuranceclaims.api.service.ProvidedItemService;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.ConsumedItemException;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.QUANTITY_CONSUMED_CONCEPT_UUID;
 
 @Component("DefaultConsumedItemStrategy")
+@Transactional
 public class ConsumedItemStrategy implements GenericConsumedItemStrategy {
 
     private ProvidedItemService providedItemService;
