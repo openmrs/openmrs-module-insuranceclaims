@@ -17,6 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -45,6 +46,14 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 	@Basic
 	@Column(name = "policy_number")
 	private String policyNumber;
+
+	@Basic
+	@Column(name = "allowed_money")
+	private BigDecimal allowedMoney;
+
+	@Basic
+	@Column(name = "used_money")
+	private BigDecimal usedMoney;
 
 	@ManyToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
@@ -125,5 +134,21 @@ public class InsurancePolicy extends AbstractBaseOpenmrsData {
 
 	public void setStatus(InsurancePolicyStatus status) {
 		this.status = status;
+	}
+
+	public void setAllowedMoney(BigDecimal allowedMoney) {
+		this.allowedMoney = allowedMoney;
+	}
+
+	public void setUsedMoney(BigDecimal usedMoney) {
+		this.usedMoney = usedMoney;
+	}
+
+	public BigDecimal getAllowedMoney() {
+		return allowedMoney;
+	}
+
+	public BigDecimal getUsedMoney() {
+		return usedMoney;
 	}
 }

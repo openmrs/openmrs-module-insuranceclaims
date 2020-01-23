@@ -1,0 +1,16 @@
+.insurance-validation-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.insurance-validation-container #insurance-validation-label {
+    width: auto;
+}
+
+.insurance-validation-container #insurance-validation-question {
+    max-width: none;
+}
+
+.insurance-validation-container #insurance-validation-submit {
+    margin-top: 5px;
+}

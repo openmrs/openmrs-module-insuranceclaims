@@ -2,25 +2,33 @@ package org.openmrs.module.insuranceclaims.api.service.request.impl;
 
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
+import org.hl7.fhir.dstu3.model.EligibilityRequest;
+import org.hl7.fhir.dstu3.model.EligibilityResponse;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.insuranceclaims.api.client.ClaimHttpRequest;
+import org.openmrs.module.insuranceclaims.api.client.EligibilityHttpRequest;
 import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimItem;
+import org.openmrs.module.insuranceclaims.api.model.InsurancePolicy;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.InsuranceClaimService;
+import org.openmrs.module.insuranceclaims.api.service.InsurancePolicyService;
 import org.openmrs.module.insuranceclaims.api.service.db.ItemDbService;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.ClaimRequestException;
+import org.openmrs.module.insuranceclaims.api.service.exceptions.EligibilityRequestException;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.ItemMatchingFailedException;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseService;
+import org.openmrs.module.insuranceclaims.api.service.fhir.FHIREligibilityService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil;
 import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -30,13 +38,17 @@ import java.util.stream.Collectors;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.BASE_URL_PROPERTY;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.CLAIM_RESPONSE_SOURCE_URI;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.CLAIM_SOURCE_URI;
+import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.ELIGIBILITY_SOURCE_URI;
 
 public class ExternalApiRequestImpl implements ExternalApiRequest {
 
     private String claimResponseUrl;
     private String claimUrl;
+    private String eligibilityUrl;
 
     private ClaimHttpRequest claimHttpRequest;
+
+    private EligibilityHttpRequest eligibilityHttpRequest;
 
     private FHIRInsuranceClaimService fhirInsuranceClaimService;
 
@@ -46,9 +58,13 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
 
     private FHIRClaimDiagnosisService fhirClaimDiagnosisService;
 
+    private FHIREligibilityService fhirEligibilityService;
+
     private InsuranceClaimService insuranceClaimService;
 
     private InsuranceClaimItemService insuranceClaimItemService;
+
+    private InsurancePolicyService insurancePolicyService;
 
     private ItemDbService itemDbService;
 
@@ -115,6 +131,36 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         }
     }
 
+    @Override
+    public InsurancePolicy getPatientPolicy(String policyNumber) throws EligibilityRequestException {
+        try {
+            setUrls();
+            EligibilityRequest eligibilityRequest = fhirEligibilityService.generateEligibilityRequest(policyNumber);
+            EligibilityResponse response =  eligibilityHttpRequest.sendEligibilityRequest(this.eligibilityUrl, eligibilityRequest);
+            if (response.getInsurance() == null) {
+                throw new EligibilityRequestException("Insurance not found");
+            }
+            return insurancePolicyService.generateInsurancePolicy(response);
+        } catch (URISyntaxException | FHIRException requestException) {
+            String exceptionMessage = "Exception occured during processing request: "
+                    + "Message:" + requestException.getMessage();
+            throw new EligibilityRequestException(exceptionMessage);
+        } catch (HttpServerErrorException e) {
+            String exceptionMessage = "Exception occured during processing request: "
+                    + "Message:" + e.getMessage()
+                    + "Reason: " + e.getResponseBodyAsString();
+
+            throw new EligibilityRequestException(exceptionMessage, e);
+        } catch (ResourceAccessException e) {
+            String exceptionMessage = "Exception occured during processing request: "
+                    + "Message:" + e.getMessage()
+                    + "Reason: " + e.getCause();
+
+            throw new EligibilityRequestException(exceptionMessage, e);
+
+        }
+    }
+
     public void setClaimHttpRequest(ClaimHttpRequest claimHttpRequest) {
         this.claimHttpRequest = claimHttpRequest;
     }
@@ -143,17 +189,31 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         this.insuranceClaimItemService = insuranceClaimItemService;
     }
 
+    public void setEligibilityHttpRequest(EligibilityHttpRequest eligibilityHttpRequest) {
+        this.eligibilityHttpRequest = eligibilityHttpRequest;
+    }
+
     public void setItemDbService(ItemDbService itemDbService) {
         this.itemDbService = itemDbService;
+    }
+
+    public void setFhirEligibilityService(FHIREligibilityService fhirEligibilityService) {
+        this.fhirEligibilityService = fhirEligibilityService;
+    }
+
+    public void setInsurancePolicyService(InsurancePolicyService insurancePolicyService) {
+        this.insurancePolicyService = insurancePolicyService;
     }
 
     private void setUrls() {
         String baseUrl = Context.getAdministrationService().getGlobalProperty(BASE_URL_PROPERTY);
         String claimUri =  Context.getAdministrationService().getGlobalProperty(CLAIM_SOURCE_URI);
         String claimResponseUri =  Context.getAdministrationService().getGlobalProperty(CLAIM_RESPONSE_SOURCE_URI);
+        String eligibilityUri = Context.getAdministrationService().getGlobalProperty(ELIGIBILITY_SOURCE_URI);
 
         this.claimResponseUrl = baseUrl + "/" + claimResponseUri;
         this.claimUrl = baseUrl + "/" + claimUri;
+        this.eligibilityUrl = baseUrl + "/" + eligibilityUri;
     }
 
     private ClaimRequestWrapper wrapResponse(Claim claim) {

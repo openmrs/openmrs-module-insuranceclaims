@@ -5,7 +5,9 @@ import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
 import org.openmrs.Obs;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.api.FormService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.event.Event;
 import org.openmrs.event.EventListener;
@@ -14,6 +16,7 @@ import org.openmrs.module.DaemonToken;
 import org.openmrs.module.DaemonTokenAware;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
+import org.openmrs.module.insuranceclaims.util.ConstantValues;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +62,8 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 				LOG.error("Failed to load consumed item form. Caused by:  " + e.toString());
 			}
 		}
+
+		createInsureNumberAttribute();
 
 		eventListener = getItemConsumedListener();
 		Event.subscribe(Obs.class, Event.Action.CREATED.name(), eventListener);
@@ -115,4 +120,20 @@ public class InsuranceClaimsActivator extends BaseModuleActivator implements Dae
 				htmlFormEntryService, PATH_TO_CONSUMED_ITEM_FORM_TEMPLATE);
 	}
 
+	private void createInsureNumberAttribute() {
+		PersonAttributeType attributeType = new PersonAttributeType();
+		attributeType.setName(ConstantValues.POLICY_NUMBER_ATTRIBUTE_TYPE_NAME);
+		attributeType.setFormat(ConstantValues.POLICY_NUMBER_ATTRIBUTE_TYPE_FORMAT);
+		attributeType.setDescription(ConstantValues.POLICY_NUMBER_ATTRIBUTE_TYPE_DESCRIPTION);
+		attributeType.setUuid(ConstantValues.POLICY_NUMBER_ATTRIBUTE_TYPE_UUID);
+		createPersonAttributeTypeIfNotExists(attributeType);
+	}
+
+	private void createPersonAttributeTypeIfNotExists(PersonAttributeType attributeType) {
+		PersonService personService = Context.getPersonService();
+		PersonAttributeType actual = personService.getPersonAttributeTypeByUuid(attributeType.getUuid());
+		if (actual == null) {
+			personService.savePersonAttributeType(attributeType);
+		}
+	}
 }

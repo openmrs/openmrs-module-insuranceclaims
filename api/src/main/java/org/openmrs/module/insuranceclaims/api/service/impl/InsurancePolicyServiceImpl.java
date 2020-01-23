@@ -2,11 +2,14 @@ package org.openmrs.module.insuranceclaims.api.service.impl;
 
 import ca.uhn.fhir.util.DateUtils;
 import org.hl7.fhir.dstu3.model.EligibilityResponse;
+import org.hl7.fhir.dstu3.model.Money;
 import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.module.insuranceclaims.api.model.InsurancePolicy;
 import org.openmrs.module.insuranceclaims.api.model.InsurancePolicyStatus;
 import org.openmrs.module.insuranceclaims.api.service.InsurancePolicyService;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -17,7 +20,7 @@ import static org.openmrs.module.insuranceclaims.api.service.fhir.util.Insurance
 public class InsurancePolicyServiceImpl extends BaseOpenmrsDataService<InsurancePolicy> implements InsurancePolicyService {
 
     @Override
-    public InsurancePolicy generateInsurancePolicy(EligibilityResponse response) {
+    public InsurancePolicy generateInsurancePolicy(EligibilityResponse response) throws FHIRException {
         Reference contract = response.getInsuranceFirstRep().getContract();
         InsurancePolicy policy = new InsurancePolicy();
         Date expireDate = getExpireDateFromContractReference(contract);
@@ -25,6 +28,9 @@ public class InsurancePolicyServiceImpl extends BaseOpenmrsDataService<Insurance
         policy.setExpiryDate(expireDate);
         policy.setStatus(getPolicyStatus(policy));
         policy.setPolicyNumber(getPolicyIdFromContractReference(contract));
+
+        policy.setUsedMoney(getUsedMoney(response));
+        policy.setAllowedMoney(getAllowedMoney(response));
 
         return policy;
     }
@@ -59,5 +65,17 @@ public class InsurancePolicyServiceImpl extends BaseOpenmrsDataService<Insurance
     private boolean isPolicyActive(Date policyExpireDate) {
         Date today = Calendar.getInstance().getTime();
         return policyExpireDate.after(today);
+    }
+
+    private BigDecimal getAllowedMoney(EligibilityResponse response) throws FHIRException {
+        EligibilityResponse.BenefitsComponent benefit = response.getInsuranceFirstRep().getBenefitBalanceFirstRep();
+        Money allowedMoney = benefit.getFinancialFirstRep().getAllowedMoney();
+        return allowedMoney.getValue();
+    }
+
+    private BigDecimal getUsedMoney(EligibilityResponse response) throws FHIRException {
+        EligibilityResponse.BenefitsComponent benefit = response.getInsuranceFirstRep().getBenefitBalanceFirstRep();
+        Money usedMoney = benefit.getFinancialFirstRep().getUsedMoney();
+        return usedMoney.getValue();
     }
 }
