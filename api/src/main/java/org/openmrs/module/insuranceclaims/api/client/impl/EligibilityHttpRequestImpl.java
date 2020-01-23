@@ -10,10 +10,6 @@ public class EligibilityHttpRequestImpl implements EligibilityHttpRequest {
 
     private FhirRequestClient client;
 
-    public EligibilityHttpRequestImpl() {
-        client = new FhirRequestClient();
-    }
-
     @Override
     public EligibilityResponse sendEligibilityRequest(String resourceUrl, EligibilityRequest request)
             throws URISyntaxException {
@@ -21,5 +17,9 @@ public class EligibilityHttpRequestImpl implements EligibilityHttpRequest {
         EligibilityResponse response = client.postObject(url, request, EligibilityResponse.class);
 
         return response;
+    }
+
+    public void setClient(FhirRequestClient client) {
+        this.client = client;
     }
 }

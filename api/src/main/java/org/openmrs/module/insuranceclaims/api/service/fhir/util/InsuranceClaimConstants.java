@@ -47,9 +47,9 @@ public final class InsuranceClaimConstants {
     public static final int CONTRACT_POLICY_ID_ORDINAL = 1;
     public static final int CONTRACT_EXPIRE_DATE_ORDINAL = 2;
 
-    public static final String EXPECTED_DATE_PATTERN = "yyyy-mm-dd";
+    public static final String EXPECTED_DATE_PATTERN = "yyyy-MM-dd";
     public static final List<String> CONTRACT_DATE_PATTERN = Collections.unmodifiableList(
-            Arrays.asList("yyyy-mm-dd hh:mm:ss", "yyyy-mm-dd"));
+            Arrays.asList("yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
 
     public static final String CONSUMED_ITEMS_CONCEPT_NAME = "Items consumed";
     public static final String CONSUMED_ITEMS_CONCEPT_UUID = "907519e6-4b90-473e-b1db-5167352ddcd0";
