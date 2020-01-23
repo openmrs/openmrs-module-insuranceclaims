@@ -350,6 +350,8 @@
             <column name="start_date" type="DATETIME"/>
             <column name="expiry_date" type="DATETIME"/>
             <column name="policy_number" type="varchar(255)"/>
+            <column name="used_money" type="decimal(10,2)"/>
+            <column name="allowed_money" type="decimal(10,2)"/>
             <column name="patient" type="int">
                 <constraints nullable="false"/>
             </column>

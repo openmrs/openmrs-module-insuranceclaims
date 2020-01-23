@@ -3,7 +3,9 @@ package org.openmrs.module.insuranceclaims.api.service;
 import ca.uhn.fhir.util.DateUtils;
 import org.hamcrest.Matchers;
 import org.hl7.fhir.dstu3.model.EligibilityResponse;
+import org.hl7.fhir.dstu3.model.Money;
 import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Location;
@@ -16,25 +18,32 @@ import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 
 import static org.openmrs.module.insuranceclaims.api.util.TestConstants.TEST_PATIENT_POLICY_NUMBER;
 
 public class InsurancePolicyServiceTest extends BaseModuleContextSensitiveTest {
 
+    private static final BigDecimal ALLOWED_MONEY = new BigDecimal("100.00");
+    private static final BigDecimal USED_MONEY = new BigDecimal("90.00");
+
     @Autowired
     InsurancePolicyService insurancePolicyService;
 
     @Test
-    public void generateInsurancePolicy_shouldMapEligibilityResponseToPolicy() {
+    public void generateInsurancePolicy_shouldMapEligibilityResponseToPolicy() throws FHIRException {
         EligibilityResponse eligibilityResponse = createTestEligibilityResponse();
 
         InsurancePolicy expected = createTestPolicyInstance();
-        expected.setExpiryDate(DateUtils.parseDate(TestConstants.TEST_DATE, new String[]{"yyy-mm-dd hh:mm:ss"}));
+        expected.setExpiryDate(DateUtils.parseDate(TestConstants.TEST_DATE, new String[]{"yyy-MM-dd hh:mm:ss"}));
         InsurancePolicy actual = insurancePolicyService.generateInsurancePolicy(eligibilityResponse);
 
         Assert.assertThat(actual.getExpiryDate(), Matchers.equalTo(expected.getExpiryDate()));
         Assert.assertThat(actual.getPolicyNumber(), Matchers.equalTo(expected.getPolicyNumber()));
+        Assert.assertThat(actual.getAllowedMoney(), Matchers.equalTo(ALLOWED_MONEY));
+        Assert.assertThat(actual.getUsedMoney(), Matchers.equalTo(USED_MONEY));
     }
 
     @Test
@@ -59,6 +68,7 @@ public class InsurancePolicyServiceTest extends BaseModuleContextSensitiveTest {
         EligibilityResponse response = new EligibilityResponse();
         EligibilityResponse.InsuranceComponent insuranceComponent = new EligibilityResponse.InsuranceComponent();
         insuranceComponent.setContract(createTestContract());
+        insuranceComponent.setBenefitBalance(createTestBenefitCategory());
         response.setInsurance(Collections.singletonList(insuranceComponent));
         return response;
     }
@@ -69,5 +79,22 @@ public class InsurancePolicyServiceTest extends BaseModuleContextSensitiveTest {
                 + TestConstants.TEST_DATE;
 
         return new Reference(referenceString);
+    }
+
+    private List<EligibilityResponse.BenefitsComponent> createTestBenefitCategory() {
+        EligibilityResponse.BenefitsComponent component = new EligibilityResponse.BenefitsComponent();
+        component.setFinancial(createTestFinancialComponent());
+        return Collections.singletonList(component);
+    }
+
+    public List<EligibilityResponse.BenefitComponent> createTestFinancialComponent() {
+        EligibilityResponse.BenefitComponent  financial = new EligibilityResponse.BenefitComponent();
+        Money allowed = new Money();
+        allowed.setValue(ALLOWED_MONEY);
+        Money used = new Money();
+        used.setValue(USED_MONEY);
+        financial.setUsed(used);
+        financial.setAllowed(allowed);
+        return Collections.singletonList(financial);
     }
 }

@@ -18,14 +18,6 @@
     "order": 19
   },
   {
-    "id": "${project.parent.artifactId}.patientInsuranceClaimFragment",
-    "extensionPointId": "patientDashboard.secondColumnFragments",
-    "extensionParams": {
-      "provider": "insuranceclaims",
-      "fragment": "users"
-    }
-  },
-  {
     "id": "${project.parent.artifactId}.realTime.consumedItemAdmission",
     "extensionPointId": "patientDashboard.visitActions",
     "type": "link",
@@ -34,5 +26,13 @@
     "icon": "icon-signin",
     "order": 90,
     "require": "visit.active && !visit.admitted"
+  },
+  {
+    "id": "${project.parent.artifactId}.patientDashboard.secondColumnFragments",
+    "extensionPointId": "patientDashboard.secondColumnFragments",
+    "extensionParams": {
+      "provider": "insuranceclaims",
+      "fragment": "insuranceValidation"
+    }
   }
 ]

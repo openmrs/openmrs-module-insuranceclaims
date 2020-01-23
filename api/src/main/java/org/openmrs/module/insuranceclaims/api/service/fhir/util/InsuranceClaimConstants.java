@@ -47,16 +47,26 @@ public final class InsuranceClaimConstants {
     public static final int CONTRACT_POLICY_ID_ORDINAL = 1;
     public static final int CONTRACT_EXPIRE_DATE_ORDINAL = 2;
 
-    public static final String EXPECTED_DATE_PATTERN = "yyyy-mm-dd";
+    public static final String EXPECTED_DATE_PATTERN = "yyyy-MM-dd";
     public static final List<String> CONTRACT_DATE_PATTERN = Collections.unmodifiableList(
-            Arrays.asList("yyyy-mm-dd hh:mm:ss", "yyyy-mm-dd"));
+            Arrays.asList("yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd"));
 
     public static final String CONSUMED_ITEMS_CONCEPT_NAME = "Items consumed";
     public static final String CONSUMED_ITEMS_CONCEPT_UUID = "907519e6-4b90-473e-b1db-5167352ddcd0";
 
+    public static final String CONSUMABLES_LIST_CONCEPT_NAME = "CONSUMABLES LIST";
+    public static final String CONSUMABLES_LIST_ITEMS_CONCEPT_UUID = "df3f4aab-0e18-43cb-89bf-03ec347faa4a";
+
+    public static final String QUANTITY_CONSUMED_CONCEPT_NAME = "QUANTITY CONSUMED";
+    public static final String QUANTITY_CONSUMED_CONCEPT_UUID = "dd75407b-bbb3-465b-976d-023b4d79ac54";
+    public static final double ABSOULUTE_LOW_CONSUMED_ITEMS = 1.0;
+    public static final double ABSOULUTE_HI_CONSUMED_ITEMS = 1.0;
+
     public static final String CONSUMED_ITEMS_FORM_NAME = "Consumed Items";
     public static final String CONSUMED_ITEMS_FORM_DESCRIPTION = "Used to add information about services and items consumed by the patient.";
     public static final String CONSUMED_ITEMS_FORM_UUID = "2da13321-5829-41d3-b11c-68520b5e4da4";
+
+    public static final String CONSUMED_ITEM_STRATEGY_PROPERTY = "insuranceclaims.consumeditem.strategy";
 
     private InsuranceClaimConstants() {}
 }
