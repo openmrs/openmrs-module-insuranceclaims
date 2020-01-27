@@ -87,4 +87,5 @@
             window.location.reload();
         }, 2000);
     }
+    
 </script>
