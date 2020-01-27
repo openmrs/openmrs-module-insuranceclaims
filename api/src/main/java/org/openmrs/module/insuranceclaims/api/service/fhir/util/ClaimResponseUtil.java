@@ -70,8 +70,7 @@ public final class ClaimResponseUtil {
         if (StringUtils.isNotBlank(rejectionReason)) {
             codeableConcept.setText(rejectionReason);
             reasonCoding.setCode(rejectionReason);
-        }
-        else {
+        } else {
             reasonCoding.setCode(DEFAULT_ERROR_CODE);
         }
         codeableConcept.setCoding(Collections.singletonList(reasonCoding));

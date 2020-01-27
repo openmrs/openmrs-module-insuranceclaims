@@ -1,9 +1,10 @@
 package org.openmrs.module.insuranceclaims.api.service.impl;
 
+import org.hibernate.Criteria;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.api.APIException;
-import org.openmrs.api.db.OpenmrsDataDAO;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.insuranceclaims.api.dao.BaseOpenmrsDataDao;
 import org.openmrs.module.insuranceclaims.api.service.OpenmrsDataService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,16 +14,16 @@ import java.util.List;
 @Transactional
 public class BaseOpenmrsDataService<T extends BaseOpenmrsData> extends BaseOpenmrsService implements OpenmrsDataService<T> {
 
-	private OpenmrsDataDAO<T> dao;
+	private BaseOpenmrsDataDao<T> dao;
 
 	public BaseOpenmrsDataService() {
 	}
 
-	public BaseOpenmrsDataService(OpenmrsDataDAO<T> dao) {
+	public BaseOpenmrsDataService(BaseOpenmrsDataDao<T> dao) {
 		this.dao = dao;
 	}
 
-	public void setDao(OpenmrsDataDAO<T> dao) {
+	public void setDao(BaseOpenmrsDataDao<T> dao) {
 		this.dao = dao;
 	}
 
@@ -61,5 +62,20 @@ public class BaseOpenmrsDataService<T extends BaseOpenmrsData> extends BaseOpenm
 	@Override
 	public int getAllCount(boolean includeVoided) throws APIException {
 		return dao.getAllCount(includeVoided);
+	}
+
+	@Override
+	public List<T> getAllByCriteria(Criteria criteria, boolean includeVoided) {
+		return dao.findAllByCriteria(criteria, includeVoided);
+	}
+
+	@Override
+	public T getByCriteria(Criteria criteria, boolean includeVoided) {
+		return dao.findByCriteria(criteria, includeVoided);
+	}
+
+	@Override
+	public Criteria createCriteria() {
+		return dao.createCriteria();
 	}
 }

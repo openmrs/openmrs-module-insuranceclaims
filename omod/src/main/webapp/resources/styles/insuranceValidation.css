@@ -13,4 +13,15 @@
 
 .insurance-validation-container #insurance-validation-submit {
     margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.insurance-validation-container .insurance-validation-result {
+    overflow-y: unset;
+    overflow-x: scroll;
+    border: 1px solid #dddddd;
+}
+
+.insurance-validation-container .insurance-validation-result td {
+    max-width: none;
 }

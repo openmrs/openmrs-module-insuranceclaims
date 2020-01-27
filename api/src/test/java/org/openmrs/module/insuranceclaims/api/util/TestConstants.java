@@ -1,5 +1,10 @@
 package org.openmrs.module.insuranceclaims.api.util;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public final class TestConstants {
 
 	public static final int TEST_LOCATION_ID = 10547108;
@@ -31,6 +36,10 @@ public final class TestConstants {
 	public static final double[] TEST_PROCESSED_PRICES = {100, 500, 50, 0};
 
 	public static final String TEST_URL = "http://example.com/that";
+
+	public static final BigDecimal TEST_PATIENT_POLICY_ALLOWED_MONEY = new BigDecimal(1253221);
+
+	public static final Date TEST_PATIENT_POLICY_EXPIRY_DATE = new GregorianCalendar(2010, Calendar.NOVEMBER, 16).getTime();
 
 	private TestConstants() {
 	}

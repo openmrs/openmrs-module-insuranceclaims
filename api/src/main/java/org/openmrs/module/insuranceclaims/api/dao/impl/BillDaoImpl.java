@@ -5,13 +5,13 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.api.APIException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
-import org.openmrs.api.db.hibernate.HibernateOpenmrsDataDAO;
 import org.openmrs.module.insuranceclaims.api.dao.BillDao;
 import org.openmrs.module.insuranceclaims.api.model.Bill;
+import org.openmrs.module.insuranceclaims.api.dao.BaseOpenmrsDataDao;
 
 import java.util.List;
 
-public class BillDaoImpl extends HibernateOpenmrsDataDAO<Bill> implements BillDao {
+public class BillDaoImpl extends BaseOpenmrsDataDao<Bill> implements BillDao {
     private DbSessionFactory sessionFactory;
 
     public BillDaoImpl() {

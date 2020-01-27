@@ -43,5 +43,12 @@
     <bean id="insuranceclaims.InsurancePolicyService"
           class="org.openmrs.module.insuranceclaims.api.service.impl.InsurancePolicyServiceImpl">
         <property name="dao" ref="insuranceclaims.InsurancePolicyDao"/>
+        <property name="personService" ref="personService" />
+        <property name="insurancePolicyMapper">
+            <ref local="insuranceclaims.insurancePolicyMapper" />
+        </property>
     </bean>
+
+    <bean id="insuranceclaims.insurancePolicyMapper"
+          class="org.openmrs.module.insuranceclaims.api.mapper.InsurancePolicyMapper" />
 </beans>

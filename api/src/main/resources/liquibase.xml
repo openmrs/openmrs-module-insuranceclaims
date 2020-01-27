@@ -26,9 +26,6 @@
             <column name="iclm_bill_id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" unique="true"/>
             </column>
-            <column name="patient" type="int">
-                <constraints nullable="false"/>
-            </column>
             <column name="start_date" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
@@ -58,9 +55,6 @@
             </column>
             <column name="voided_by" type="int"/>
         </createTable>
-        <addForeignKeyConstraint constraintName="iclm_bill_patient_fk"
-                                 baseTableName="iclm_bill" baseColumnNames="patient"
-                                 referencedTableName="patient" referencedColumnNames="patient_id"/>
         <addForeignKeyConstraint constraintName="iclm_bill_diagnosis_fk"
                                  baseTableName="iclm_bill" baseColumnNames="diagnosis"
                                  referencedTableName="concept" referencedColumnNames="concept_id"/>
@@ -537,4 +531,23 @@
             <column name="uuid">1946c03b-6fbd-4e11-8c76-36d07b39e47c</column>
         </insert>
     </changeSet>
+
+    <changeSet id="insuranceclaims-27.01.2020:16:30" author="Bartlomiej Kaminski">
+        <preConditions>
+            <tableExists tableName="iclm_bill"/>
+            <not>
+                <columnExists tableName="iclm_bill" columnName="patient"/>
+            </not>
+        </preConditions>
+        <comment>
+            Patient for Bill
+        </comment>
+        <addColumn tableName="iclm_bill">
+            <column name="patient" type="int"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="iclm_bill_patient_fk"
+                                 baseTableName="iclm_bill" baseColumnNames="patient"
+                                 referencedTableName="patient" referencedColumnNames="patient_id"/>
+    </changeSet>
+
 </databaseChangeLog>
