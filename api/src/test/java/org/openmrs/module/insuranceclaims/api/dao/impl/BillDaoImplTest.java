@@ -3,10 +3,14 @@ package org.openmrs.module.insuranceclaims.api.dao.impl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.insuranceclaims.api.dao.BillDao;
 import org.openmrs.module.insuranceclaims.api.model.Bill;
 import org.openmrs.module.insuranceclaims.api.mother.BillMother;
+import org.openmrs.module.insuranceclaims.api.mother.PatientMother;
 import org.openmrs.module.insuranceclaims.api.util.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +45,12 @@ public class BillDaoImplTest extends BaseModuleContextSensitiveTest {
 
     private Bill createTestInstance() {
         Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
-        return BillMother.createTestInstance(concept);
-    }
+        Location location = Context.getLocationService().getLocation(TestConstants.TEST_LOCATION_ID);
+        PatientIdentifierType identifierType = Context.getPatientService()
+                .getPatientIdentifierType(TestConstants.TEST_IDENTIFIER_TYPE_ID);
 
+        Patient patient = PatientMother.createTestInstance(location, identifierType);
+
+        return BillMother.createTestInstance(concept, patient);
+    }
 }

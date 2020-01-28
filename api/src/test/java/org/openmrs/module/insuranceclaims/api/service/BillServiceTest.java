@@ -88,7 +88,7 @@ public class BillServiceTest extends BaseModuleContextSensitiveTest {
 
         Date date = dateUtil.now();
         Bill expectedBill = BillMother.createTestInstanceWithAmount(sumProvidedItems, date, dateUtil.plusDays(date,
-                ConstantValues.DEFAULT_DURATION_BILL_DAYS));
+                ConstantValues.DEFAULT_DURATION_BILL_DAYS), patient);
 
         Assert.assertThat(actualBill, is(expectedBill));
         Assert.assertTrue(actualBill.getTotalAmount().compareTo(expectedBill.getTotalAmount()) == 0);

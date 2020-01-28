@@ -4,13 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.PersonService;
+import org.openmrs.module.insuranceclaims.util.ConstantValues;
 import org.openmrs.module.insuranceclaims.api.mapper.InsurancePolicyMapper;
 import org.openmrs.module.insuranceclaims.api.model.InsurancePolicy;
 import org.openmrs.module.insuranceclaims.api.model.dto.InsurancePolicyDTO;
 import org.openmrs.module.insuranceclaims.api.service.InsurancePolicyService;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.EligibilityRequestException;
 import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
-import org.openmrs.module.insuranceclaims.util.ConstantValues;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class InsuranceValidationFragmentController {
-
     private static final String WIDGET_MODE_KEY = "widgetMode";
 
     private static final String INITIAL_VALUE_KEY = "initialValue";
@@ -45,6 +44,7 @@ public class InsuranceValidationFragmentController {
             @RequestParam(value = "patientId", required = false) String personUuid) {
         model.put(WIDGET_MODE_KEY, false);
         model.put(PERSON_UUID_KEY, personUuid);
+
         if (StringUtils.isNotBlank(personUuid)) {
             Person person = personService.getPersonByUuid(personUuid);
             PersonAttribute attribute = person.getAttribute(ConstantValues.POLICY_NUMBER_ATTRIBUTE_TYPE_NAME);
@@ -85,5 +85,4 @@ public class InsuranceValidationFragmentController {
         requestResponse.put(RESULTS_KEY, results);
         return requestResponse;
     }
-
 }

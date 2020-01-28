@@ -34,11 +34,11 @@ import static org.openmrs.module.insuranceclaims.api.util.TestConstants.TEST_PAT
 
 public class InsurancePolicyServiceTest extends BaseModuleContextSensitiveTest {
 
-    private static final String XML_DATA_SET = "test_insurance_policy.xml";
-
     private static final BigDecimal ALLOWED_MONEY = new BigDecimal("100.00");
 
     private static final BigDecimal USED_MONEY = new BigDecimal("90.00");
+
+    private static final String XML_DATA_SET = "test_insurance_policy.xml";
 
     private static final String PERSON_UUID = "41c2283e-549e-4e0e-acdb-3540040effef";
 

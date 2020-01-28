@@ -138,6 +138,7 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
             EligibilityRequest eligibilityRequest = fhirEligibilityService.generateEligibilityRequest(policyNumber);
             EligibilityResponse response =  eligibilityHttpRequest.sendEligibilityRequest(
                     this.eligibilityUrl, eligibilityRequest);
+
             if (response.getInsurance() == null) {
                 throw new EligibilityRequestException("Insurance not found");
             }

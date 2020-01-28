@@ -2,7 +2,7 @@
     ui.includeJavascript("uicommons", "angular.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("Add new insurance claim") ])
+    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("Insurance claims") ])
 %>
 
 <openmrs:htmlInclude file="/moduleResources/htmlformentry/htmlForm.js" />
@@ -64,30 +64,22 @@
         jQuery.ajax({
         type: "GET",
         url: "../ws/insuranceclaims/rest/v1/claims/sendToExternal?claimUuid=" + uuid,
-        success: function(){
-            reloadPage();
-        },
-        error: function (request, status, error) {
-            reloadPage();
-        },
         dataType: "json",
-        contentType : "application/json"
-        });
+        contentType : "application/json",
+        complete: function() {
+            reloadPage();
+        }});
     }
 
     function updateClaim(uuid) {
         jQuery.ajax({
         type: "GET",
         url: "../ws/insuranceclaims/rest/v1/claims/updateClaim?claimUuid=" + uuid,
-        success: function(){
-            reloadPage();
-        },
-        error: function (request, status, error) {
-            reloadPage();
-        },
         dataType: "json",
-        contentType : "application/json"
-        });
+        contentType : "application/json",
+        complete: function() {
+            reloadPage();
+        }});
     }
 
     function reloadPage(){
@@ -95,4 +87,5 @@
             window.location.reload();
         }, 2000);
     }
+    
 </script>

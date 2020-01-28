@@ -31,7 +31,7 @@ public final class InsuranceClaimMother {
 													PatientIdentifierType identifierType) {
 		Patient patient = PatientMother.createTestInstance(location, identifierType);
 		Concept concept = Context.getConceptService().getConcept(TestConstants.TEST_CONCEPT_ID);
-		Bill bill = BillMother.createTestInstance(concept);
+		Bill bill = BillMother.createTestInstance(concept, patient);
 
 		InsuranceClaim insuranceClaim = new InsuranceClaim();
 		insuranceClaim.setProvider(provider);
