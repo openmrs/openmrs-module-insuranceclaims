@@ -66,6 +66,18 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
     @JoinColumn(name = "bill")
     private Bill bill;
 
+    @Basic
+    @Column(name = "number_of_consumptions")
+    private Integer numberOfConsumptions;
+
+    public BigDecimal getTotalPrice() {
+        if (numberOfConsumptions != null) {
+            return price.multiply(new BigDecimal(numberOfConsumptions));
+        } else {
+            return price;
+        }
+    }
+
     @Override
     public Integer getId() {
         return id;
@@ -122,6 +134,14 @@ public class ProvidedItem extends AbstractBaseOpenmrsData {
 
     public void setBill(Bill bill) {
         this.bill = bill;
+    }
+
+    public Integer getNumberOfConsumptions() {
+        return numberOfConsumptions;
+    }
+
+    public void setNumberOfConsumptions(Integer numberOfConsumptions) {
+        this.numberOfConsumptions = numberOfConsumptions;
     }
 
     @Override

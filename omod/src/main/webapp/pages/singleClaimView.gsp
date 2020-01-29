@@ -128,12 +128,12 @@
                 def details = "Details"
                 def itemDetailsId = item.key + details %>
 
-                <tr> <div id="${item.key}" style="cursor: pointer;"> ${index + 1}. ${item.key} </div> </tr>
+                <tr> <div id="${item.key}" style="cursor: pointer;"> <input id="Position_${item.key}" type="checkbox" >  ${index + 1}. ${item.key} </div> </tr>
                 <div id="${itemDetailsId}" style="display: none;">
                     <%item.value.eachWithIndex { providedItem, itemIndex -> %>
                         <tr>
                             <div class="consumedItemsOfType" id="${providedItem.uuid}" style="border: 2px solid black;">
-                                ${itemIndex + 1}. ${providedItem.dateOfServed} 
+                                ${itemIndex + 1}. ${providedItem.dateOfServed} | Quantity: ${providedItem.numberOfConsumptions}
                             </div>
                             <script>
                                 providedItems['${item.key}'] = {};

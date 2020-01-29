@@ -531,4 +531,20 @@
             <column name="uuid">1946c03b-6fbd-4e11-8c76-36d07b39e47c</column>
         </insert>
     </changeSet>
+
+    <changeSet id="insuranceclaims-28.01.2020:15:40" author="Bartlomiej Kaminski">
+        <preConditions>
+            <tableExists tableName="iclm_provided_item"/>
+            <not>
+                <columnExists tableName="iclm_provided_item" columnName="number_of_consumptions"/>
+            </not>
+        </preConditions>
+        <comment>
+            Patient for Bill
+        </comment>
+        <addColumn tableName="iclm_provided_item">
+            <column name="number_of_consumptions" type="int"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
