@@ -141,7 +141,7 @@
         </preConditions>
         <createTable tableName="iclm_claim">
             <column name="iclm_claim_id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" unique="true" />
+                <constraints primaryKey="true" unique="true"/>
             </column>
             <column name="provider" type="int"/>
             <column name="patient" type="int">
@@ -313,7 +313,8 @@
         </createTable>
         <addForeignKeyConstraint constraintName="iclm_claim_item_item_fk"
                                  baseTableName="iclm_claim_item" baseColumnNames="item"
-                                 referencedTableName="iclm_provided_item" referencedColumnNames="iclm_provided_item_id"/>
+                                 referencedTableName="iclm_provided_item"
+                                 referencedColumnNames="iclm_provided_item_id"/>
         <addForeignKeyConstraint constraintName="iclm_claim_item_claim_fk"
                                  baseTableName="iclm_claim_item" baseColumnNames="claim"
                                  referencedTableName="iclm_claim" referencedColumnNames="iclm_claim_id"/>
@@ -385,7 +386,7 @@
 
     <changeSet id="insuranceclaims-12.11.2019:14:01" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="provider_attribute_type" />
+            <tableExists tableName="provider_attribute_type"/>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM provider_attribute_type WHERE uuid = "bbdf67e8-c020-40ff-8ad6-74ba34893882";
             </sqlCheck>
@@ -407,7 +408,7 @@
 
     <changeSet id="insuranceclaims-12.11.2019:14:02" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="location_attribute_type" />
+            <tableExists tableName="location_attribute_type"/>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM location_attribute_type WHERE uuid = "217da59b-6003-43b9-9595-b5c1349f1152";
             </sqlCheck>
@@ -429,7 +430,7 @@
 
     <changeSet id="insuranceclaims-12.11.2019:14:03" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="patient_identifier_type" />
+            <tableExists tableName="patient_identifier_type"/>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM patient_identifier_type WHERE uuid ="ee8e82c4-1563-43aa-8c73-c3e4e88cb79b";
             </sqlCheck>
@@ -451,7 +452,7 @@
 
     <changeSet id="insuranceclaims-18.11.2019:14:39" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="concept_attribute_type" />
+            <tableExists tableName="concept_attribute_type"/>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM concept_attribute_type WHERE uuid ="925e4987-3104-4d74-989b-3ec96197b532";
             </sqlCheck>
@@ -473,7 +474,7 @@
 
     <changeSet id="insuranceclaims-18.11.2019:14:41" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="concept_attribute_type" />
+            <tableExists tableName="concept_attribute_type"/>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM concept_attribute_type WHERE uuid ="ddc082c8-db30-4796-890e-f0d487fb9085";
             </sqlCheck>
@@ -495,7 +496,7 @@
 
     <changeSet id="insuranceclaims-18.11.2019:15:12" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="concept_reference_source" />
+            <tableExists tableName="concept_reference_source"/>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM concept_reference_source WHERE uuid ="e730f72a-2789-4d82-8e71-d7707babc0e6";
             </sqlCheck>
@@ -515,7 +516,7 @@
 
     <changeSet id="insuranceclaims-27.12.2019:11:15" author="Damian Borowiecki">
         <preConditions onFail="MARK_RAN">
-            <tableExists tableName="concept_class" />
+            <tableExists tableName="concept_class"/>
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM concept_class WHERE uuid ="1946c03b-6fbd-4e11-8c76-36d07b39e47c";
             </sqlCheck>
@@ -532,6 +533,24 @@
         </insert>
     </changeSet>
 
+    <changeSet id="insuranceclaims-27.01.2020:16:30" author="Bartlomiej Kaminski">
+        <preConditions>
+            <tableExists tableName="iclm_bill"/>
+            <not>
+                <columnExists tableName="iclm_bill" columnName="patient"/>
+            </not>
+        </preConditions>
+        <comment>
+            Patient for Bill
+        </comment>
+        <addColumn tableName="iclm_bill">
+            <column name="patient" type="int"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="iclm_bill_patient_fk"
+                                 baseTableName="iclm_bill" baseColumnNames="patient"
+                                 referencedTableName="patient" referencedColumnNames="patient_id"/>
+    </changeSet>
+
     <changeSet id="insuranceclaims-28.01.2020:15:40" author="Bartlomiej Kaminski">
         <preConditions>
             <tableExists tableName="iclm_provided_item"/>
@@ -540,7 +559,7 @@
             </not>
         </preConditions>
         <comment>
-            Patient for Bill
+            Number of consumptions
         </comment>
         <addColumn tableName="iclm_provided_item">
             <column name="number_of_consumptions" type="int"/>
