@@ -29,7 +29,7 @@ public class BillServiceImpl extends BaseOpenmrsDataService<Bill> implements Bil
         bill.setDateCreated(date);
         bill.setPatient(providedItems.get(0).getPatient());
 
-        BigDecimal sumProvidedItems = providedItems.stream().map(ProvidedItem::getPrice)
+        BigDecimal sumProvidedItems = providedItems.stream().map(ProvidedItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         bill.setTotalAmount(sumProvidedItems);

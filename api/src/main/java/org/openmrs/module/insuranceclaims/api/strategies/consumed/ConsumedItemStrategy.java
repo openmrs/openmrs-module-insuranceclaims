@@ -55,12 +55,10 @@ public class ConsumedItemStrategy implements GenericConsumedItemStrategy {
 
     private void createProvidedItems(Obs consumedItem, int numberOfConsumptions) throws ConsumedItemException {
         BigDecimal itemPrice = getConceptPrice(consumedItem.getValueCoded());
-        for (int singleConsumption = 0; singleConsumption < numberOfConsumptions; singleConsumption++ ) {
-            createProvidedItemForObservation(consumedItem, itemPrice);
-        }
+        createProvidedItemForObservation(consumedItem, itemPrice, numberOfConsumptions);
     }
 
-    private void createProvidedItemForObservation(Obs consumedItem, BigDecimal price) {
+    private void createProvidedItemForObservation(Obs consumedItem, BigDecimal price, int numberOfConsumptions) {
         ProvidedItem newProvidedItem = new ProvidedItem();
 
         Concept consumedItemConcept = consumedItem.getValueCoded();
@@ -72,6 +70,7 @@ public class ConsumedItemStrategy implements GenericConsumedItemStrategy {
 
         newProvidedItem.setDateOfServed(consumedItem.getObsDatetime());
         newProvidedItem.setStatus(ProcessStatus.ENTERED);
+        newProvidedItem.setNumberOfConsumptions(numberOfConsumptions);
         newProvidedItem.setPrice(price);
 
         providedItemService.saveOrUpdate(newProvidedItem);
