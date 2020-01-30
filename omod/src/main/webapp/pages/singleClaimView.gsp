@@ -24,7 +24,7 @@
 
 <script>
     var providedItems = {};
-    
+
     function showElement(itemName) {
         var detailsBlock = document.getElementById(itemName)
         if (detailsBlock.style.display == 'none') {
@@ -79,7 +79,7 @@
     }
 </script>
 
-<div> Patient: ${patientName} </div> 
+<div> Patient: ${patientName} </div>
 
 <% if(valuatedClaim) {%>
     <div> Status: ${valuatedClaim.claim.status} </div>
@@ -117,18 +117,18 @@
     <div> Diagnoses: </div>
         <% valuatedClaim.claimDiagnoses.eachWithIndex { claimDiagnosis, diagnosisIndex -> %>
             <div  id="${claimDiagnosis.diagnosisUuid}" style="border: 2px solid black;"> ${diagnosisIndex + 1}. ${claimDiagnosis.diagnosisName} </div>
-        <% } %>       
+        <% } %>
 <%} else {%>
 <div id="new-insurance-claim-app" ng-controller="InsuranceClaimsCtrl" ng-init='init()'>
 <form id="newInsuranceClaim" method="post" autocomplete="off">
     <% if(providedItems) {%>
         <br/>
         <tr>
-            <% providedItems.eachWithIndex { item, index -> 
+            <% providedItems.eachWithIndex { item, index ->
                 def details = "Details"
                 def itemDetailsId = item.key + details %>
 
-                <tr> <div id="${item.key}" style="cursor: pointer;"> <input id="Position_${item.key}" type="checkbox" >  ${index + 1}. ${item.key} </div> </tr>
+                <tr> <div id="${item.key}" style="cursor: pointer;"> <input id="Position_${item.key}" type="checkbox" />  ${index + 1}. ${item.key} </div> </tr>
                 <div id="${itemDetailsId}" style="display: none;">
                     <%item.value.eachWithIndex { providedItem, itemIndex -> %>
                         <tr>
@@ -151,7 +151,7 @@
                         jQuery("[id= '${item.key}Explanation']").change( function() {
                                 providedItems['${item.key}']['explanation'] = jQuery(this).val();
                             });
-                        
+
                         jQuery("[id= '${item.key}Justification']").change(function() {
                                 providedItems['${item.key}']['justification'] = jQuery(this).val();
                             });
@@ -163,16 +163,21 @@
                         showElement('${itemDetailsId}');
                         let consumed = document.getElementById('${itemDetailsId}')
                                             .getElementsByClassName('consumedItemsOfType');
+
+                        let selectedValue = document.getElementById('Position_${item.key}');
+
                         if (this.style.backgroundColor == 'lightgreen') {
                             changeColor(this, 'white');
                             for (var i = 0; i < consumed.length; i++) {
                                 unselectProvidedItem('${item.key}', consumed[i]);
-                            }  
+                            };
+                            selectedValue.checked = false;
                         } else {
                             changeColor(this, 'lightgreen');
                             for (var i = 0; i < consumed.length; i++) {
                                 selectProvidedItem('${item.key}', consumed[i]);
-                            }   
+                            };
+                            selectedValue.checked = true;
                         }
                     };
                 </script>
@@ -182,9 +187,9 @@
         <br />
 
         <span id="claimExplanationSpan">
-            Claim explanation   : <input type="text" id="claimExplanation" value="">   </tr> 
+            Claim explanation   : <input type="text" id="claimExplanation" value="">   </tr>
         </span>
-        
+
         <span id="claimJustificationSpan">
             <input type="hidden" id="claimJustification" value=""> </tr> <br>
         </span>
@@ -225,7 +230,7 @@
     <% } %>
 
     <br>
-    <div id="paymentOption"> 
+    <div id="paymentOption">
         Paid in facility: <input id="paidInFacility" type="checkbox" ><br>
     </div>
 
@@ -245,18 +250,18 @@
     <input type="hidden" name="providedItems" value=JSON.stringify(providedItems); />
     <input type="hidden" name="selectedDiagnosis" value=JSON.stringify(diagnosees); />
     <input type="hidden" id="provider" value="${provider.uuid}" />
-    <input type="hidden" id="storagePatientUuid" name="patientUuid" value="${patientUuid}" /> 
+    <input type="hidden" id="storagePatientUuid" name="patientUuid" value="${patientUuid}" />
 </form>
 <div id="formData"></div>
 <% } %>
 
 
 <script>
- 
+
     function showProvided() {
         document.getElementById("formData").innerHTML = JSON.stringify(getFormData());
     }
-   
+
     function getFormData() {
         return {
             "providedItems": providedItems,
@@ -291,7 +296,7 @@
         contentType : "application/json"
         }).done(function(data) {
                 // log data to the console so we can see
-                console.log(data); 
+                console.log(data);
                 document.getElementById("formData").innerHTML = data;
                 // here we will handle errors and validation messages
             });
