@@ -1,0 +1,19 @@
+[
+  {
+    "id": "insuranceclaims.import.patient.id",
+    "description": "",
+    "order": 3,
+    "extensions": [
+      {
+        "id": "${project.parent.artifactId}.launcheManager",
+        "extensionPointId": "org.openmrs.insuranceclaims.homepageLink",
+        "type": "link",
+        "order": 10,
+        "label": "insuranceclaims.import.patient.label",
+        "url": "insuranceclaims/importPatient.page",
+        "icon": "icon-user",
+        "requiredPrivilege": "App: registrationapp.registerPatient"
+      }
+    ]
+  }
+]

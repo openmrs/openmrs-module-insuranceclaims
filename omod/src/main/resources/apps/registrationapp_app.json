@@ -44,10 +44,49 @@
                                     ]
                                 }
                             ]
+                        },
+                        {
+                            "legend": "External Identification Number",
+                            "id": "insuranceclaims.patient.external.id",
+                            "fields": [
+                                {
+                                    "type": "patientIdentifier",
+                                    "label": "insuranceclaims.patient.external.label",
+                                    "formFieldName": "extetnalIdentificationId",
+                                    "uuid": "ee8e82c4-1563-43aa-8c73-c3e4e88cb79b",
+                                    "widget": {
+                                        "providerName": "uicommons",
+                                        "fragmentId": "field/text",
+                                        "config": {
+                                            "regex": "^.+$"
+                                        }
+                                    },
+                                    "cssClasses": [
+                                        "regex"
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }
             ]
         }
+    },
+    {
+        "id": "insuranceclaims.import.patient.id",
+        "description": "",
+        "order": 3,
+        "extensions": [
+            {
+                "id": "${project.parent.artifactId}.launcheManager",
+                "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+                "type": "link",
+                "order": 10,
+                "label": "insuranceclaims.import.patient.label",
+                "url": "insuranceclaims/importPatient.page",
+                "icon": "icon-user",
+                "requiredPrivilege": "App: registrationapp.registerPatient"
+            }
+        ]
     }
 ]

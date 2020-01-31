@@ -68,5 +68,8 @@ public final class InsuranceClaimConstants {
 
     public static final String CONSUMED_ITEM_STRATEGY_PROPERTY = "insuranceclaims.consumeditem.strategy";
 
+    public static final String OPENMRS_ID_DEFAULT_IDENTIFIER_SOURCE = "691eed12-c0f1-11e2-94be-8c13b969e334";
+    public static final String OPENMRS_ID_DEFAULT_TYPE = "05a29f94-c0ed-11e2-94be-8c13b969e334";
+
     private InsuranceClaimConstants() {}
 }
