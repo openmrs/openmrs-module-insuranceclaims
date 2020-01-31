@@ -146,7 +146,7 @@ public class ClaimFormServiceImpl implements ClaimFormService {
             ProvidedItem provideditem = providedItemService.getByUuid(nextItemUuid);
             InsuranceClaimItem nextInsuranceClaimItem = new InsuranceClaimItem();
             nextInsuranceClaimItem.setItem(provideditem);
-            nextInsuranceClaimItem.setQuantityProvided(SINGLE_ITEM);
+            nextInsuranceClaimItem.setQuantityProvided(provideditem.getNumberOfConsumptions());
             nextInsuranceClaimItem.setJustification(justification);
             nextInsuranceClaimItem.setExplanation(explanation);
             items.add(nextInsuranceClaimItem);
