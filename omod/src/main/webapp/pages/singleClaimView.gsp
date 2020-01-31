@@ -79,14 +79,10 @@
     }
 </script>
 
-<<<<<<< Updated upstream
 <span>
     <b><font size="16">${ patientName }</font></b>
 </span>
 
-=======
-<div> Patient: ${patientName} </div> 
->>>>>>> Stashed changes
 <% if(valuatedClaim) {%>
     <div> Status: ${valuatedClaim.claim.status} </div>
     <% if(!valuatedClaim.claim.status.name().equalsIgnoreCase("ENTERED")) { %>
