@@ -79,10 +79,14 @@
     }
 </script>
 
+<<<<<<< Updated upstream
 <span>
     <b><font size="16">${ patientName }</font></b>
 </span>
 
+=======
+<div> Patient: ${patientName} </div> 
+>>>>>>> Stashed changes
 <% if(valuatedClaim) {%>
     <div> Status: ${valuatedClaim.claim.status} </div>
     <% if(!valuatedClaim.claim.status.name().equalsIgnoreCase("ENTERED")) { %>
@@ -118,9 +122,10 @@
 
     <div> Diagnoses: </div>
         <% valuatedClaim.claimDiagnoses.eachWithIndex { claimDiagnosis, diagnosisIndex -> %>
-            <div  id="${claimDiagnosis.diagnosisUuid}" style="border: 2px solid black;"> ${diagnosisIndex + 1}. ${claimDiagnosis.diagnosisName} </div>
-        <% } %>
+        <div  id="${claimDiagnosis.diagnosisUuid}" style="border: 2px solid black;"> ${diagnosisIndex + 1}. ${claimDiagnosis.diagnosisName} </div>
+        <% } %>       
 <%} else {%>
+
 <div id="new-insurance-claim-app" ng-controller="InsuranceClaimsCtrl" ng-init='init()'>
 <form id="newInsuranceClaim" method="post" autocomplete="off">
     <% if(providedItems) {%>
@@ -186,7 +191,10 @@
                     };
                 </script>
                 <br/>
-            <% }} %>
+            <% }} else { %>
+            
+    <div style="color:red;"> No provided items found </div>
+            <% }%>
         </tr>
 
         <br>
@@ -214,6 +222,7 @@
     <tr> Guarantee id: <input type="text" id="guaranteeId" value="">   </tr> <br>
 
     <% if(patientDiagnoses) {%>
+
     <div id="diagnoses"> Diagnoses: <br>
         <% patientDiagnoses.eachWithIndex { diagnosis, index ->  %>
             <span id="diagnosis${diagnosis.id}" class="diagnosis-span" value="${diagnosis.uuid}">
@@ -235,8 +244,9 @@
                 jQuery('#selectedDiagnosis').html(diagnoses);
             });
         </script>
-    <% } %>
-
+    <% } else { %>
+    <div style="color:red;"> No diagnoses associated with patient found </div>
+<% }%>
     <br>
 
     <% if(visitTypes) { %>

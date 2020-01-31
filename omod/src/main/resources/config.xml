@@ -45,6 +45,10 @@
         <require_module version="${metadatamappingVersion}">
             org.openmrs.module.metadatamapping
         </require_module>
+
+        <require_module version="${idgenModuleVersion}">
+            org.openmrs.module.idgen
+        </require_module>
     </require_modules>
 
     <!-- Extensions -->
@@ -56,6 +60,7 @@
     <aware_of_modules>
         <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
         <aware_of_module>org.openmrs.module.fhir</aware_of_module>
+        <aware_of_module>org.openmrs.module.idgen</aware_of_module>
     </aware_of_modules>
 
 
@@ -147,6 +152,20 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.patientRequestResource</property>
+        <defaultValue>Patient</defaultValue>
+        <description>Third party server resource path for patient
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.patientRequestId</property>
+        <defaultValue>id</defaultValue>
+        <description>Id uses in importing patient as GET parameter
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.diagnosisPrimaryCode</property>
         <defaultValue>icd_0</defaultValue>
         <description>Establish primary mapping in Claim.DiagnosiComponent
@@ -170,8 +189,7 @@
     <globalProperty>
         <property>${project.parent.artifactId}.consumeditem.strategy</property>
         <defaultValue>DefaultConsumedItemStrategy</defaultValue>
-        <description>Password used for external claim service authorization
+        <description>Default strategy used for consummed items
         </description>
     </globalProperty>
 </module>
-

@@ -7,8 +7,14 @@ import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Reference;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.IdentifierNotUniqueException;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.idgen.IdentifierSource;
+import org.openmrs.module.idgen.service.IdentifierSourceService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +24,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ELEMENTS;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.OPENMRS_ID_DEFAULT_IDENTIFIER_SOURCE;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.OPENMRS_ID_DEFAULT_TYPE;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.PATIENT_EXTERNAL_ID_IDENTIFIER_UUID;
 
 public final class IdentifierUtil {
 
@@ -29,6 +38,12 @@ public final class IdentifierUtil {
 
     public static String getClaimIdentifierValueBySystemCode(ClaimResponse claim, String code) {
         List<Identifier> claimCodeIdentifier = getIdentifierBySystemCode(claim.getIdentifier(), code);
+        Identifier identifier = getUnambiguousElement(claimCodeIdentifier);
+        return identifier.getValue();
+    }
+
+    public static String getPatientIdentifierValueBySystemCode(Patient patient, String code) {
+        List<Identifier> claimCodeIdentifier = getIdentifierBySystemCode(patient.getIdentifier(), code);
         Identifier identifier = getUnambiguousElement(claimCodeIdentifier);
         return identifier.getValue();
     }
@@ -82,6 +97,22 @@ public final class IdentifierUtil {
                     + listOfElements.get(0).getClass()
                     + ELEMENTS + ":\n" + listOfElements.toString());
         }
+    }
+
+    public static PatientIdentifier createBasicPatientIdentifier() {
+        PatientIdentifier omrIdentifier = new PatientIdentifier();
+        IdentifierSource idSource = Context.getService(IdentifierSourceService.class).getIdentifierSourceByUuid(OPENMRS_ID_DEFAULT_IDENTIFIER_SOURCE);
+        omrIdentifier.setIdentifier(Context.getService(IdentifierSourceService.class).generateIdentifier(idSource, null));
+        omrIdentifier.setLocation(Context.getLocationService().getDefaultLocation());
+        omrIdentifier.setIdentifierType(Context.getPatientService().getPatientIdentifierTypeByUuid(OPENMRS_ID_DEFAULT_TYPE));
+        return omrIdentifier;
+    }
+
+    public static PatientIdentifier createExternalIdIdentifier(String identifier) {
+        PatientIdentifierType identifierType = Context.getPatientService().getPatientIdentifierTypeByUuid(PATIENT_EXTERNAL_ID_IDENTIFIER_UUID);
+        PatientIdentifier patientExternalIdentifier = new PatientIdentifier(identifier, identifierType, Context.getUserContext().getLocation());
+        patientExternalIdentifier.setPreferred(false);
+        return patientExternalIdentifier;
     }
 
     private static List<Identifier> getIdentifierBySystemCode(List<Identifier> identifierList, String code) {

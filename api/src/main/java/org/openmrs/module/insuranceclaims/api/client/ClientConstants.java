@@ -12,6 +12,8 @@ public final class ClientConstants {
     public static final String CLAIM_RESPONSE_SOURCE_URI = "insuranceclaims.claimResponseResource";
     public static final String CLAIM_SOURCE_URI = "insuranceclaims.claimResource";
     public static final String ELIGIBILITY_SOURCE_URI = "insuranceclaims.eligibilityRequestResource";
+    public static final String PATIENT_SOURCE_URI = "insuranceclaims.patientRequestResource";
+    public static final String PATIENT_ID_PARAM_PROPERTY = "insuranceclaims.patientRequestId";
 
     private ClientConstants() {};
 }

@@ -1,13 +1,17 @@
 package org.openmrs.module.insuranceclaims.api.service.request.impl;
 
+import org.hl7.fhir.dstu3.model.BooleanType;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.EligibilityRequest;
 import org.hl7.fhir.dstu3.model.EligibilityResponse;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.insuranceclaims.api.client.ClaimHttpRequest;
 import org.openmrs.module.insuranceclaims.api.client.EligibilityHttpRequest;
+import org.openmrs.module.insuranceclaims.api.client.PatientHttpRequest;
 import org.openmrs.module.insuranceclaims.api.client.impl.ClaimRequestWrapper;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaim;
 import org.openmrs.module.insuranceclaims.api.model.InsuranceClaimDiagnosis;
@@ -20,11 +24,13 @@ import org.openmrs.module.insuranceclaims.api.service.db.ItemDbService;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.ClaimRequestException;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.EligibilityRequestException;
 import org.openmrs.module.insuranceclaims.api.service.exceptions.ItemMatchingFailedException;
+import org.openmrs.module.insuranceclaims.api.service.exceptions.PatientRequestException;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimDiagnosisService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimItemService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRClaimResponseService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIREligibilityService;
 import org.openmrs.module.insuranceclaims.api.service.fhir.FHIRInsuranceClaimService;
+import org.openmrs.module.insuranceclaims.api.service.fhir.util.IdentifierUtil;
 import org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimUtil;
 import org.openmrs.module.insuranceclaims.api.service.request.ExternalApiRequest;
 import org.springframework.web.client.HttpServerErrorException;
@@ -33,22 +39,28 @@ import org.springframework.web.client.ResourceAccessException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.BASE_URL_PROPERTY;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.CLAIM_RESPONSE_SOURCE_URI;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.CLAIM_SOURCE_URI;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.ELIGIBILITY_SOURCE_URI;
+import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.PATIENT_ID_PARAM_PROPERTY;
+import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.PATIENT_SOURCE_URI;
+import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
 
 public class ExternalApiRequestImpl implements ExternalApiRequest {
-
     private String claimResponseUrl;
     private String claimUrl;
     private String eligibilityUrl;
+    private String patientUrl;
 
     private ClaimHttpRequest claimHttpRequest;
 
     private EligibilityHttpRequest eligibilityHttpRequest;
+
+    private PatientHttpRequest patientHttpRequest;
 
     private FHIRInsuranceClaimService fhirInsuranceClaimService;
 
@@ -157,10 +169,45 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
             String exceptionMessage = "Exception occured during processing request: "
                     + "Message:" + e.getMessage()
                     + "Reason: " + e.getCause();
-
             throw new EligibilityRequestException(exceptionMessage, e);
 
         }
+    }
+
+    @Override
+    public org.openmrs.Patient getPatient(String patientId) throws PatientRequestException {
+        try {
+            Patient fhirPatient = getFhirPatient(patientId);
+            org.openmrs.Patient patient = FHIRPatientUtil.generateOmrsPatient(fhirPatient, new ArrayList<>());
+            patient.setIdentifiers(new TreeSet<>());
+
+            String identifier = IdentifierUtil.getPatientIdentifierValueBySystemCode(fhirPatient, ACCESSION_ID);
+            patient.addIdentifier(IdentifierUtil.createExternalIdIdentifier(identifier));
+            patient.addIdentifier(IdentifierUtil.createBasicPatientIdentifier());
+
+            return patient;
+        } catch (URISyntaxException uriSyntaxException) {
+            String exceptionMessage = "Exception occured during processing request: "
+                    + "Message:" + uriSyntaxException.getMessage();
+            throw new PatientRequestException(exceptionMessage);
+        }
+    }
+
+    @Override
+    public org.openmrs.Patient importPatient(String patientId) throws PatientRequestException {
+        org.openmrs.Patient patient = getPatient(patientId);
+        Context.getPatientService().savePatient(patient);
+        Context.getPatientService().unvoidPatient(patient);
+        return patient;
+    }
+
+    private Patient getFhirPatient(String patientId) throws URISyntaxException {
+        setUrls();
+        Patient fhirPatient =  patientHttpRequest.getPatientByQuery(patientUrl, createPatientQuery(patientId));
+        if (fhirPatient.getDeceased() == null) {
+            fhirPatient.setDeceased(new BooleanType(false));
+        }
+        return fhirPatient;
     }
 
     public void setClaimHttpRequest(ClaimHttpRequest claimHttpRequest) {
@@ -207,15 +254,20 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
         this.insurancePolicyService = insurancePolicyService;
     }
 
+    public void setPatientHttpRequest(PatientHttpRequest patientHttpRequest) {
+        this.patientHttpRequest = patientHttpRequest;
+    }
+
     private void setUrls() {
         String baseUrl = Context.getAdministrationService().getGlobalProperty(BASE_URL_PROPERTY);
         String claimUri =  Context.getAdministrationService().getGlobalProperty(CLAIM_SOURCE_URI);
-        String claimResponseUri =  Context.getAdministrationService().getGlobalProperty(CLAIM_RESPONSE_SOURCE_URI);
-        String eligibilityUri = Context.getAdministrationService().getGlobalProperty(ELIGIBILITY_SOURCE_URI);
-
-        this.claimResponseUrl = baseUrl + "/" + claimResponseUri;
         this.claimUrl = baseUrl + "/" + claimUri;
+        String claimResponseUri =  Context.getAdministrationService().getGlobalProperty(CLAIM_RESPONSE_SOURCE_URI);
+        this.claimResponseUrl = baseUrl + "/" + claimResponseUri;
+        String eligibilityUri = Context.getAdministrationService().getGlobalProperty(ELIGIBILITY_SOURCE_URI);
         this.eligibilityUrl = baseUrl + "/" + eligibilityUri;
+        String patientUri = Context.getAdministrationService().getGlobalProperty(PATIENT_SOURCE_URI);
+        this.patientUrl = baseUrl + "/" + patientUri;
     }
 
     private ClaimRequestWrapper wrapResponse(Claim claim) {
@@ -259,5 +311,9 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
             InsuranceClaimItem claimItem) {
         claimResponseItem.setItem(claimItem.getItem());
         claimResponseItem.setQuantityProvided(claimItem.getQuantityProvided());
+    }
+
+    private String createPatientQuery(String patientId) {
+        return "?" + Context.getAdministrationService().getGlobalProperty(PATIENT_ID_PARAM_PROPERTY) + "=" + patientId;
     }
 }
