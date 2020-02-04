@@ -79,6 +79,8 @@
                         <tbody id="${ config.id }-validation-result-body">
                         </tbody>
                     </table>
+                    <div id="${ config.id }-all-covered" >   
+                    </div>
                 </div>
             </div>
         </div>

@@ -46,7 +46,6 @@ import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.BASE
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.CLAIM_RESPONSE_SOURCE_URI;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.CLAIM_SOURCE_URI;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.ELIGIBILITY_SOURCE_URI;
-import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.PATIENT_ID_PARAM_PROPERTY;
 import static org.openmrs.module.insuranceclaims.api.client.ClientConstants.PATIENT_SOURCE_URI;
 import static org.openmrs.module.insuranceclaims.api.service.fhir.util.InsuranceClaimConstants.ACCESSION_ID;
 
@@ -170,7 +169,6 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
                     + "Message:" + e.getMessage()
                     + "Reason: " + e.getCause();
             throw new EligibilityRequestException(exceptionMessage, e);
-
         }
     }
 
@@ -186,6 +184,20 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
             patient.addIdentifier(IdentifierUtil.createBasicPatientIdentifier());
 
             return patient;
+        } catch (URISyntaxException uriSyntaxException) {
+            String exceptionMessage = "Exception occured during processing request: "
+                    + "Message:" + uriSyntaxException.getMessage();
+            throw new PatientRequestException(exceptionMessage);
+        }
+    }
+
+    @Override
+    public List<Patient> getPatientsByIdentifier(String patientIdentifier) throws PatientRequestException {
+        setUrls();
+        try {
+            List<Patient> fhirPatient = patientHttpRequest.getPatientByIdentifier(patientUrl, patientIdentifier);
+
+            return fhirPatient;
         } catch (URISyntaxException uriSyntaxException) {
             String exceptionMessage = "Exception occured during processing request: "
                     + "Message:" + uriSyntaxException.getMessage();
@@ -314,6 +326,6 @@ public class ExternalApiRequestImpl implements ExternalApiRequest {
     }
 
     private String createPatientQuery(String patientId) {
-        return "?" + Context.getAdministrationService().getGlobalProperty(PATIENT_ID_PARAM_PROPERTY) + "=" + patientId;
+        return "/" + patientId;
     }
 }

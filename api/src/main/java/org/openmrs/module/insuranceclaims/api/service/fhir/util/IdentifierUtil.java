@@ -105,6 +105,7 @@ public final class IdentifierUtil {
         omrIdentifier.setIdentifier(Context.getService(IdentifierSourceService.class).generateIdentifier(idSource, null));
         omrIdentifier.setLocation(Context.getLocationService().getDefaultLocation());
         omrIdentifier.setIdentifierType(Context.getPatientService().getPatientIdentifierTypeByUuid(OPENMRS_ID_DEFAULT_TYPE));
+        omrIdentifier.setPreferred(true);
         return omrIdentifier;
     }
 
