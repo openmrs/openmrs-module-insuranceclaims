@@ -160,7 +160,7 @@
 
     <globalProperty>
         <property>${project.parent.artifactId}.patientRequestId</property>
-        <defaultValue>id</defaultValue>
+        <defaultValue>identifier</defaultValue>
         <description>Id uses in importing patient as GET parameter
         </description>
     </globalProperty>

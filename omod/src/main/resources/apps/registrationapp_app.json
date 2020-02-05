@@ -24,28 +24,6 @@
                     "label":"insuranceclaims.policy.eligibility.label",
                     "questions":[
                         {
-                            "legend":"insuranceclaims.policy.eligibility.label",
-                            "id":"policyNumber",
-                            "fields":[
-                                {
-                                    "type":"personAttribute",
-                                    "label":"insuranceclaims.policy.number.label",
-                                    "formFieldName":"policyNumber",
-                                    "uuid":"22ee615f-2d5d-4be9-bdd3-c4da8c8ba91e",
-                                    "widget":{
-                                        "providerName":"insuranceclaims",
-                                        "fragmentId":"insuranceValidation",
-                                        "config":{
-                                            "regex":"^.+$"
-                                        }
-                                    },
-                                    "cssClasses":[
-                                        "regex"
-                                    ]
-                                }
-                            ]
-                        },
-                        {
                             "legend": "External Identification Number",
                             "id": "insuranceclaims.patient.external.id",
                             "fields": [
