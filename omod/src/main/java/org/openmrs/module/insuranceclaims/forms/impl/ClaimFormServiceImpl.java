@@ -44,8 +44,6 @@ public class ClaimFormServiceImpl implements ClaimFormService {
 
     private InsuranceClaimDiagnosisService insuranceClaimDiagnosisService;
 
-    private static final int SINGLE_ITEM = 1;
-
     private static final String[] FORM_DATE_FORMAT = {"yyy-mm-dd"};
 
     private static final String INVALID_LOCATION_ERROR = "You must select valid location";
@@ -146,7 +144,7 @@ public class ClaimFormServiceImpl implements ClaimFormService {
             ProvidedItem provideditem = providedItemService.getByUuid(nextItemUuid);
             InsuranceClaimItem nextInsuranceClaimItem = new InsuranceClaimItem();
             nextInsuranceClaimItem.setItem(provideditem);
-            nextInsuranceClaimItem.setQuantityProvided(SINGLE_ITEM);
+            nextInsuranceClaimItem.setQuantityProvided(provideditem.getNumberOfConsumptions());
             nextInsuranceClaimItem.setJustification(justification);
             nextInsuranceClaimItem.setExplanation(explanation);
             items.add(nextInsuranceClaimItem);

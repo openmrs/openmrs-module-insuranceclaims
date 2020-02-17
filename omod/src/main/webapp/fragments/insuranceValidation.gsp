@@ -47,7 +47,7 @@
                     type="text"
                     id="${ config.id }-field"
                     name="policyNumber"
-                    value="${ config.initialValue ?: '' }"
+                    value=""
                     <% if (config.classes) { %>class="${ config.classes.join(' ') }" <% } %>
                     <% if (config.size) { %> size="${ config.size }" <% } %>
                     <% if (config.maxLength) { %> maxlength="${ config.maxLength }" <% } %>
@@ -79,6 +79,8 @@
                         <tbody id="${ config.id }-validation-result-body">
                         </tbody>
                     </table>
+                    <div id="${ config.id }-all-covered" >   
+                    </div>
                 </div>
             </div>
         </div>

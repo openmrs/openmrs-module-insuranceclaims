@@ -28,6 +28,8 @@ insuranceValidator.submit = function(inputId, personUuid) {
                 } else {
                     emr.errorMessage("insuranceclaims.failed");
                 }
+                insuranceValidator.renderCoveredPatients(inputId, data.coveredByPolicy)
+                console.log(data)
             },
             error: function(xhr, status, error) {
                 emr.errorMessage("insuranceclaims.failed");
@@ -51,4 +53,10 @@ insuranceValidator.renderPolicyResults = function(inputId, data) {
             .append(jq("<td/>").text(r.allowedMoney));
         tableBody.append(row);
     });
+}
+
+insuranceValidator.renderCoveredPatients = function(inputId, covered) {
+    var coveredDiv = jq('#' + inputId + '-all-covered');
+    var result = covered.join(", ");
+    coveredDiv.text("Covered: " + covered);
 }
